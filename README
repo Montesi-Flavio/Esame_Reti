@@ -1,4 +1,4 @@
-# Email Analyzer
+#Email Analyzer
 
 Email Analyzer è uno strumento per analizzare le email scaricate da un server IMAP. Questo strumento estrae e analizza vari componenti delle email, inclusi gli header, i link e i digests, e fornisce informazioni di investigazione utilizzando servizi esterni come VirusTotal e AbuseIPDB.
 
