@@ -1,4 +1,4 @@
-#Email Analyzer
+# Email Analyzer
 
 Email Analyzer è uno strumento per analizzare le email scaricate da un server IMAP. 
 Questo strumento estrae e analizza vari componenti delle email, inclusi gli header, i link e i digests, e fornisce informazioni di investigazione utilizzando servizi esterni come VirusTotal e AbuseIPDB.
@@ -34,7 +34,7 @@ Questo strumento estrae e analizza vari componenti delle email, inclusi gli head
    ```sh
     python app.py -s imap.server.com -u user@example.com -p password -m INBOX -o emails --complete --investigate
     ```
-## Utilizzo
+### Utilizzo
 
 1. Configura le credenziali del server IMAP nel file app.py:
    ```python
