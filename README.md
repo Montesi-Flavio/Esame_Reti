@@ -5,7 +5,7 @@ Questo strumento estrae e analizza vari componenti delle email, inclusi gli head
 
 ## Funzionalità
 
-- **Download delle Email**: Scarica le email da un server IMAP e le salva come file `.eml`.
+- ** Download delle Email**: Scarica le email da un server IMAP e le salva come file `.eml`.
 - **Estrazione degli Header**: Estrae gli header delle email e fornisce informazioni di investigazione sugli indirizzi IP e altri componenti.
 - **Analisi dei Link**: Estrae i link dal contenuto delle email e verifica se sono sospetti utilizzando VirusTotal.
 - **Calcolo dei Digests**: Calcola gli hash MD5, SHA1 e SHA256 dei file e del contenuto delle email.
@@ -27,7 +27,7 @@ Questo strumento estrae e analizza vari componenti delle email, inclusi gli head
 
 1. Clona il repository:
    ```sh
-   git clone https://github.com/tuo-username/email-analyzer.git
+   git clone https://github.com/Montesi-Flavio/Esame_Reti.git
    cd email-analyzer
    ```
 2. Esegui lo script:

@@ -3,11 +3,11 @@ import imaplib
 import email
 import os
 import json
-import quopri
 import re
+from email import policy
 from argparse import ArgumentParser
 from datetime import datetime
-from email.parser import HeaderParser
+from email.parser import BytesParser, HeaderParser
 
 # Global Values
 SUPPORTED_FILE_TYPES = ["eml"]
@@ -51,7 +51,6 @@ def get_headers(mail_data: str, investigation):
 
         if data["Headers"]["Data"].get("reply-to") and data["Headers"]["Data"].get("from"):
             replyto = re.findall(MAIL_REGEX, data["Headers"]["Data"]["reply-to"])[0]
-
             mailfrom = re.findall(MAIL_REGEX, data["Headers"]["Data"]["from"])[0]
 
             if replyto == mailfrom:
@@ -64,19 +63,28 @@ def get_headers(mail_data: str, investigation):
                 "From": mailfrom,
                 "Conclusion": conclusion
             }
+    else:
+        data["Headers"]["Investigation"].get("")
     return data
 
 # Get Links
 def get_links(mail_data : str, investigation):
     '''Get Links from mail data'''
     try:
-        # If content of eml file is Encoded -> Decode
-        if "Content-Transfer-Encoding" in mail_data:
-            try:
-                mail_data = quopri.decodestring(mail_data).decode('utf-8')            
-            except (quopri.Error, UnicodeDecodeError) as e:
-                print(f"Error decoding mail data: {e}")
-                return json.loads('{"Links":{"Data":{},"Investigation":{}}}')
+        # Parse the email content
+        msg = BytesParser(policy=policy.default).parsebytes(mail_data.encode('utf-8', errors='replace'))
+
+        # Get the email body
+        if msg.is_multipart():
+            parts = msg.get_payload()
+            mail_data = ''
+            for part in parts:
+                if part.get_content_type() == 'text/plain':
+                    mail_data += part.get_payload(decode=True).decode('utf-8', errors='replace')
+                elif part.get_content_type() == 'text/html':
+                    mail_data += part.get_payload(decode=True).decode('utf-8', errors='replace')
+        else:
+            mail_data = msg.get_payload(decode=True).decode('utf-8', errors='replace')
 
         # Find the Links    
         links = re.findall(LINK_REGEX, mail_data)
@@ -161,10 +169,12 @@ def download_emails(imap_server, email_user, email_pass, mailbox="Inbox", output
     try:
         mail = imaplib.IMAP4_SSL(imap_server)
         mail.login(email_user, email_pass)
-        mail.select(mailbox)
+
     except Exception as e:
         print(f"Error: {e}")
         return
+
+    mail.select(mailbox)
 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -173,7 +183,7 @@ def download_emails(imap_server, email_user, email_pass, mailbox="Inbox", output
     email_ids = data[0].split()
 
     for email_id in email_ids:
-        result, msg_data = mail.fetch(email_id, "(RFC822)")
+        result, msg_data = mail.fetch(email_id, "(BODY.PEEK[])")
         raw_email = msg_data[0][1]
         msg = email.message_from_bytes(raw_email)
         eml_filename = os.path.join(output_dir, f"{email_id.decode('utf-8')}.eml")
@@ -185,18 +195,18 @@ def download_emails(imap_server, email_user, email_pass, mailbox="Inbox", output
 # Main Function chose the options
 def main():
     parser = ArgumentParser(description="Email Analyzer")
-    # parser.add_argument("-s", "--server", type=str, help="IMAP server", required=True)
-    # parser.add_argument("-u", "--user", type=str, help="Email user", required=True)
-    # parser.add_argument("-p", "--password", type=str, help="Email password", required=True)
+    parser.add_argument("-s", "--server", type=str, help="IMAP server", required=True)
+    parser.add_argument("-u", "--user", type=str, help="Email user", required=True)
+    parser.add_argument("-p", "--password", type=str, help="Email password", required=True)
     parser.add_argument("-m", "--mailbox", type=str, help="Mailbox to download emails from", default="INBOX")
-    parser.add_argument("-o", "--output-dir", type=str, help="Directory to save downloaded emails", default="emails")
-    parser.add_argument("-H", "--headers", help="To get the Headers of the Email", required=False, action="store_true")
+    parser.add_argument("-d", "--output-dir", type=str, help="Directory to save downloaded emails", default="emails")
+    parser.add_argument("-h", "--headers", help="To get the Headers of the Email", required=False, action="store_true")
     parser.add_argument("-g", "--digests", help="To get the Digests of the Email", required=False, action="store_true")
     parser.add_argument("-l", "--links", help="To get the Links from the Email", required=False, action="store_true")
     parser.add_argument("-c", "--complete", help="Perform a complete analysis", required=False, action="store_true")
     parser.add_argument("-a", "--attachments", help="To get the Attachments from the Email", required=False, action="store_true")
     parser.add_argument("-i", "--investigate", help="Activate if you want an investigation", required=False, action="store_true")
-    parser.add_argument("-O", "--output", type=str, help="Name of the Output file (Only HTML or JSON format supported)", required=False)
+    parser.add_argument("-o", "--output", type=str, help="Name of the Output file (Only HTML or JSON format supported)", required=False)
     args = parser.parse_args()
 
     download_emails(SERVER, USER, PASSWORD, args.mailbox, args.output_dir)
@@ -213,12 +223,6 @@ def main():
             "Filename": filename,
             "Generated": str(datetime.now().strftime(DATE_FORMAT))
         }
-
-        if args.complete:
-            headers = get_headers(data, args.investigate)
-            digests = get_digests(data, filename, args.investigate)
-            links = get_links(data, args.investigate)
-            app_data["Analysis"].update(headers | digests | links)
         
         if args.headers or args.complete:
             headers = get_headers(data, args.investigate)
@@ -238,7 +242,6 @@ def main():
     with open(output_filename, 'w', encoding='utf-8') as f:
         json.dump(all_data, f, ensure_ascii=False, indent=4)
     print(f"Your data has been written to the {output_filename}")
-
 
 if __name__ == '__main__':
     main()
