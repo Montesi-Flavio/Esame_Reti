@@ -1,4 +1,4 @@
-/src/outputfile.json
 
+*.json
 *.eml
 *.cpy
