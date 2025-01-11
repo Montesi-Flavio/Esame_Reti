@@ -4,10 +4,15 @@ import email
 import os
 import json
 import re
+import dns
+
 from email import policy
 from argparse import ArgumentParser
 from datetime import datetime
 from email.parser import BytesParser, HeaderParser
+
+
+
 
 # Global Values
 SUPPORTED_FILE_TYPES = ["eml"]
@@ -20,6 +25,12 @@ SERVER = "webmail.register.it"
 USER = "test@maurimori.eu"
 PASSWORD = "W2024pc!Q"
 
+BLACKLISTS = [
+    "zen.spamhaus.org",
+    "bl.spamcop.net",
+    "b.barracudacentral.org"
+]
+
 # Get EML Files
 def get_eml_files(directory):
     '''Get EML Files from Directory'''
@@ -29,6 +40,32 @@ def get_eml_files(directory):
             if file.endswith(".eml"):
                 eml_files.append(os.path.join(root, file))
     return eml_files
+
+# Check if email is from a blacklisted IP
+def check_blacklist(ip):
+    '''Check if IP is in any blacklist'''
+    for blacklist in BLACKLISTS:
+        try:
+            query = '.'.join(reversed(ip.split('.'))) + '.' + blacklist
+            dns.resolver.resolve(query, 'A')
+            return True, blacklist
+        except dns.resolver.NXDOMAIN:
+            continue
+    return False, None
+
+# Check DMARC Record
+def check_dmarc(domain):
+    '''Check DMARC record for a domain'''
+    try:
+        dmarc_record = dns.resolver.resolve('_dmarc.' + domain, 'TXT')
+        for txt_record in dmarc_record:
+            if 'v=DMARC1' in txt_record.to_text():
+                return True, txt_record.to_text()
+    except dns.resolver.NoAnswer:
+        return False, None
+    except dns.resolver.NXDOMAIN:
+        return False, None
+    return False, None
 
 # Get Headers
 def get_headers(mail_data: str, investigation):
@@ -43,11 +80,34 @@ def get_headers(mail_data: str, investigation):
         data["Headers"]["Data"]["received"] = ' '.join(headers.get_all('Received')).replace('\t', '').replace('\n', '')
     
     if investigation:
-        if data["Headers"]["Data"].get("x-sender-ip"):
+        # Extract IP from the last Received header
+        received_headers = headers.get_all('Received')
+        if received_headers:
+            last_received = received_headers[-1]
+            sender_ip_match = re.search(r'\[([0-9.]+)\]', last_received)
+            if sender_ip_match:
+                sender_ip = sender_ip_match.group(1)
+            else:
+                sender_ip = None
+        else:
+            sender_ip = None
+
+        if sender_ip:
             data["Headers"]["Investigation"]["X-Sender-Ip"] = {
-                "Virustotal": f'https://www.virustotal.com/gui/search/{data["Headers"]["Data"]["x-sender-ip"]}',
-                "Abuseipdb": f'https://www.abuseipdb.com/check/{data["Headers"]["Data"]["x-sender-ip"]}'
+                "Virustotal": f'https://www.virustotal.com/gui/search/{sender_ip}',
+                "Abuseipdb": f'https://www.abuseipdb.com/check/{sender_ip}'
             }
+            # Check if the IP is blacklisted
+            blacklisted, blacklist = check_blacklist(sender_ip)
+            if blacklisted:
+                data["Headers"]["Investigation"]["Blacklist_Check"] = {
+                    "Blacklist_Status": "Blacklisted",
+                    "Blacklist": blacklist
+                }
+            else:
+                data["Headers"]["Investigation"]["Blacklist_Check"] = {
+                    "Blacklist_Status": "Not Blacklisted"
+                }
 
         if data["Headers"]["Data"].get("reply-to") and data["Headers"]["Data"].get("from"):
             replyto = re.findall(MAIL_REGEX, data["Headers"]["Data"]["reply-to"])[0]
@@ -63,6 +123,20 @@ def get_headers(mail_data: str, investigation):
                 "From": mailfrom,
                 "Conclusion": conclusion
             }
+
+        # Check DMARC record for the domain
+            domain = mailfrom.split('@')[-1]
+            dmarc_valid, dmarc_record = check_dmarc(domain)
+            if dmarc_valid:
+                data["Headers"]["Investigation"]["DMARC_Check"] = {
+                    "DMARC_Status": "Pass",
+                    "DMARC_Record": dmarc_record
+                }
+            else:
+                data["Headers"]["Investigation"]["DMARC_Check"] = {
+                    "DMARC_Status": "Fail",
+                    "Details": "No valid DMARC record found"
+                }
     else:
         data["Headers"]["Investigation"].get("")
     return data
