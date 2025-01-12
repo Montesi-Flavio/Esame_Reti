@@ -1,86 +1,92 @@
+from email.policy import default
 import hashlib
 import imaplib
-import email
 import os
 import json
 import re
-import dns
+import dns.exception
+import dns.resolver
+import vt
 
-from email import policy
-from argparse import ArgumentParser
-from datetime import datetime
 from email.parser import BytesParser, HeaderParser
-
-
-
+from argparse import ArgumentParser
 
 # Global Values
+VIRUSTOTAL_API_KEY = "bd967895e71ce6eeb87d62f473b94fcc29e2afddf79d4d40b821e003ceef9b15"
 SUPPORTED_FILE_TYPES = ["eml"]
 SUPPORTED_OUTPUT_TYPES = ["json", "html"]
-LINK_REGEX = r'href=\"((?:\S)*)\"'
+LINK_REGEX = r'href=["\']([^"\']+)["\']' 
+LINK_REGEX2 = r'href=\"((?:\S)*)\"'
 MAIL_REGEX = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
 DATE_FORMAT = "%B %d, %Y - %H:%M:%S"
-TER_COL_SIZE = 60
+BLACKLISTS = ["zen.spamhaus.org", "bl.spamcop.net", "b.barracudacentral.org"]
+
 SERVER = "webmail.register.it"
 USER = "test@maurimori.eu"
 PASSWORD = "W2024pc!Q"
 
-BLACKLISTS = [
-    "zen.spamhaus.org",
-    "bl.spamcop.net",
-    "b.barracudacentral.org"
-]
-
-# Get EML Files
-def get_eml_files(directory):
-    '''Get EML Files from Directory'''
-    eml_files = []
-    for root, dirs, files in os.walk(directory):
-        for file in files:
-            if file.endswith(".eml"):
-                eml_files.append(os.path.join(root, file))
-    return eml_files
-
-# Check if email is from a blacklisted IP
-def check_blacklist(ip):
-    '''Check if IP is in any blacklist'''
-    for blacklist in BLACKLISTS:
-        try:
-            query = '.'.join(reversed(ip.split('.'))) + '.' + blacklist
-            dns.resolver.resolve(query, 'A')
-            return True, blacklist
-        except dns.resolver.NXDOMAIN:
-            continue
-    return False, None
-
-# Check DMARC Record
-def check_dmarc(domain):
-    '''Check DMARC record for a domain'''
+# Utility Functions
+def safe_resolve(query, record_type):
     try:
-        dmarc_record = dns.resolver.resolve('_dmarc.' + domain, 'TXT')
-        for txt_record in dmarc_record:
-            if 'v=DMARC1' in txt_record.to_text():
-                return True, txt_record.to_text()
-    except dns.resolver.NoAnswer:
-        return False, None
-    except dns.resolver.NXDOMAIN:
-        return False, None
-    return False, None
+        return dns.resolver.resolve(query, record_type)
+    except dns.exception.DNSException:
+        return None
 
-# Get Headers
-def get_headers(mail_data: str, investigation):
-    '''Get Headers from mail data'''
+def check_ip_safety(ip):
+    '''Check if an IP is safe using VirusTotal'''
+    client = vt.Client(VIRUSTOTAL_API_KEY)
+    try:
+        analysis = client.get_object(f"/ip_addresses/{ip}")
+        positives = analysis.last_analysis_stats['malicious']
+        if positives > 0:
+            return False, positives
+        else:
+            return True, 0
+    except vt.error.APIError as e:
+        print(f"Error making request to VirusTotal: {e}")
+        return None, None
+    finally:
+        client.close()
+
+def fetch_emails(imap_server, email_user, email_pass, mailbox="INBOX", output_dir="emails"):
+    try:
+        mail = imaplib.IMAP4_SSL(imap_server)
+        mail.login(email_user, email_pass)
+        mail.select(mailbox)
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+
+        result, data = mail.search(None, "ALL")
+        if result != "OK":
+            print("Error fetching emails.")
+            return
+
+        email_ids = data[0].split()
+        for email_id in email_ids:
+            result, msg_data = mail.fetch(email_id, "(BODY.PEEK[])")
+            if result != "OK":
+                continue
+            raw_email = msg_data[0][1]
+            eml_filename = os.path.join(output_dir, f"{email_id.decode('utf-8')}.eml")
+            with open(eml_filename, "wb") as eml_file:
+                eml_file.write(raw_email)
+
+        mail.logout()
+    except Exception as e:
+        print(f"Error fetching emails: {e}")
+
+def parse_email_headers(mail_data, investigation):
     headers = HeaderParser().parsestr(mail_data, headersonly=True)
-    data = json.loads('{"Headers":{"Data":{},"Investigation":{}}}')
+    parsed_headers = {"Data": {}, "Investigation": {}}
 
     for k, v in headers.items():
-        data["Headers"]["Data"][k.lower()] = v.replace('\t', '').replace('\n', '')
+        parsed_headers["Data"][k.lower()] = v.replace('\t', '').replace('\n', '')
 
-    if data["Headers"]["Data"].get('received'):
-        data["Headers"]["Data"]["received"] = ' '.join(headers.get_all('Received')).replace('\t', '').replace('\n', '')
-    
+    if 'received' in parsed_headers["Data"]:
+        parsed_headers["Data"]['received'] = ' '.join(headers.get_all('Received', [])).replace('\t', '').replace('\n', '')
+
     if investigation:
-        # Extract IP from the last Received header
+        # Estrarre IP dai campi "Received"
         received_headers = headers.get_all('Received')
         if received_headers:
             last_received = received_headers[-1]
@@ -93,229 +99,162 @@ def get_headers(mail_data: str, investigation):
             sender_ip = None
 
         if sender_ip:
-            data["Headers"]["Investigation"]["X-Sender-Ip"] = {
-                "Virustotal": f'https://www.virustotal.com/gui/search/{sender_ip}',
-                "Abuseipdb": f'https://www.abuseipdb.com/check/{sender_ip}'
+            # Verifica IP su VirusTotal
+            safe, positives = check_ip_safety(sender_ip)
+            safety_status = "Safe" if safe else "Unsafe"
+            parsed_headers["Investigation"]["X-Sender-Ip"] = {
+                "Virustotal": f"https://www.virustotal.com/gui/search/{sender_ip}",
+                "Abuseipdb": f"https://www.abuseipdb.com/check/{sender_ip}",
+                "Safety": safety_status,
+                "Positives": positives
             }
-            # Check if the IP is blacklisted
+
+            # Verifica IP nei Blacklist
             blacklisted, blacklist = check_blacklist(sender_ip)
             if blacklisted:
-                data["Headers"]["Investigation"]["Blacklist_Check"] = {
+                parsed_headers["Investigation"]["Blacklist_Check"] = {
                     "Blacklist_Status": "Blacklisted",
                     "Blacklist": blacklist
                 }
             else:
-                data["Headers"]["Investigation"]["Blacklist_Check"] = {
+                parsed_headers["Investigation"]["Blacklist_Check"] = {
                     "Blacklist_Status": "Not Blacklisted"
                 }
 
-        if data["Headers"]["Data"].get("reply-to") and data["Headers"]["Data"].get("from"):
-            replyto = re.findall(MAIL_REGEX, data["Headers"]["Data"]["reply-to"])[0]
-            mailfrom = re.findall(MAIL_REGEX, data["Headers"]["Data"]["from"])[0]
+    return {"Headers": parsed_headers}
 
-            if replyto == mailfrom:
-                conclusion = "Reply Address and From Address is SAME."
-            else:
-                conclusion = "Reply Address and From Address is NOT Same. This mail may be SPOOFED." 
+def check_blacklist(ip):
+    for blacklist in BLACKLISTS:
+        query = f"{'.'.join(reversed(ip.split('.')))}.{blacklist}"
+        if safe_resolve(query, 'A'):
+            return True, blacklist
+    return False, None
 
-            data["Headers"]["Investigation"]["Spoof_check"] = {
-                "Reply-To": replyto,
-                "From": mailfrom,
-                "Conclusion": conclusion
-            }
+def check_dmarc(domain):
+    dmarc_record = safe_resolve(f'_dmarc.{domain}', 'TXT')
+    if dmarc_record:
+        for txt_record in dmarc_record:
+            if 'v=DMARC1' in txt_record.to_text():
+                return True, txt_record.to_text()
+    return False, None
 
-        # Check DMARC record for the domain
-            domain = mailfrom.split('@')[-1]
-            dmarc_valid, dmarc_record = check_dmarc(domain)
-            if dmarc_valid:
-                data["Headers"]["Investigation"]["DMARC_Check"] = {
-                    "DMARC_Status": "Pass",
-                    "DMARC_Record": dmarc_record
-                }
-            else:
-                data["Headers"]["Investigation"]["DMARC_Check"] = {
-                    "DMARC_Status": "Fail",
-                    "Details": "No valid DMARC record found"
-                }
+def analyze_links(mail_data, investigation):
+    ''' Extract links and optionally investigate their safety '''
+
+    # Parse the email content
+    msg = BytesParser(policy=default).parsebytes(mail_data.encode('utf-8', errors='replace'))
+
+    # Get the email body
+    mail_data = ''
+    if msg.is_multipart():
+        parts = msg.get_payload()
+        for part in parts:
+            if part.get_content_type() == 'text/plain':
+                mail_data += part.get_payload(decode=True).decode('utf-8', errors='replace')
+            elif part.get_content_type() == 'text/html':
+                mail_data += part.get_payload(decode=True).decode('utf-8', errors='replace')
     else:
-        data["Headers"]["Investigation"].get("")
-    return data
+        mail_data = msg.get_payload(decode=True).decode('utf-8', errors='replace')
 
-# Get Links
-def get_links(mail_data : str, investigation):
-    '''Get Links from mail data'''
-    try:
-        # Parse the email content
-        msg = BytesParser(policy=policy.default).parsebytes(mail_data.encode('utf-8', errors='replace'))
+    # Find all links in the email body using the LINK_REGEX
+    links = re.findall(LINK_REGEX, mail_data)
 
-        # Get the email body
-        if msg.is_multipart():
-            parts = msg.get_payload()
-            mail_data = ''
-            for part in parts:
-                if part.get_content_type() == 'text/plain':
-                    mail_data += part.get_payload(decode=True).decode('utf-8', errors='replace')
-                elif part.get_content_type() == 'text/html':
-                    mail_data += part.get_payload(decode=True).decode('utf-8', errors='replace')
-        else:
-            mail_data = msg.get_payload(decode=True).decode('utf-8', errors='replace')
+    # Remove duplicates and empty values
+    links = list(filter(None, dict.fromkeys(links)))
 
-        # Find the Links    
-        links = re.findall(LINK_REGEX, mail_data)
+    link_data = {}
+    for index, link in enumerate(links, start=1):
+        link_data[str(index)] = link
 
-        # Remove Duplicates and Empty Values
-        links = list(filter(None, dict.fromkeys(links)))
-
-
-        # Create JSON data
-        data = json.loads('{"Links":{"Data":{},"Investigation":{}}}')
-
-        for index,link in enumerate(links,start=1):
-            data["Links"]["Data"][str(index)] = link
-        
-        # If investigation requested
-        if investigation:
-            for index,link in enumerate(links,start=1):
-                # Remove http/s from link
-                if "://" in link:
-                    link = link.split("://")[-1]
-                
-                data["Links"]["Investigation"][str(index)] = {
-                    "Virustotal":f"https://www.virustotal.com/gui/search/{link}",
-                    "Urlscan":f"https://urlscan.io/search/#{link}"
-                }
-        return data
-    except Exception as e:
-        print(f"Error processing links: {e}")
-        return json.loads('{"Links":{"Data":{},"Investigation":{}}}')
-
-
-# Get Digests
-def get_digests(mail_data : str, filename : str, investigation):
-    '''Get Hash value of mail'''
-    with open(filename, 'rb') as f:
-        eml_file    = f.read()
-        file_md5    = hashlib.md5(eml_file).hexdigest()
-        file_sha1   = hashlib.sha1(eml_file).hexdigest()
-        file_sha256 = hashlib.sha256(eml_file).hexdigest()
-
-    content_md5     = hashlib.md5(mail_data.encode("utf-8")).hexdigest()
-    content_sha1    = hashlib.sha1(mail_data.encode("utf-8")).hexdigest()
-    content_sha256  = hashlib.sha256(mail_data.encode("utf-8")).hexdigest()
-
-    # Create JSON data
-    data = json.loads('{"Digests":{"Data":{},"Investigation":{}}}')
-
-    # Write Data to JSON
-    data["Digests"]["Data"]["File MD5"]         = file_md5
-    data["Digests"]["Data"]["File SHA1"]        = file_sha1
-    data["Digests"]["Data"]["File SHA256"]      = file_sha256
-    data["Digests"]["Data"]["Content MD5"]      = content_md5
-    data["Digests"]["Data"]["Content SHA1"]     = content_sha1
-    data["Digests"]["Data"]["Content SHA256"]   = content_sha256
-
-    # If investigation requested
+    investigation_data = {}
     if investigation:
-        data["Digests"]["Investigation"]["File MD5"] = {
-            "Virustotal":f"https://www.virustotal.com/gui/search/{file_md5}"
-        }
-        data["Digests"]["Investigation"]["File SHA1"] = {
-            "Virustotal":f"https://www.virustotal.com/gui/search/{file_sha1}"
-        }
-        data["Digests"]["Investigation"]["File SHA256"] = {
-            "Virustotal":f"https://www.virustotal.com/gui/search/{file_sha256}"
-        }
-        data["Digests"]["Investigation"]["Content MD5"] = {
-            "Virustotal":f"https://www.virustotal.com/gui/search/{content_md5}"
-        }
-        data["Digests"]["Investigation"]["Content SHA1"] = {
-            "Virustotal":f"https://www.virustotal.com/gui/search/{content_sha1}"
-        }
-        data["Digests"]["Investigation"]["Content SHA256"] = {
-            "Virustotal":f"https://www.virustotal.com/gui/search/{content_sha256}"
-        }
-    return data
+        client = vt.Client(VIRUSTOTAL_API_KEY)
+        for index, link in enumerate(links, start=1):
+            try:
+                analysis = client.get_object(f"/urls/{vt.url_id(link)}")
+                positives = analysis.last_analysis_stats.get('malicious', 0)
+                investigation_data[str(index)] = {
+                    "Virustotal": f"https://www.virustotal.com/gui/search/{link}",
+                    "Safety": "Safe" if positives == 0 else "Unsafe",
+                    "Positives": positives
+                }
+            except vt.error.APIError:
+                investigation_data[str(index)] = {
+                    "Error": "Unable to fetch data from VirusTotal"
+                }
+        client.close()
 
-# Download Emails from IMAP Server
-def download_emails(imap_server, email_user, email_pass, mailbox="Inbox", output_dir="emails"):
-    '''Download emails from IMAP server and save as EML files'''
+    return {"Links": {"Data": link_data, "Investigation": investigation_data}}
 
-    try:
-        mail = imaplib.IMAP4_SSL(imap_server)
-        mail.login(email_user, email_pass)
+def calculate_hashes(filename, investigation):
+    with open(filename, 'rb') as f:
+        file_data = f.read()
+    hashes = {
+        "File MD5": hashlib.md5(file_data).hexdigest(),
+        "File SHA1": hashlib.sha1(file_data).hexdigest(),
+        "File SHA256": hashlib.sha256(file_data).hexdigest()
+    }
 
-    except Exception as e:
-        print(f"Error: {e}")
-        return
+    investigation_data = {}
+    if investigation:
+        client = vt.Client(VIRUSTOTAL_API_KEY)
+        for hash_type, hash_value in hashes.items():
+            try:
+                analysis = client.get_object(f"/files/{hash_value}")
+                positives = analysis.last_analysis_stats.get('malicious', 0)
+                investigation_data[hash_type] = {
+                    "Virustotal": f"https://www.virustotal.com/gui/file/{hash_value}",
+                    "Safety": "Safe" if positives == 0 else "Unsafe",
+                    "Positives": positives
+                }
+            except vt.error.APIError:
+                investigation_data[hash_type] = {
+                    "Error": "Unable to fetch data from VirusTotal"
+                }
+        client.close()
+    return {"Hashes": {"Data": hashes, "Investigation": {}}}
 
-    mail.select(mailbox)
-
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-
-    result, data = mail.search(None, "ALL")
-    email_ids = data[0].split()
-
-    for email_id in email_ids:
-        result, msg_data = mail.fetch(email_id, "(BODY.PEEK[])")
-        raw_email = msg_data[0][1]
-        msg = email.message_from_bytes(raw_email)
-        eml_filename = os.path.join(output_dir, f"{email_id.decode('utf-8')}.eml")
-        with open(eml_filename, "wb") as eml_file:
-            eml_file.write(raw_email)
-
-    mail.logout()
-
-# Main Function chose the options
 def main():
     parser = ArgumentParser(description="Email Analyzer")
-    parser.add_argument("-s", "--server", type=str, help="IMAP server", required=True)
-    parser.add_argument("-u", "--user", type=str, help="Email user", required=True)
-    parser.add_argument("-p", "--password", type=str, help="Email password", required=True)
-    parser.add_argument("-m", "--mailbox", type=str, help="Mailbox to download emails from", default="INBOX")
-    parser.add_argument("-d", "--output-dir", type=str, help="Directory to save downloaded emails", default="emails")
-    parser.add_argument("-h", "--headers", help="To get the Headers of the Email", required=False, action="store_true")
-    parser.add_argument("-g", "--digests", help="To get the Digests of the Email", required=False, action="store_true")
-    parser.add_argument("-l", "--links", help="To get the Links from the Email", required=False, action="store_true")
-    parser.add_argument("-c", "--complete", help="Perform a complete analysis", required=False, action="store_true")
-    parser.add_argument("-a", "--attachments", help="To get the Attachments from the Email", required=False, action="store_true")
-    parser.add_argument("-i", "--investigate", help="Activate if you want an investigation", required=False, action="store_true")
-    parser.add_argument("-o", "--output", type=str, help="Name of the Output file (Only HTML or JSON format supported)", required=False)
+    parser.add_argument("-s", "--server", required=False, help="IMAP server")
+    parser.add_argument("-u", "--user", required=False, help="Email user")
+    parser.add_argument("-p", "--password", required=False, help="Email password")
+    parser.add_argument("-m", "--mailbox", default="INBOX", help="Mailbox to download emails from")
+    parser.add_argument("-d", "--output-dir", default="emails", help="Directory to save downloaded emails")
+    parser.add_argument("-i", "--investigate", action="store_true", help="Enable investigation mode")
+    parser.add_argument("-o", "--output", required=False, help="Output file name (JSON or HTML)")
+
     args = parser.parse_args()
 
-    download_emails(SERVER, USER, PASSWORD, args.mailbox, args.output_dir)
-    eml_files = get_eml_files(args.output_dir)
+    if args.output and not any(args.output.endswith(ext) for ext in SUPPORTED_OUTPUT_TYPES):
+        print("Error: Output file must be in JSON or HTML format.")
+        return
+
+    fetch_emails(SERVER, USER, PASSWORD, args.mailbox, args.output_dir)
+
+    eml_files = [os.path.join(args.output_dir, f) for f in os.listdir(args.output_dir) if f.endswith(".eml")]
     all_data = []
 
-    for filename in eml_files:
-        with open(filename, "r", encoding="utf-8") as file:
-            data = file.read().rstrip()
-
-        app_data = json.loads('{"Information": {}, "Analysis":{}}')
+    for eml_file in eml_files:
+        with open(eml_file, "rb") as file:
+            mail_data = BytesParser(policy=default).parse(file)
         
-        app_data["Information"]["Scan"] = {
-            "Filename": filename,
-            "Generated": str(datetime.now().strftime(DATE_FORMAT))
-        }
-        
-        if args.headers or args.complete:
-            headers = get_headers(data, args.investigate)
-            app_data["Analysis"].update(headers)
+        headers = parse_email_headers(mail_data.as_string(), args.investigate)
+        hashes = calculate_hashes(eml_file, args.investigate)        
+        links_data = analyze_links(mail_data.as_string(), args.investigate)
 
-        if args.digests or args.complete:
-            digests = get_digests(data, filename, args.investigate)
-            app_data["Analysis"].update(digests)
-
-        if args.links or args.complete:
-            links = get_links(data, args.investigate)
-            app_data["Analysis"].update(links)
-        
-        all_data.append(app_data)
+        all_data.append({
+            "File": eml_file,
+            "Headers": headers,
+            "Hashes": hashes,
+            "Links": links_data
+        })
 
     output_filename = args.output if args.output else "outputfile.json"
-    with open(output_filename, 'w', encoding='utf-8') as f:
-        json.dump(all_data, f, ensure_ascii=False, indent=4)
-    print(f"Your data has been written to the {output_filename}")
+    with open(output_filename, "w", encoding="utf-8") as f:
+        json.dump(all_data, f,ensure_ascii=False, indent=4)
 
-if __name__ == '__main__':
+    print(f"Analysis complete. Results saved to {output_filename}")
+
+if __name__ == "__main__":
     main()
