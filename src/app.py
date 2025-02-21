@@ -15,8 +15,7 @@ from argparse import ArgumentParser
 VIRUSTOTAL_API_KEY = "bd967895e71ce6eeb87d62f473b94fcc29e2afddf79d4d40b821e003ceef9b15"
 SUPPORTED_FILE_TYPES = ["eml"]
 SUPPORTED_OUTPUT_TYPES = ["json", "html"]
-LINK_REGEX = r'href=["\']([^"\']+)["\']' 
-LINK_REGEX2 = r'href=\"((?:\S)*)\"'
+LINK_REGEX = r'https?://[^\s<>"]+|www\.[^\s<>"]+'
 MAIL_REGEX = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
 DATE_FORMAT = "%B %d, %Y - %H:%M:%S"
 BLACKLISTS = ["zen.spamhaus.org", "bl.spamcop.net", "b.barracudacentral.org"]
@@ -172,12 +171,17 @@ def analyze_links(mail_data, investigation):
         for index, link in enumerate(links, start=1):
             try:
                 analysis = client.get_object(f"/urls/{vt.url_id(link)}")
-                positives = analysis.last_analysis_stats.get('malicious', 0)
-                investigation_data[str(index)] = {
-                    "Virustotal": f"https://www.virustotal.com/gui/search/{link}",
-                    "Safety": "Safe" if positives == 0 else "Unsafe",
-                    "Positives": positives
-                }
+                if hasattr(analysis, 'last_analysis_stats'):
+                    positives = analysis.last_analysis_stats.get('malicious', 0)
+                    investigation_data[str(index)] = {
+                        "Virustotal": f"https://www.virustotal.com/gui/search/{link}",
+                        "Safety": "Safe" if positives == 0 else "Unsafe",
+                        "Positives": positives
+                    }
+                else:
+                    investigation_data[str(index)] = {
+                        "Error": "No analysis data available"
+                    }
             except vt.error.APIError:
                 investigation_data[str(index)] = {
                     "Error": "Unable to fetch data from VirusTotal"
