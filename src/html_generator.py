@@ -8,6 +8,34 @@ def generate_headers_section(headers):
         <h2 id="headers-section" style="text-align: center;"><i class="fa-solid fa-code"></i> Headers</h2>
         <hr>
         <h3 id="headers-data-section"><i class="fa-solid fa-chart-column"></i> Data</h3>
+    """
+    
+    # Utilizzo della versione HTML formattata se disponibile
+    if "HTML_View" in headers:
+        html_view = headers["HTML_View"]
+        html += """
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h4 class="card-title">Informazioni Email</h4>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <tbody>
+        """
+        
+        # Inserisci i valori formattati per HTML
+        for label, value in html_view.items():
+            html += f"<tr><th>{label}</th><td>{value}</td></tr>"
+            
+        html += """
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        """
+    else:
+        # Fallback alla vecchia formattazione per compatibilità
+        html += """
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
@@ -15,38 +43,55 @@ def generate_headers_section(headers):
                     <th>Value</th>
                 </tr>
             </thead>
-        <tbody>
-    """
-    for key,value in headers["Data"].items():
-        # Populate table rows
-        html += f"<tr><td>{ str(key) }</td><td>{ escape(str(value)) }</td></tr>"
-        
-    html += """
-        </tbody>
-    </table>
-    """
+            <tbody>
+        """
+        for key, value in headers["Data"].items():
+            # Populate table rows
+            html += f"<tr><td>{ str(key) }</td><td>{ escape(str(value)) }</td></tr>"
+            
+        html += """
+            </tbody>
+        </table>
+        """
+    
     ######################################################################
     
     # Investigation
     ######################################################################
     html += """
         <h3 id="headers-investigation-section"><i class="fa-solid fa-magnifying-glass"></i> Investigation</h3>
-        <div class="row">
     """
-    for index,values in headers["Investigation"].items():
-        # Populate table rows
-        html += """
-        <div class="col-md-4">
-            <div class="jumbotron">
-                <h3>{}</h3><hr>
-        """.format(index)
-        for k,v in values.items():
-            html += f"<br><b>{k}:<br></b>{v}"
+    
+    # Utilizzo della versione HTML formattata per l'investigazione se disponibile
+    if "HTML_Investigation" in headers:
+        html += """<div class="row">"""
         
-        html += """
+        for section_name, html_content in headers["HTML_Investigation"].items():
+            html += f"""
+            <div class="col-md-6 mb-4">
+                {html_content}
             </div>
-        </div>
-        """
+            """
+        
+        html += "</div>"
+    else:
+        # Fallback alla vecchia formattazione per compatibilità
+        html += """<div class="row">"""
+        
+        for index, values in headers["Investigation"].items():
+            # Populate table rows
+            html += """
+            <div class="col-md-4">
+                <div class="jumbotron">
+                    <h3>{}</h3><hr>
+            """.format(index)
+            for k, v in values.items():
+                html += f"<br><b>{k}:<br></b>{v}"
+            
+            html += """
+                </div>
+            </div>
+            """
 
     html += "</div><hr>"
     return html
@@ -139,28 +184,68 @@ def generate_attachment_section(attachments):
     ######################################################################
     html += """
         <h3 id="attachments-investigation-section"><i class="fa-solid fa-magnifying-glass"></i> Investigation</h3>
-        <table class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>Attachment</th>
-                    <th>Information</th>
-                </tr>
-            </thead>
-        <tbody>
+        <div class="row">
     """
-    for index,values in attachments["Investigation"].items():
-        # Populate table rows
-        html += "<tr>"
-        html += "<td>{}</td><td>".format(index)
-        for k,v in values.items():
-            for x,y in v.items():
-                html += f"<b>{x} ({k})</b>: Potentially suspicious<br>"
-        html += "</td></tr>"
+    for index, values in attachments["Investigation"].items():
+        # Verifica se abbiamo un formato HTML_View predefinito
+        if "HTML_View" in values:
+            html_view = values["HTML_View"]
+            html += """
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">{}</h4>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-sm">
+                            <tbody>
+            """.format(index)
+            
+            # Inserisci i valori formattati per HTML
+            for label, value in html_view.items():
+                html += f"<tr><th>{label}</th><td>{value}</td></tr>"
+            
+            # Se ci sono formatted results di VirusTotal, li aggiungiamo
+            if "HTML_Formatted" in values:
+                html += """
+                <tr>
+                    <th colspan="2" class="bg-light">Analisi VirusTotal</th>
+                </tr>
+                """
+                for hash_type, hash_data in values["HTML_Formatted"].items():
+                    html += f"<tr><th>{hash_data['Tipo']}</th><td>{hash_data['Link VirusTotal']} - {hash_data['Rilevamenti']}</td></tr>"
+            
+            html += """
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            """
+        else:
+            # Fallback alla vecchia formattazione per compatibilità
+            html += """
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">{}</h4>
+                    </div>
+                    <div class="card-body">
+            """.format(index)
+            
+            for k, v in values.items():
+                for x, y in v.items():
+                    html += f"<p><strong>{x} ({k})</strong>: Potentially suspicious</p>"
+            
+            html += """
+                    </div>
+                </div>
+            </div>
+            """
         
     html += """
-        </tbody>
-    </table>
-    <hr>"""
+        </div>
+        <hr>"""
 
     return html
     ######################################################################

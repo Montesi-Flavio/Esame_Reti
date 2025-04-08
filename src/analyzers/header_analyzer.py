@@ -27,6 +27,71 @@ def parse_email_headers(mail_data, investigation=False):
     # Handle special case for 'received' headers which can be multiple
     if 'received' in parsed_headers["Data"]:
         parsed_headers["Data"]['received'] = ' '.join(headers.get_all('Received', [])).replace('\t', '').replace('\n', '')
+    
+    # Crea una versione formattata per HTML degli header
+    html_header_view = {}
+    
+    # Ordine prioritario per gli header più importanti
+    priority_headers = ['subject', 'from', 'to', 'cc', 'bcc', 'date', 'message-id', 'reply-to']
+    
+    # Prima aggiungi gli header prioritari in ordine
+    for header in priority_headers:
+        if header in parsed_headers["Data"]:
+            # Formattazione speciale per ciascun tipo di header
+            if header == 'from':
+                html_header_view['Mittente'] = f'<strong>{parsed_headers["Data"][header]}</strong>'
+            elif header == 'to':
+                html_header_view['Destinatario'] = parsed_headers["Data"][header]
+            elif header == 'cc':
+                html_header_view['CC'] = parsed_headers["Data"][header]
+            elif header == 'bcc':
+                html_header_view['BCC'] = parsed_headers["Data"][header]
+            elif header == 'subject':
+                html_header_view['Oggetto'] = f'<h4>{parsed_headers["Data"][header]}</h4>'
+            elif header == 'date':
+                html_header_view['Data'] = f'<em>{parsed_headers["Data"][header]}</em>'
+            elif header == 'message-id':
+                html_header_view['ID Messaggio'] = f'<code>{parsed_headers["Data"][header]}</code>'
+            elif header == 'reply-to':
+                html_header_view['Rispondi A'] = parsed_headers["Data"][header]
+    
+    # Poi aggiungi gli altri header ordinati alfabeticamente
+    other_headers = {}
+    for k, v in sorted(parsed_headers["Data"].items()):
+        if k not in priority_headers:
+            other_headers[k] = v
+    
+    # Aggiungi la sezione "Altri Header" se ci sono altri header
+    if other_headers:
+        html_header_view['Dettagli Tecnici'] = """
+        <div class="accordion" id="headerAccordion">
+            <div class="card">
+                <div class="card-header" id="headingDetails">
+                    <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" 
+                            data-target="#collapseDetails" aria-expanded="false" aria-controls="collapseDetails">
+                        Mostra Altri Header
+                    </button>
+                </div>
+                <div id="collapseDetails" class="collapse" aria-labelledby="headingDetails" data-parent="#headerAccordion">
+                    <div class="card-body">
+                        <table class="table table-sm table-striped">
+                            <tbody>
+        """
+        
+        for k, v in other_headers.items():
+            html_header_view['Dettagli Tecnici'] += f'<tr><th>{k}</th><td><small>{v}</small></td></tr>'
+            
+        html_header_view['Dettagli Tecnici'] += """
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        """
+
+    # Aggiungi HTML_View ai dati di output
+    parsed_headers["HTML_View"] = html_header_view
 
     # Perform security investigation if requested
     if investigation:
@@ -39,11 +104,61 @@ def parse_email_headers(mail_data, investigation=False):
             ip_investigation = investigate_sender_ip(sender_ip)
             if ip_investigation:
                 parsed_headers["Investigation"]["X-Sender-Ip"] = ip_investigation
+                
+                # Aggiungi una versione HTML formattata per l'IP del mittente
+                safety_class = "success" if ip_investigation["Safety"] == "Safe" else "danger"
+                html_ip_info = f"""
+                <div class="card mb-3">
+                    <div class="card-header bg-light">
+                        <h5><i class="fa fa-shield-alt"></i> Analisi IP Mittente</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>IP:</strong> <code>{sender_ip}</code></p>
+                        <p><strong>Stato:</strong> <span class="badge badge-{safety_class}">{ip_investigation["Safety"]}</span></p>
+                        <p><strong>Rilevamenti:</strong> {ip_investigation["Positives"]}</p>
+                        <div class="btn-group">
+                            <a href="{ip_investigation["Virustotal"]}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                VirusTotal <i class="fa fa-external-link-alt"></i>
+                            </a>
+                            <a href="{ip_investigation["Abuseipdb"]}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                AbuseIPDB <i class="fa fa-external-link-alt"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                """
+                parsed_headers["HTML_Investigation"] = {"Sender_IP": html_ip_info}
 
             # Check IP against blacklists
             blacklist_results = check_ip_blacklists(sender_ip)
             if blacklist_results:
                 parsed_headers["Investigation"]["Blacklist_Check"] = blacklist_results
+                
+                # Aggiungi una versione HTML formattata per i risultati della blacklist
+                blacklist_class = "danger" if blacklist_results["Blacklist_Status"] == "Blacklisted" else "success"
+                html_blacklist_info = f"""
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <h5><i class="fa fa-ban"></i> Controllo Blacklist</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Stato:</strong> <span class="badge badge-{blacklist_class}">{blacklist_results["Blacklist_Status"]}</span></p>
+                """
+                
+                if "Blacklist" in blacklist_results:
+                    html_blacklist_info += "<p><strong>Liste:</strong></p><ul>"
+                    for bl in blacklist_results["Blacklist"]:
+                        html_blacklist_info += f"<li>{bl}</li>"
+                    html_blacklist_info += "</ul>"
+                
+                html_blacklist_info += """
+                    </div>
+                </div>
+                """
+                
+                if "HTML_Investigation" not in parsed_headers:
+                    parsed_headers["HTML_Investigation"] = {}
+                parsed_headers["HTML_Investigation"]["Blacklist"] = html_blacklist_info
 
     return parsed_headers
 
