@@ -1,224 +1,205 @@
 
-        <head>
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-            <script async defer src="https://buttons.github.io/buttons.js"></script>
-        </head>
-
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="#"><i class="fa fa-envelope"></i> Email Analyzer</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mr-auto">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Headers
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#headers-data-section">Data <span class="badge badge-pill badge-dark">26</span></a>
-                    <a class="dropdown-item" href="#headers-investigation-section">Investigation <span class="badge badge-pill badge-dark">2</span></a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Links
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#links-data-section">Data <span class="badge badge-pill badge-dark">10</span></a>
-                    <a class="dropdown-item" href="#links-investigation-section">Investigation <span class="badge badge-pill badge-dark">10</span></a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Attachments
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#attachments-data-section">Data <span class="badge badge-pill badge-dark">0</span></a>
-                    <a class="dropdown-item" href="#attachments-investigation-section">Investigation <span class="badge badge-pill badge-dark">0</span></a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Digests
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#digests-data-section">Data <span class="badge badge-pill badge-dark">3</span></a>
-                    <a class="dropdown-item" href="#digests-investigation-section">Investigation <span class="badge badge-pill badge-dark">3</span></a>
-                    </div>
-                </li>
-                </ul>
-            </div>
-
-            <div class="d-flex">
-                <!-- Star -->
-                <a class="github-button" href="https://github.com/keraattin/EmailAnalyzer" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star keraattin/EmailAnalyzer on GitHub">Star</a>
-                &nbsp;
-                <!-- Fork -->
-                <a class="github-button" href="https://github.com/keraattin/EmailAnalyzer/fork" data-icon="octicon-repo-forked" data-size="large" data-show-count="true" aria-label="Fork keraattin/EmailAnalyzer on GitHub">Fork</a>
-                &nbsp;
-                <!-- Follow -->
-                <a class="github-button" href="https://github.com/keraattin" data-size="large" data-show-count="true" aria-label="Follow @keraattin on GitHub">Follow @keraattin</a>
-            </div>
-        </nav>
-
-        <div class="container-fluid">
-        
-        <h2 style="text-align: center;"><i class="fa-solid fa-circle-info"></i> Information</h2>
-        <hr>
-        <div class="row">
-            <div class="col-md-6">
-                <h3 style="text-align: center;"><i class="fa-solid fa-diagram-project"></i> Project</h3>
-                <table class="table table-bordered table-striped">
-                    <tbody>
-                        <tr>
-                            <td>Name</td>
-                            <td>Email Analyzer</td>
-                        </tr>
-                        <tr>
-                            <td>Url</td>
-                            <td><a href="https://github.com/keraattin/EmailAnalyzer" target='_blank'>https://github.com/keraattin/EmailAnalyzer</a></td>
-                        </tr>
-                        <tr>
-                            <td>Version</td>
-                            <td>1.0.0</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-md-6">
-                <h3 style="text-align: center;"><i class="fa-solid fa-satellite-dish"></i> Scan</h3>
-                <table class="table table-bordered table-striped">
-                    <tbody>
-                        <tr>
-                            <td>Name</td>
-                            <td>output.html</td>
-                        </tr>
-                        <tr>
-                            <td>Generated</td>
-                            <td>April 08, 2025 - 16:44:38</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Email Analysis</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+            }
+            .container {
+                width: 100%;
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+            .email-list {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 15px;
+                margin-bottom: 30px;
+            }
+            .email-card {
+                border: 2px solid #ccc;
+                border-radius: 5px;
+                padding: 15px;
+                width: 200px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+            .email-card.suspicious {
+                border-color: #ff0000;
+            }
+            .email-card:hover {
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            }
+            .email-card.active {
+                background-color: #f0f0f0;
+                border-color: #007bff;
+            }
+            .email-content {
+                display: none;
+                border: 1px solid #ddd;
+                padding: 20px;
+                border-radius: 5px;
+            }
+            .email-content.active {
+                display: block;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 20px;
+            }
+            table, th, td {
+                border: 1px solid #ddd;
+            }
+            th, td {
+                padding: 10px;
+                text-align: left;
+            }
+            th {
+                background-color: #f2f2f2;
+            }
+            .section {
+                margin-bottom: 30px;
+            }
+            .section h2 {
+                text-align: center;
+                margin-bottom: 15px;
+            }
+            .badge {
+                background-color: #dc3545;
+                color: white;
+                padding: 3px 8px;
+                border-radius: 10px;
+                font-size: 12px;
+                margin-left: 5px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Email Analysis Results</h1>
+            <p>Click on an email to view its analysis. Emails with red borders are suspicious.</p>
+            
+            <div class="email-list">
     
-        <h2 id="headers-section" style="text-align: center;"><i class="fa-solid fa-code"></i> Headers</h2>
-        <hr>
-        <h3 id="headers-data-section"><i class="fa-solid fa-chart-column"></i> Data</h3>
-        <table class="table table-bordered table-striped">
-            <thead>
+            <div class="email-card " onclick="showEmail(0)">
+                <h3>Email 1 </h3>
+                <p>Click to view analysis</p>
+            </div>
+        
+            </div>
+            
+            <div id="email-details">
+    
+            <div id="email-0" class="email-content active">
+                
+        <div class="section">
+            <h2>Headers</h2>
+            <table>
                 <tr>
-                    <th>Key</th>
+                    <th>Field</th>
                     <th>Value</th>
                 </tr>
-            </thead>
-        <tbody>
-    <tr><td>x-rid-platform</td><td>FORWARDLNX</td></tr><tr><td>x-rid-domain</td><td>FWD-test@maurimori.eu</td></tr><tr><td>return-path</td><td>=?utf-8?q?=3C01070193a6bbba98-dc4fb71a-d4a7-4925-bfd3-0fecfc19b?= =?utf-8?q?713-000000=40eu-central-1=2Eamazonses=2Ecom=3E?=</td></tr><tr><td>delivered-to</td><td>test@maurimori.eu</td></tr><tr><td>received</td><td>from montiit-dir05.it.dadainternal ([172.29.136.16])by montiit-be16.it.dadainternal with LMTPid H3LmOhWxVWeyRQAAzKB61A(envelope-from =?utf-8?q?=3C01070193a6bbba98-dc4fb71a-d4a7-4925-bfd3-0fecfc?= =?utf-8?q?19b713-000000=40eu-central-1=2Eamazonses=2Ecom=3E=29?=for &lt;test@maurimori.eu&gt;; Sun, 08 Dec 2024 15:45:41 +0100 from scott16 ([172.29.136.16])by montiit-dir05.it.dadainternal with LMTPid iCNCOhWxVWd0EQAA6+nncw(envelope-from =?utf-8?q?=3C01070193a6bbba98?= =?utf-8?q?-dc4fb71a-d4a7-4925-bfd3-0fecfc19b713-000000=40eu-central-1=2Eama?= =?utf-8?q?zonses=2Ecom=3E=29?=for &lt;test@maurimori.eu&gt;; Sun, 08 Dec 2024 15:45:41 +0100 from b227-211.smtp-out.eu-central-1.amazonses.com ([69.169.227.211])by cmsmtp with ESMTPSid KIXVtadxafBB1KIXVtKjI3; Sun, 08 Dec 2024 15:45:41 +0100</td></tr><tr><td>x-cloudmark-reporter</td><td>test@maurimori.eu</td></tr><tr><td>x-spam-status</td><td>No, score=0.00, required=95.00</td></tr><tr><td>x-rspamd-server</td><td>rspamd14</td></tr><tr><td>arc-seal</td><td>i=1; a=rsa-sha256; d=securemail.pro; s=arc20240405; t=1733669141;cv=none; =?utf-8?q?b=3DwWFm+sT23vRkd7EisTbwY1YBFsLmPmYZTq5XBa87w81w5wNio2VL?= =?utf-8?q?bjRlTA/rYCZCK6UunmytRZcSYx8ClMY4KB9wwHVuOtTGN7RBJVPup5NUMjCWqNfYJ?= =?utf-8?q?zqbG/zxMNnd/s96T56ZlVozlXGcbnl2LM0SrRdB5ZNcq0R6Azaw4eWhuGW/FIyZQg?= =?utf-8?q?RaYSXZRX3d9dIPRtWJrumi4P8B3GBuG93XiC80Vqi+VITiBlq3DQVnoELOY+XQeFi?= =?utf-8?q?CH9Z0vtIMruJ7CX8kE0AJKVoaIUtypv5NLoKZJb8GKOvrHAXP9Tzv7fQkQcbLRlpT?= =?utf-8?q?oAL9b1/CGOyA+mx/NZzkpwDWeYj+SQ=3D=3D?=</td></tr><tr><td>arc-message-signature</td><td>i=1; a=rsa-sha256; d=securemail.pro; s=arc20240405;t=1733669141; c=relaxed/relaxed;bh=ee5IFx863TQNn3hnjlXCk5ojRKlQbOMAeQacky6Rrjo=;h=DKIM-Signature:DKIM-Signature:Date:To:From:Subject:Message-ID;  =?utf-8?q?b=3DBfu+hsqTLqS63EyDX57yVZKusBuoylV/G4uPpV1JXphzQPounySQTPNG13OSy?= =?utf-8?q?qDGYqC55Tj0LPcLffQRXiQc352/slB5o4rgKYFa0cyT+p7gDJ4WitYrQA/4lhfmzk?= =?utf-8?q?qMXQgYi7Whi5/O7Je4u7BUIZcS4mALrerV0O4SIgOstKiws4/h8pa7PZy/hd+rM3x?= =?utf-8?q?DbJwdGWmArbyWACmLuis0y+hQwJZVi43N9J29T8x2EUpW/X0l4YhRrAHNWW44GFQY?= =?utf-8?q?/32pdYx6O+7PEEU7bzoSToWighNSjvIBTCZ5+kV49X2T2iXCSZeLUx/rvCB8Bkdf5?= =?utf-8?q?EUGutt+MJoEN2soojlp4Q=3D=3D?=</td></tr><tr><td>arc-authentication-results</td><td>i=1; scott16; spf=pass (scott16: domain of  =?utf-8?q?01070193a6bbba98-dc4fb71a-d4a7-4925-bfd3-0fecfc19b713-000000=40eu?= =?utf-8?q?-central-1=2Eamazonses=2Ecom?= designates 69.169.227.211 as permited sender) =?utf-8?q?smtp=2Emailfrom=3D01070193a6bbba98-dc4fb71a-d4a7?= =?utf-8?q?-4925-bfd3-0fecfc19b713-000000=40eu-central-1=2Eamazonses=2Ecom?= =?utf-8?q?=3B?=arc=none</td></tr><tr><td>received-spf</td><td>pass</td></tr><tr><td>x-cnfs-analysis</td><td>v=2.4 cv=FOvQxPos c=1 sm=1 tr=0 ts=6755b115 b=1 cx=a_idp_d a=1S8Bis8e84V5DTy/9ETD6w==:117 a=1S8Bis8e84V5DTy/9ETD6w==:17 a=IkcTkHD0fZMA:10 a=Hgn-wnRn1-cA:10 a=WMLqLRrgRMoA:10 a=YFHz6ByJM4cA:10 a=e4t4CnE5AAAA:8 a=y8FPWtG8AAAA:8 a=JqEG_dyiAAAA:8 a=jU4qhlNgAAAA:8 a=vnREMb7VAAAA:8 a=SSmOFEACAAAA:8 a=A1X0JdhQAAAA:8 a=nVkQFUcyFaUwUEsv578A:9 a=tIswsE9owt8MHxmy:21 a=gKO2Hq4RSVkA:10 a=frz4AuCg-hUA:10 a=_W_S_7VecoQA:10 a=L03L2QfmqWoA:10 a=1WNtSb5ECZgA:10 a=lqcHg5cX4UMA:10 a=QEXdDO2ut3YA:10 a=BSaMy2rg1KxQBbM94f7t:22 a=JlUvu3QhK3hl-xmYIhzw:22 a=sssgxJ8YLXj7wcFHSGN1:22 a=bUj3ONecwWJy43GQNZ5j:22</td></tr><tr><td>dkim-signature</td><td>v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;s=54ecsf3zk7z4mwxwwox7z7bg6e5gwjsz; d=amazonses.com; t=1733669141; =?utf-8?q?h=3DDate=3ATo=3AFrom=3ASubject=3AMessage-ID=3AMIME-Version=3ACont?= =?utf-8?q?ent-Type=3AContent-Transfer-Encoding=3AFeedback-ID=3B?=bh=degWU8CUZ66IzYJXw+vtPc8FoRj1nDPQwTlHEQLSgCE=;b=agKDCNBVY4zZ3pSPNkcnj5VBsXDeSRCagpWV72EPeSMZkbE62uWIsCNyP9BrAaIHai1c4K6FVzlkXLlHVAOFc44uHUpsP69uFfbSFiX+tn0WCf/xP1/yGImRkJWZZwBZNIPA8/xme3k+1gaA656i/eh9lWHrQRxl2Noz9HIlNSo=</td></tr><tr><td>date</td><td>Sun, 8 Dec 2024 14:45:41 +0000</td></tr><tr><td>to</td><td>test@maurimori.eu</td></tr><tr><td>from</td><td>Email Security Tester &lt;test-d0643290@emailsecuritytester.com&gt;</td></tr><tr><td>subject</td><td>[TEST] 2. Test HTML cleanup</td></tr><tr><td>message-id</td><td>&lt;01070193a6bbba98-dc4fb71a-d4a7-4925-bfd3-0fecfc19b713-000000@eu-central-1.amazonses.com&gt;</td></tr><tr><td>x-mailer</td><td>Microsoft Outlook 16.0</td></tr><tr><td>mime-version</td><td>1.0</td></tr><tr><td>content-type</td><td>text/html; charset=utf-8</td></tr><tr><td>content-transfer-encoding</td><td>quoted-printable</td></tr><tr><td>feedback-id</td><td> ::1.eu-central-1.zOKi0o3K98R1feywrAfzxL0RnOanKm7zUh31xDvFPEc=:AmazonSES</td></tr><tr><td>x-ses-outgoing</td><td>2024.12.08-69.169.227.211</td></tr><tr><td>x-cmae-envelope</td><td>=?utf-8?q?MS4xfIVvw7sx3OZnN4BAtyv5or+0Vs1FRpGjTIVBiAU2Y3y+7?= =?utf-8?q?Il/pmJcF7zwi353h/XSlu+jtYH6ZH2vd6s+H8fe4nfCYIOSu4vELjseulL2AzHADD?= =?utf-8?q?CXeNrE_HAAx8CHV0zgKh3eKmvXjU5wO/2xwXC2h9nCaqbZ3cgbbB2SZXdeKXO5nwA?= =?utf-8?q?C6jgEE6ChsF+GivC3D59jBfex7DlkMaRVXgj8YymPyeosjyuz5U5h1hO46eBUW_qc?= =?utf-8?q?Eb5n8wI4ucwv4pVTdRkfnDKfyu12j9at2tpfvEUeVkGylHaTubaxvR1pMDpNewXYR?= =?utf-8?q?5HCIQsMbVIez1RNvWSg=3D=3D?=</td></tr>
-        </tbody>
-    </table>
-    
-        <h3 id="headers-investigation-section"><i class="fa-solid fa-magnifying-glass"></i> Investigation</h3>
-        <div class="row">
-    
-        <div class="col-md-4">
-            <div class="jumbotron">
-                <h3>X-Sender-Ip</h3><hr>
-        <br><b>Virustotal:<br></b>https://www.virustotal.com/gui/search/69.169.227.211<br><b>Abuseipdb:<br></b>https://www.abuseipdb.com/check/69.169.227.211<br><b>Safety:<br></b>Safe<br><b>Positives:<br></b>0
-            </div>
+        
+                <tr>
+                    <td>Data</td>
+                    <td>{&#x27;x-rid-platform&#x27;: &#x27;FORWARDLNX&#x27;, &#x27;x-rid-domain&#x27;: &#x27;FWD-test@maurimori.eu&#x27;, &#x27;return-path&#x27;: &#x27;&lt;maurimori@gmail.com&gt;&#x27;, &#x27;delivered-to&#x27;: &#x27;test@maurimori.eu&#x27;, &#x27;received&#x27;: &#x27;from montiit-dir03.it.dadainternal ([172.29.136.15])by montiit-be31.it.dadainternal with LMTPid xgXaHUs79WdKPQAABBHseQ(envelope-from &lt;maurimori@gmail.com&gt;)for &lt;test@maurimori.eu&gt;; Tue, 08 Apr 2025 17:05:47 +0200 from scott15 ([172.29.136.15])by montiit-dir03.it.dadainternal with LMTPid 2FsiHUs79WcsKgAAS21KyQ(envelope-from &lt;maurimori@gmail.com&gt;)for &lt;test@maurimori.eu&gt;; Tue, 08 Apr 2025 17:05:47 +0200 from mail-ej1-f41.google.com ([209.85.218.41])by cmsmtp with ESMTPSid 2AWHuEMxIeNMu2AWIuobwq; Tue, 08 Apr 2025 17:05:46 +0200 by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ac2bb7ca40bso648175966b.3        for &lt;test@maurimori.eu&gt;; Tue, 08 Apr 2025 08:05:46 -0700 (PDT) from [192.168.1.60] (93-41-32-21.ip79.fastwebnet.it. [93.41.32.21])        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7c018b109sm919915466b.160.2025.04.08.08.05.41        for &lt;test@maurimori.eu&gt;        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);        Tue, 08 Apr 2025 08:05:42 -0700 (PDT)&#x27;, &#x27;x-cloudmark-reporter&#x27;: &#x27;test@maurimori.eu&#x27;, &#x27;x-spam-status&#x27;: &#x27;No, score=0.00, required=95.00&#x27;, &#x27;x-rspamd-server&#x27;: &#x27;rspamd14&#x27;, &#x27;arc-seal&#x27;: &#x27;i=1; a=rsa-sha256; d=securemail.pro; s=arc20240405; t=1744124746;cv=none; =?utf-8?q?b=3Dc9YoHsGGK+Jsm5DaP5DIicg93JgUFCBC8t1tQl0LVMZBIViZ3B/M?= =?utf-8?q?P8dfDo76e6iYeBD0Cq6+JQGVcOonpjFuAeGse1fVaGB/2m5ce4D4R/pIaaCtfQuqc?= =?utf-8?q?oJc82DJ0/IBCl3vpaulbLYxLq/z8X/tUKWKwkTSCFjXrQVFPrRZd6RS1K8amuy5aS?= =?utf-8?q?4KQIWGng6zHtUgptfP+15703urdD2fKR1WU0axtZkqDbkZE7WXyGAQhjG8w0/8p8e?= =?utf-8?q?lkaHpWOoIYHcBHdOgCYXY6bXyrmxsdqryLj22Bviy1UPOq3raDjDnwEVqhPe6KnwG?= =?utf-8?q?X6LaZysFY6m4PRlf+c1+Pv7V7WFkDA=3D=3D?=&#x27;, &#x27;arc-message-signature&#x27;: &#x27;i=1; a=rsa-sha256; d=securemail.pro; s=arc20240405;t=1744124746; c=relaxed/relaxed;bh=S50vumvFyIi38V+EiVuBqzfcrTARpUKwVfxu02pPJl0=;h=DKIM-Signature:Message-ID:Date:To:From:Subject; =?utf-8?q?b=3DazCYiQdXFXQ?= =?utf-8?q?feF8BGSN10S072Cb8rzUnkdbtWdPEkmfLDoYeWn4I1Ut6NbE91eVFimYBJivt0n3d?= =?utf-8?q?oudG8VeNTJu4pCVwqNNiMaUBKYgWIyutpCOIHd3cE0LkLmvSj7HA11itWQjZfMXDt?= =?utf-8?q?GVpPGrk5fh03I87tj4q8sxepND8iicejvYStfnw0Bz5JJsnBxwdY1b14sPNG8I7c+?= =?utf-8?q?weWG/snoLRy7UMEOSj8fNnyO/J5tYNmRuC+WqUfTHy7SaURb6nxyb9b9OSBErFYYX?= =?utf-8?q?QjV/xyA1bZdS2wQAfwpc9jT6oTdfN8fEF//UOT1JBytR7CywfViPnYBpkVeTJvN7I?= =?utf-8?q?BUJ+pw=3D=3D?=&#x27;, &#x27;arc-authentication-results&#x27;: &#x27;i=1; scott15; spf=pass (scott15: domain of maurimori@gmail.com designates 209.85.218.41 as permited sender) smtp.mailfrom=maurimori@gmail.com;arc=none;dkim=pass header.d=gmail.com header.b=nswV1cH3&#x27;, &#x27;received-spf&#x27;: &#x27;pass&#x27;, &#x27;x-cnfs-analysis&#x27;: &#x27;v=2.4 cv=INnJCRvG c=1 sm=1 tr=0 ts=67f53b4a cx=a_idp_d a=/XEA4Vg4RWeMfXAJl6kgpw==:117 a=EZ+gcyUjseCe9fGqrnKx2A==:17 a=XR8D0OoHHMoA:10 a=x7bEGLp0ZPQA:10 a=BytA9ynTsDQA:10 a=95EFz5htlIgA:10 a=r77TgQKjGQsHNAKrUKIA:9 a=nS36O97Bj3wUElCrIrAA:9 a=QEXdDO2ut3YA:10 a=LPMgiDy0bqDdadZML-sA:9 a=mXuCJ--y6OYA:10 a=wwAePvBONnjDQaqHVNx2:22 a=bMrFyaAnRwegQDxt2Pzk:22 a=pHzHmUro8NiASowvMSCR:22 a=nt3jZW36AmriUCFCBwmW:22&#x27;, &#x27;dkim-signature&#x27;: &#x27;v=1; a=rsa-sha256; c=relaxed/relaxed;        d=gmail.com; s=20230601; t=1744124745; x=1744729545; darn=maurimori.eu;        h=subject:from:to:content-language:user-agent:mime-version:date         :message-id:from:to:cc:subject:date:message-id:reply-to;        bh=S50vumvFyIi38V+EiVuBqzfcrTARpUKwVfxu02pPJl0=;        b=nswV1cH3U79/q2Ubih516Ro1AG/puUk8kCnwd5HtExC70PAxs4K7SYQTYY1zdZrc1J         cKWJvUkccBdTyWDKlS1JiZLcDHDcOCWrqUvq3TH5hSO4UBt15beI5JYcT7E6kucXa5u+         1YdQSJ3qh09kuaFU9uDypdI8d8Rg25M4wUgZUtKRnzHS76ca4fy+3HE9/HG/SpAdUMWq         W9Fg8L8NqV/lq1Lkj/TyTCeBm80N3sWC6a08S1DANbRuijiGmUWigweTkVycLX9djZ6v         g8qXFkyjB74/gbAJK/I/YRcvsRNOl5FNob+tXGqtzpKvcH+qlGGuG7k9857M9U0jw/S5         FZlg==&#x27;, &#x27;x-google-dkim-signature&#x27;: &#x27;v=1; a=rsa-sha256; c=relaxed/relaxed;        d=1e100.net; s=20230601; t=1744124745; x=1744729545;        h=subject:from:to:content-language:user-agent:mime-version:date         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id         :reply-to;        bh=S50vumvFyIi38V+EiVuBqzfcrTARpUKwVfxu02pPJl0=;        b=ZViDIARlfzyQhvNcSolXWbha7qs1k5IqSq+XAcpHFmiC2oVj1GAUZnLdZQyppLfBfb         fcib2H/pubRsFhyAheufmkXVYSZncREWbnBOXKVP08g+p9GosF61mKvdokMc2Q0C3L7B         XtMfgbq13JO73Vl4DEmnz8Iz6WIJs4eaF2XDHHx40e++GuTgKs91WoXNdNnqB7Fg34uT         fF0fTupZr8i7ppKHLyt3xVyWdJ9ZMllRU5rBKOiOKoK6amz3vN2PzcH3Zvkq5sPQDghe         H6qZNFzcv8X+mZPl/P2AEzxHGjs1vPTB9TL2uSrX0SXOW+QudlnVkN03rtsp96YJB4OF         KhuA==&#x27;, &#x27;x-gm-message-state&#x27;: &#x27;AOJu0YxJKWdvJj6WdXP5OU0kC5qRLi2eLB8NxFSlwxq4UCqhU0Axzy8NI8bMjHdOIJdOeJnYIWcYJ+wA49LfRRQ6R2cdKo/Cz/MB3hsFVz/h/ausPJfF&#x27;, &#x27;x-gm-gg&#x27;: &#x27;ASbGncvBe5vf9ionLcITqCLHJ+aTboyBgVzqwSJD+Ix3fBwcsAVvbtxR+zS1FVdFW+2sYak43UoGCClmhsB5K8S7rl7KSoU5QoHW3/nI3U+XbsXsYVcHN9iI6dtsrPC/a0UNgsmgsh2OrN45AkZKCRL1B3d9T0lyn136MizQEdpJVfBptR4BhDDih2HD/LkAgVH/yDTxqIvga8S2pOn0fhyMovtx9zq/xS4waqRCk/bUS0Jb34b/odSO24/UBiby/t1Nfj0z/Cb/Yd0PCrKSTLUuZtlp7XIbJ2aR/JYc8yjiELE8DYnWpOj1bQNvmx4LJzaIUx7M90q77BfD4ub2Lc5cUPAxlij4qLuXQ5UNUZCX2zS+Oa3JyYO83s2qD80=&#x27;, &#x27;x-google-smtp-source&#x27;: &#x27;=?utf-8?q?AGHT+IGXzkoNQMHJbBMV5bW3BJPKiemdSa/kTeIVcvSk?= =?utf-8?q?GYS3mZlsKgXcGVPfZ51krnFbwoSLpa1ilw=3D=3D?=&#x27;, &#x27;x-received&#x27;: &#x27;by 2002:a17:907:72c5:b0:ac7:3911:35e6 with SMTP id a640c23a62f3a-ac7d1cceaa2mr1266037366b.58.1744124745091;        Tue, 08 Apr 2025 08:05:45 -0700 (PDT)&#x27;, &#x27;content-type&#x27;: &#x27;multipart/mixed; boundary=&quot;------------mZilOvlypg1PHEudUMEhjnyN&quot;&#x27;, &#x27;message-id&#x27;: &#x27;&lt;630242a1-35e7-4269-a972-05ba31400c99@gmail.com&gt;&#x27;, &#x27;date&#x27;: &#x27;Tue, 8 Apr 2025 17:07:29 +0200&#x27;, &#x27;mime-version&#x27;: &#x27;1.0&#x27;, &#x27;user-agent&#x27;: &#x27;Mozilla Thunderbird&#x27;, &#x27;content-language&#x27;: &#x27;it&#x27;, &#x27;to&#x27;: &#x27;test@maurimori.eu&#x27;, &#x27;from&#x27;: &#x27;Maurizio &lt;maurimori@gmail.com&gt;&#x27;, &#x27;subject&#x27;: &#x27;test&#x27;, &#x27;x-cmae-envelope&#x27;: &#x27;=?utf-8?q?MS4xfDnnW682Ld2vXWi0hfliaelz9pMyqP7be/CHbBcz++9oo?= =?utf-8?q?R0K1xyAL03EI/+FjpLv3uAIgUW35ODfw9u39kPGBVXqz948pH2sGM4pdMAsw+HP1c?= =?utf-8?q?gSz2zn_WGuJfB/3n9aMZnsnuc5dOrAnPFpkYHZ2ET2NjN+OaMdU9t6bTzvjPYok+f?= =?utf-8?q?ApR5OlOpo5HWmu4SR8p3L8QM3IXos/fsPwCCupqC8=3D?=&#x27;}</td>
+                </tr>
+            
+                <tr>
+                    <td>Investigation</td>
+                    <td>{&#x27;Blacklist_Check&#x27;: {&#x27;Blacklist_Status&#x27;: &#x27;Not Blacklisted&#x27;}}</td>
+                </tr>
+            
+            </table>
         </div>
         
-        <div class="col-md-4">
-            <div class="jumbotron">
-                <h3>Blacklist_Check</h3><hr>
-        <br><b>Blacklist_Status:<br></b>Not Blacklisted
+        <div class="section">
+            <h2>Links</h2>
+            <table>
+                <tr>
+                    <th>Link</th>
+                </tr>
+        
+                <tr>
+                    <td>Data</td>
+                </tr>
+            
+                <tr>
+                    <td>Investigation</td>
+                </tr>
+            
+            </table>
+        </div>
+        
+        <div class="section">
+            <h2>Attachments</h2>
+            <table>
+                <tr>
+                    <th>Filename</th>
+                    <th>Type</th>
+                    <th>Size</th>
+                </tr>
+        
+                <tr>
+                    <td colspan="3">No attachment information available</td>
+                </tr>
+            
+            </table>
+        </div>
+        
+        <div class="section">
+            <h2>Digests</h2>
+            <table>
+                <tr>
+                    <th>Algorithm</th>
+                    <th>Hash</th>
+                </tr>
+        
+                <tr>
+                    <td>Data</td>
+                    <td>{&#x27;File MD5&#x27;: &#x27;879a3547a7c48f82b01a7f591fa66fdd&#x27;, &#x27;File SHA1&#x27;: &#x27;5680dc71922d60a7c6cf0be6edc960f10ab68483&#x27;, &#x27;File SHA256&#x27;: &#x27;a19a9871742dea3dfb458e5da3c8e36e9786cd42e4a0e60a8731f265b7e2f1e7&#x27;}</td>
+                </tr>
+            
+                <tr>
+                    <td>Investigation</td>
+                    <td>{&#x27;File MD5&#x27;: {&#x27;Error&#x27;: &quot;Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)&quot;}, &#x27;File SHA1&#x27;: {&#x27;Error&#x27;: &quot;Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)&quot;}, &#x27;File SHA256&#x27;: {&#x27;Error&#x27;: &quot;Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)&quot;}}</td>
+                </tr>
+            
+            </table>
+        </div>
+        
+            </div>
+        
             </div>
         </div>
-        </div><hr>
-        <h2 id="links-section" style="text-align: center;"><i class="fa-solid fa-link"></i> Links</h2>
-        <hr>
-        <h3 id="links-data-section"><i class="fa-solid fa-chart-column"></i> Data</h3>
-        <table class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>Key</th>
-                    <th>Value</th>
-                </tr>
-            </thead>
-        <tbody>
-    <tr><td>1</td><td>http://www.w3.org/1999/xhtml</td></tr><tr><td>2</td><td>https://emailsecuritytester.com/image=</td></tr><tr><td>3</td><td>https://www.example.com/</td></tr><tr><td>4</td><td>https://emailsecuritytester.com/images/pixel.gif</td></tr><tr><td>5</td><td>http://twitter.com/libraesva</td></tr><tr><td>6</td><td>http://www.linkedin.com/company/libraesva</td></tr><tr><td>7</td><td>https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/co=</td></tr><tr><td>8</td><td>https://www.libraesva.com</td></tr><tr><td>9</td><td>http://www.youtube.com/user/librasrl</td></tr><tr><td>10</td><td>https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-y=</td></tr>
-        </tbody>
-    </table>
-        <h3 id="links-investigation-section"><i class="fa-solid fa-magnifying-glass"></i> Investigation</h3>
-        <table class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>Key</th>
-                    <th>Value</th>
-                </tr>
-            </thead>
-        <tbody>
-    <tr><td>1</td><td><b><a href='Error making request to VirusTotal: ('QuotaExceededError', 'Quota exceeded')' target='_blank'>Error Scan</a></b>&nbsp;&nbsp;</td></tr><tr><td>2</td><td><b><a href='Error making request to VirusTotal: ('QuotaExceededError', 'Quota exceeded')' target='_blank'>Error Scan</a></b>&nbsp;&nbsp;</td></tr><tr><td>3</td><td><b><a href='Error making request to VirusTotal: ('QuotaExceededError', 'Quota exceeded')' target='_blank'>Error Scan</a></b>&nbsp;&nbsp;</td></tr><tr><td>4</td><td><b><a href='Error making request to VirusTotal: ('QuotaExceededError', 'Quota exceeded')' target='_blank'>Error Scan</a></b>&nbsp;&nbsp;</td></tr><tr><td>5</td><td><b><a href='Error making request to VirusTotal: ('QuotaExceededError', 'Quota exceeded')' target='_blank'>Error Scan</a></b>&nbsp;&nbsp;</td></tr><tr><td>6</td><td><b><a href='Error making request to VirusTotal: ('QuotaExceededError', 'Quota exceeded')' target='_blank'>Error Scan</a></b>&nbsp;&nbsp;</td></tr><tr><td>7</td><td><b><a href='Error making request to VirusTotal: ('QuotaExceededError', 'Quota exceeded')' target='_blank'>Error Scan</a></b>&nbsp;&nbsp;</td></tr><tr><td>8</td><td><b><a href='Error making request to VirusTotal: ('QuotaExceededError', 'Quota exceeded')' target='_blank'>Error Scan</a></b>&nbsp;&nbsp;</td></tr><tr><td>9</td><td><b><a href='Error making request to VirusTotal: ('QuotaExceededError', 'Quota exceeded')' target='_blank'>Error Scan</a></b>&nbsp;&nbsp;</td></tr><tr><td>10</td><td><b><a href='Error making request to VirusTotal: ('QuotaExceededError', 'Quota exceeded')' target='_blank'>Error Scan</a></b>&nbsp;&nbsp;</td></tr>
-        </tbody>
-    </table>
-    <hr>
-        <h2 id="attachments-section" style="text-align: center;"><i class="fa-solid fa-paperclip"></i> Attachments</h2>
-        <hr>
-        <h3 id="attachments-data-section"><i class="fa-solid fa-chart-column"></i> Data</h3>
-        <table class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>Key</th>
-                    <th>Value</th>
-                </tr>
-            </thead>
-        <tbody>
-    
-        </tbody>
-    </table>
-        <h3 id="attachments-investigation-section"><i class="fa-solid fa-magnifying-glass"></i> Investigation</h3>
-        <table class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>Key</th>
-                    <th>Value</th>
-                </tr>
-            </thead>
-        <tbody>
-    
-        </tbody>
-    </table>
-    <hr>
-        <h2 id="digests-section" style="text-align: center;"><i class="fa-solid fa-hashtag"></i> Digests</h2>
-        <hr>
-        <h3 id="digests-data-section"><i class="fa-solid fa-chart-column"></i> Data</h3>
-        <table class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>Key</th>
-                    <th>Value</th>
-                </tr>
-            </thead>
-        <tbody>
-    <tr><td>File MD5</td><td>b42acae896c7b66dca40ca1746ca3b51</td></tr><tr><td>File SHA1</td><td>95b94bb16d31ed09bebb5850062ed7406d18bfec</td></tr><tr><td>File SHA256</td><td>36937039f111f065a50f62d43dfd7325cdddd60f2f63f4193d9d69245b3877bd</td></tr>
-        </tbody>
-    </table>
-        <h3 id="digests-investigation-section"><i class="fa-solid fa-magnifying-glass"></i> Investigation</h3>
-        <table class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>Key</th>
-                    <th>Value</th>
-                </tr>
-            </thead>
-        <tbody>
-    <tr><td>File MD5</td><td><b><a href='Error making request to VirusTotal: ('QuotaExceededError', 'Quota exceeded')' target='_blank'>Error scan</a></b><br></td></tr><tr><td>File SHA1</td><td><b><a href='Error making request to VirusTotal: ('QuotaExceededError', 'Quota exceeded')' target='_blank'>Error scan</a></b><br></td></tr><tr><td>File SHA256</td><td><b><a href='Error making request to VirusTotal: ('QuotaExceededError', 'Quota exceeded')' target='_blank'>Error scan</a></b><br></td></tr>
-        </tbody>
-    </table>
-    <hr>
-        </div>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
+        
+        <script>
+            function showEmail(index) {
+                // Hide all email contents
+                document.querySelectorAll('.email-content').forEach(el => {
+                    el.classList.remove('active');
+                });
+                
+                // Remove active class from all cards
+                document.querySelectorAll('.email-card').forEach(el => {
+                    el.classList.remove('active');
+                });
+                
+                // Show selected email content
+                document.getElementById(`email-${index}`).classList.add('active');
+                
+                // Add active class to selected card
+                document.querySelectorAll('.email-card')[index].classList.add('active');
+            }
+        </script>
+    </body>
+    </html>
     

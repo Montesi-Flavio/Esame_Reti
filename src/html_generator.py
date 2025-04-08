@@ -86,8 +86,8 @@ def generate_links_section(links):
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
-                    <th>Key</th>
-                    <th>Value</th>
+                    <th>Link</th>
+                    <th>Information</th>
                 </tr>
             </thead>
         <tbody>
@@ -97,7 +97,7 @@ def generate_links_section(links):
         html += "<tr>"
         html += "<td>{}</td><td>".format(index)
         for k,v in values.items():
-            html += f"<b><a href='{v}' target='_blank'>{k} Scan</a></b>&nbsp;&nbsp;"
+            html += f"<b>{k}</b>: Potentially suspicious"
         html += "</td></tr>"
         
     html += """
@@ -142,8 +142,8 @@ def generate_attachment_section(attachments):
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
-                    <th>Key</th>
-                    <th>Value</th>
+                    <th>Attachment</th>
+                    <th>Information</th>
                 </tr>
             </thead>
         <tbody>
@@ -154,7 +154,7 @@ def generate_attachment_section(attachments):
         html += "<td>{}</td><td>".format(index)
         for k,v in values.items():
             for x,y in v.items():
-                html += f"<b><a href='{y}' target='_blank'>{x} Scan({k})</a></b><br>"
+                html += f"<b>{x} ({k})</b>: Potentially suspicious<br>"
         html += "</td></tr>"
         
     html += """
@@ -199,8 +199,8 @@ def generate_digest_section(digests):
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
-                    <th>Key</th>
-                    <th>Value</th>
+                    <th>Digest</th>
+                    <th>Information</th>
                 </tr>
             </thead>
         <tbody>
@@ -210,7 +210,7 @@ def generate_digest_section(digests):
         html += "<tr>"
         html += "<td>{}</td><td>".format(index)
         for k,v in values.items():
-            html += f"<b><a href='{v}' target='_blank'>{k} scan</a></b><br>"
+            html += f"<b>{k}</b>: Potentially suspicious<br>"
         html += "</td></tr>"
         
     html += """
@@ -255,72 +255,84 @@ def generate_table_from_json(json_obj):
         digest_cnt = 0
         digest_inv_cnt = 0
 
-    # Generate HTML table with Bootstrap classes
+    # Generate HTML table with Bootstrap classes (without external links)
     html = f"""
         <head>
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-            <script async defer src="https://buttons.github.io/buttons.js"></script>
+            <style>
+                /* Bootstrap-like styling embedded directly */
+                .container-fluid {{
+                    width: 100%;
+                    padding-right: 15px;
+                    padding-left: 15px;
+                    margin-right: auto;
+                    margin-left: auto;
+                }}
+                .row {{
+                    display: flex;
+                    flex-wrap: wrap;
+                    margin-right: -15px;
+                    margin-left: -15px;
+                }}
+                .col-md-6 {{
+                    flex: 0 0 50%;
+                    max-width: 50%;
+                    padding-right: 15px;
+                    padding-left: 15px;
+                }}
+                .col-md-4 {{
+                    flex: 0 0 33.333333%;
+                    max-width: 33.333333%;
+                    padding-right: 15px;
+                    padding-left: 15px;
+                }}
+                .table {{
+                    width: 100%;
+                    margin-bottom: 1rem;
+                    color: #212529;
+                    border-collapse: collapse;
+                }}
+                .table-bordered {{
+                    border: 1px solid #dee2e6;
+                }}
+                .table-striped tbody tr:nth-of-type(odd) {{
+                    background-color: rgba(0, 0, 0, 0.05);
+                }}
+                .table th, .table td {{
+                    padding: 0.75rem;
+                    vertical-align: top;
+                    border-top: 1px solid #dee2e6;
+                }}
+                .table-bordered th, .table-bordered td {{
+                    border: 1px solid #dee2e6;
+                }}
+                .jumbotron {{
+                    padding: 2rem 1rem;
+                    margin-bottom: 2rem;
+                    background-color: #e9ecef;
+                    border-radius: 0.3rem;
+                }}
+                .badge {{
+                    display: inline-block;
+                    padding: 0.25em 0.4em;
+                    font-size: 75%;
+                    font-weight: 700;
+                    line-height: 1;
+                    text-align: center;
+                    white-space: nowrap;
+                    vertical-align: baseline;
+                    border-radius: 0.25rem;
+                }}
+                .badge-dark {{
+                    color: #fff;
+                    background-color: #343a40;
+                }}
+                .badge-pill {{
+                    padding-right: 0.6em;
+                    padding-left: 0.6em;
+                    border-radius: 10rem;
+                }}
+            </style>
         </head>
-
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="#"><i class="fa fa-envelope"></i> Email Analyzer</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mr-auto">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Headers
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#headers-data-section">Data <span class="badge badge-pill badge-dark">{ headers_cnt }</span></a>
-                    <a class="dropdown-item" href="#headers-investigation-section">Investigation <span class="badge badge-pill badge-dark">{ headers_inv_cnt }</span></a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Links
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#links-data-section">Data <span class="badge badge-pill badge-dark">{ links_cnt }</span></a>
-                    <a class="dropdown-item" href="#links-investigation-section">Investigation <span class="badge badge-pill badge-dark">{ links_inv_cnt }</span></a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Attachments
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#attachments-data-section">Data <span class="badge badge-pill badge-dark">{ attach_cnt }</span></a>
-                    <a class="dropdown-item" href="#attachments-investigation-section">Investigation <span class="badge badge-pill badge-dark">{ attach_inv_cnt }</span></a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Digests
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#digests-data-section">Data <span class="badge badge-pill badge-dark">{ digest_cnt }</span></a>
-                    <a class="dropdown-item" href="#digests-investigation-section">Investigation <span class="badge badge-pill badge-dark">{ digest_inv_cnt }</span></a>
-                    </div>
-                </li>
-                </ul>
-            </div>
-
-            <div class="d-flex">
-                <!-- Star -->
-                <a class="github-button" href="https://github.com/keraattin/EmailAnalyzer" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star keraattin/EmailAnalyzer on GitHub">Star</a>
-                &nbsp;
-                <!-- Fork -->
-                <a class="github-button" href="https://github.com/keraattin/EmailAnalyzer/fork" data-icon="octicon-repo-forked" data-size="large" data-show-count="true" aria-label="Fork keraattin/EmailAnalyzer on GitHub">Fork</a>
-                &nbsp;
-                <!-- Follow -->
-                <a class="github-button" href="https://github.com/keraattin" data-size="large" data-show-count="true" aria-label="Follow @keraattin on GitHub">Follow @keraattin</a>
-            </div>
-        </nav>
 
         <div class="container-fluid">
         """
@@ -339,7 +351,7 @@ def generate_table_from_json(json_obj):
                         </tr>
                         <tr>
                             <td>Url</td>
-                            <td><a href="{ info_data["Project"]["Url"] }" target='_blank'>{ info_data["Project"]["Url"] }</a></td>
+                            <td>{ info_data["Project"]["Url"] }</td>
                         </tr>
                         <tr>
                             <td>Version</td>
@@ -381,8 +393,6 @@ def generate_table_from_json(json_obj):
     
     html += """
         </div>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
     """
 
     return html

@@ -9,6 +9,23 @@ from email import message_from_file
 from email.message import EmailMessage
 from connectors import check_hash_safety
 
+def is_executable_file(filename):
+    """
+    Controlla se il file è un eseguibile (.exe o .bat)
+    
+    Args:
+        filename: Nome del file da controllare
+        
+    Returns:
+        Bool: True se è un file eseguibile, False altrimenti
+    """
+    if not filename:
+        return False
+    
+    # Controlla l'estensione del file (case insensitive)
+    ext = os.path.splitext(filename.lower())[1]
+    return ext in ['.exe', '.bat']
+
 def get_mime_type(filename, content=None):
     """
     Determina il tipo MIME di un file basandosi sull'estensione.
@@ -99,37 +116,74 @@ def analyze_attachments(email_file, investigation=False, save_attachments=False,
     
     # Format data
     attachment_data = {}
+    suspicious_files_found = False
+    
     for idx, attachment in enumerate(attachments, 1):
-        attachment_data[str(idx)] = {
+        # Verifica se il file è sospetto basandosi sull'estensione
+        is_executable = is_executable_file(attachment["filename"])
+        if is_executable:
+            suspicious_files_found = True
+            
+        # Base data
+        attachment_info = {
             "Filename": attachment["filename"],
             "MIME Type": attachment["mime_type"],
             "Size": f"{attachment['size']} bytes",
             "MD5": attachment["md5"],
             "SHA1": attachment["sha1"],
-            "SHA256": attachment["sha256"]
+            "SHA256": attachment["sha256"],
+            "Sospetto": "Sì - File eseguibile (.exe/.bat)" if is_executable else "No"
         }
-    
-    # Perform investigation if requested
-    investigation_data = {}
-    if investigation and attachments:
-        for idx, attachment in enumerate(attachments, 1):
-            investigation_data[str(idx)] = {}
+        
+        # Aggiungi dettagli di sicurezza se richiesta un'indagine
+        if investigation:
+            is_safe = True
+            security_details = []
             
-            # Check file hash against VirusTotal
+            # Controllo di sicurezza basato sull'estensione
+            if is_executable:
+                security_details.append("File eseguibile rilevato (.exe o .bat) - Alto rischio di malware")
+                is_safe = False
+            
+            # Controllo hash con VirusTotal
+            vt_results = {}
             for hash_type, hash_value in [("MD5", attachment["md5"]), 
                                          ("SHA1", attachment["sha1"]), 
                                          ("SHA256", attachment["sha256"])]:
                 safe, positives, error = check_hash_safety(hash_value)
                 
-                if error:
-                    investigation_data[str(idx)][hash_type] = {
-                        "Error": error
-                    }
-                else:
-                    investigation_data[str(idx)][hash_type] = {
-                        "Virustotal": f"https://www.virustotal.com/gui/file/{hash_value}",
-                        "Safety": "Safe" if safe else "Unsafe",
+                if not error:
+                    vt_link = f"https://www.virustotal.com/gui/file/{hash_value}"
+                    if not safe:
+                        is_safe = False
+                        security_details.append(f"Rilevato da VirusTotal: {positives} positivi")
+                        suspicious_files_found = True
+                    
+                    vt_results[hash_type] = {
+                        "Link": vt_link,
                         "Positives": positives
                     }
+            
+            # Aggiorna lo stato di sicurezza generale
+            if is_safe and not is_executable:
+                attachment_info["Stato Sicurezza"] = "Sicuro - Nessuna minaccia rilevata"
+            else:
+                attachment_info["Stato Sicurezza"] = "Non sicuro - Potenziale minaccia"
+                attachment_info["Dettagli Sicurezza"] = security_details
+            
+            if vt_results:
+                attachment_info["VirusTotal"] = vt_results
+        
+        attachment_data[str(idx)] = attachment_info
     
-    return {"Data": attachment_data, "Investigation": investigation_data}
+    result = {"Allegati": attachment_data}
+    
+    # Aggiungi un avviso generale se sono stati trovati file sospetti
+    if suspicious_files_found:
+        result["Avviso"] = "ATTENZIONE: Sono stati rilevati file potenzialmente pericolosi negli allegati."
+    elif len(attachment_data) == 0:
+        result["Avviso"] = "Nessun allegato trovato nell'email."
+    else:
+        result["Avviso"] = "Nessun file sospetto rilevato negli allegati."
+    
+    return result
