@@ -3,10 +3,92 @@ HTML output generation functionality.
 """
 
 import os
+import re
+import email.header
 from html_generator import generate_table_from_json
 from datetime import datetime
 import json
 from html import escape
+
+def clean_text_for_html(text):
+    """
+    Pulisce il testo per la visualizzazione HTML rimuovendo caratteri di controllo indesiderati.
+    
+    Args:
+        text: Testo da pulire
+    
+    Returns:
+        Testo pulito pronto per la visualizzazione HTML
+    """
+    if not text or not isinstance(text, str):
+        return text
+    
+    # Rimuove sequenze di newline e whitespace multipli
+    text = re.sub(r'\n\s*\n', '\n', text)
+    
+    # Sostituisce singoli newline con spazi
+    text = text.replace('\n', ' ').strip()
+    
+    # Rimuove spazi multipli
+    text = re.sub(r'\s+', ' ', text)
+    
+    # Rimuove Mostra Altri Header e altre stringhe di controllo comuni
+    text = re.sub(r'Mostra Altri Header', '', text)
+    
+    return text.strip()
+
+def decode_header_value(value):
+    """
+    Decodifica valori di header che potrebbero contenere codifiche MIME encoded-word (RFC 2047).
+    Es. =?utf-8?q?testo_codificato?= viene convertito in 'testo codificato'
+    
+    Args:
+        value: Valore dell'header da decodificare
+        
+    Returns:
+        Stringa decodificata
+    """
+    if not value or not isinstance(value, str):
+        return value
+    
+    try:
+        # Utilizza il modulo email.header per decodificare
+        decoded_parts = []
+        
+        # Sostituisce spazi che potrebbero separare codifiche consecutive
+        # Il pattern rileva sequenze come =?utf-8?q?parte1?= =?utf-8?q?parte2?=
+        encoded_pattern = r'(=\?[^?]+\?[BQbq]\?[^?]+\?=)\s+(=\?[^?]+\?[BQbq]\?[^?]+\?=)'
+        while re.search(encoded_pattern, value):
+            value = re.sub(encoded_pattern, r'\1\2', value)
+        
+        # Decodifica utilizzando email.header
+        parts = email.header.decode_header(value)
+        for part, encoding in parts:
+            if isinstance(part, bytes):
+                if encoding:
+                    try:
+                        decoded_parts.append(part.decode(encoding))
+                    except (UnicodeDecodeError, LookupError):
+                        # Fallback all'utf-8 se l'encoding specificato fallisce
+                        try:
+                            decoded_parts.append(part.decode('utf-8', errors='replace'))
+                        except:
+                            decoded_parts.append(part.decode('latin-1', errors='replace'))
+                else:
+                    # Se l'encoding non è specificato, prova prima utf-8
+                    try:
+                        decoded_parts.append(part.decode('utf-8', errors='replace'))
+                    except:
+                        decoded_parts.append(part.decode('latin-1', errors='replace'))
+            else:
+                # Se è già una stringa
+                decoded_parts.append(str(part))
+                
+        result = ''.join(decoded_parts)
+        return result
+    except Exception as e:
+        # In caso di errore, ritorna il valore originale
+        return value
 
 def generate_html_output(analysis_results, output_filename):
     """
@@ -86,26 +168,35 @@ def generate_email_selection_interface(analysis_results):
                 font-family: Arial, sans-serif;
                 margin: 0;
                 padding: 0;
+                overflow-x: hidden; /* Previeni lo scroll orizzontale */
             }
             .container {
                 width: 100%;
-                max-width: 1200px;
+                max-width: 1920px;
                 margin: 0 auto;
                 padding: 20px;
+                box-sizing: border-box;
             }
             .email-list {
                 display: flex;
                 flex-wrap: wrap;
                 gap: 15px;
                 margin-bottom: 30px;
+                justify-content: flex-start;
             }
             .email-card {
                 border: 2px solid #ccc;
                 border-radius: 5px;
                 padding: 15px;
-                width: 200px;
+                width: calc(25% - 15px); /* Responsive card width */
+                min-width: 200px;
+                max-width: 300px;
                 cursor: pointer;
                 transition: all 0.3s ease;
+                box-sizing: border-box;
+                margin-bottom: 10px;
+                flex-grow: 0;
+                flex-shrink: 0;
             }
             .email-card.suspicious {
                 border-color: #ff0000;
@@ -122,6 +213,7 @@ def generate_email_selection_interface(analysis_results):
                 border: 1px solid #ddd;
                 padding: 20px;
                 border-radius: 5px;
+                overflow-x: auto; /* Aggiungi scrollbar orizzontale se necessario */
             }
             .email-content.active {
                 display: block;
@@ -130,16 +222,27 @@ def generate_email_selection_interface(analysis_results):
                 width: 100%;
                 border-collapse: collapse;
                 margin-bottom: 20px;
+                table-layout: fixed; /* Previeni l'espansione infinita delle celle */
             }
             table, th, td {
                 border: 1px solid #ddd;
             }
-            th, td {
+            /* Applica stili più specifici per le celle */
+            table th, table td {
                 padding: 10px;
                 text-align: left;
+                word-wrap: break-word; /* Permette alle parole lunghe di andare a capo */
+                overflow-wrap: break-word;
             }
-            th {
+            /* Regole con priorità aumentata usando !important */
+            table th {
                 background-color: #f2f2f2;
+                width: 20% !important; /* Forza l'applicazione della larghezza */
+                max-width: 20% !important;
+            }
+            table td {
+                width: 80% !important; /* Forza l'applicazione della larghezza */
+                min-width: 80% !important;
             }
             .section {
                 margin-bottom: 30px;
@@ -155,6 +258,26 @@ def generate_email_selection_interface(analysis_results):
                 border-radius: 10px;
                 font-size: 12px;
                 margin-left: 5px;
+            }
+            /* Media query per dispositivi mobili */
+            @media (max-width: 768px) {
+                .email-card {
+                    width: calc(50% - 15px);
+                }
+                th, td {
+                    padding: 8px 5px;
+                }
+            }
+            @media (max-width: 480px) {
+                .email-card {
+                    width: 100%;
+                }
+                th {
+                    width: 40%;
+                }
+                td {
+                    width: 60%;
+                }
             }
         </style>
     </head>
@@ -261,10 +384,26 @@ def generate_email_analysis_html(result):
     
     # Headers section
     if "Headers" in result:
+        # Pulizia supplementare dei dati dell'header prima della visualizzazione
+        if "HTML_View" in result["Headers"]:
+            headers_html_view = {}
+            for key, value in result["Headers"]["HTML_View"].items():
+                if isinstance(value, str):
+                    clean_value = clean_text_for_html(value)
+                    clean_value = clean_value.strip()  # Rimuove spazi o newline all'inizio e alla fine
+                    headers_html_view[key] = clean_value
+                else:
+                    headers_html_view[key] = value
+            result["Headers"]["HTML_View"] = headers_html_view
+        
         html += """
         <div class="section">
             <h2>Headers</h2>
-            <table>
+            <table style="table-layout:fixed; width:100%;">
+                <colgroup>
+                    <col style="width:20%;" />
+                    <col style="width:80%;" />
+                </colgroup>
                 <tr>
                     <th>Field</th>
                     <th>Value</th>
@@ -272,10 +411,22 @@ def generate_email_analysis_html(result):
         """
         
         for key, value in result["Headers"]["Headers"].items():
+            raw_value = str(value)
+            decoded_value = decode_header_value(raw_value)
+            clean_value = clean_text_for_html(decoded_value).strip()
+            formatted_value = clean_value
+            
+            if "from" in key.lower() or "received" in key.lower() or "by" in key.lower():
+                for separator in ["by ", "from ", "for ", "with ", "id ", "; "]:
+                    if separator in formatted_value:
+                        formatted_value = formatted_value.replace(separator, "<br>" + separator)
+                if "received" in key.lower():
+                    formatted_value = formatted_value.replace("[", "<br>[").replace("(", "<br>(")
+            
             html += f"""
                 <tr>
-                    <td>{escape(str(key))}</td>
-                    <td>{escape(str(value))}</td>
+                    <td style="width:20%;">{escape(str(key))}</td>
+                    <td style="width:80%;">{formatted_value}</td>
                 </tr>
             """
         
@@ -284,7 +435,6 @@ def generate_email_analysis_html(result):
         </div>
         """
         
-        # Headers investigation
         if "Investigation" in result["Headers"]:
             html += """
             <div class="section">
@@ -304,7 +454,7 @@ def generate_email_analysis_html(result):
                 html += f"""
                     <tr>
                         <td>{escape(str(check))}</td>
-                        <td>{details_html}</td>
+                        <td>{details_html.strip()}</td>
                     </tr>
                 """
             
@@ -349,16 +499,15 @@ def generate_email_analysis_html(result):
                 </tr>
         """
         
-        attachments = result["Attachments"]["Attachments"]
-        if isinstance(attachments, list):
+        attachments = result["Attachments"].get("Attachments", {})
+        
+        if isinstance(attachments, list) and attachments:
             for attachment in attachments:
-                # Check if attachment is a dictionary or a string
                 if isinstance(attachment, dict):
                     filename = attachment.get('filename', 'Unknown')
-                    content_type = attachment.get('content_type', 'Unknown')
+                    content_type = attachment.get('content_type', 'Unknown') or attachment.get('mime_type', 'Unknown')
                     size = attachment.get('size', 'Unknown')
                 else:
-                    # If it's a string, just use it as the filename
                     filename = str(attachment)
                     content_type = 'Unknown'
                     size = 'Unknown'
@@ -370,8 +519,21 @@ def generate_email_analysis_html(result):
                         <td>{escape(str(size))}</td>
                     </tr>
                 """
+        elif isinstance(attachments, dict) and attachments:
+            for idx, attachment in attachments.items():
+                if isinstance(attachment, dict):
+                    filename = attachment.get('Filename', attachment.get('filename', 'Unknown'))
+                    content_type = attachment.get('MIME Type', attachment.get('mime_type', 'Unknown'))
+                    size = attachment.get('Size', attachment.get('size', 'Unknown'))
+                    
+                    html += f"""
+                        <tr>
+                            <td>{escape(str(filename))}</td>
+                            <td>{escape(str(content_type))}</td>
+                            <td>{escape(str(size))}</td>
+                        </tr>
+                    """
         else:
-            # Handle the case where attachments is not a list
             html += f"""
                 <tr>
                     <td colspan="3">No attachment information available</td>

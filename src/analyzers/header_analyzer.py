@@ -3,8 +3,25 @@ Header analysis functionality for email investigation.
 """
 
 import re
+import sys
+import os
 from email.parser import HeaderParser
 from connectors import check_ip_safety, check_blacklist
+
+# Importa la funzione clean_text_for_html dal modulo output.html_output
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+try:
+    from output.html_output import clean_text_for_html
+except ImportError:
+    # Definisci una versione locale della funzione se l'importazione fallisce
+    def clean_text_for_html(text):
+        if not text or not isinstance(text, str):
+            return text
+        text = re.sub(r'\n\s*\n', '\n', text)
+        text = text.replace('\n', ' ').strip()
+        text = re.sub(r'\s+', ' ', text)
+        text = re.sub(r'Mostra Altri Header', '', text)
+        return text.strip()
 
 def parse_email_headers(mail_data, investigation=False):
     """
@@ -37,33 +54,36 @@ def parse_email_headers(mail_data, investigation=False):
     # Prima aggiungi gli header prioritari in ordine
     for header in priority_headers:
         if header in parsed_headers["Data"]:
+            # Pulisci il valore dell'header rimuovendo caratteri indesiderati
+            clean_value = clean_text_for_html(parsed_headers["Data"][header])
+            
             # Formattazione speciale per ciascun tipo di header
             if header == 'from':
-                html_header_view['Mittente'] = f'<strong>{parsed_headers["Data"][header]}</strong>'
+                html_header_view['Mittente'] = f'<strong>{clean_value}</strong>'
             elif header == 'to':
-                html_header_view['Destinatario'] = parsed_headers["Data"][header]
+                html_header_view['Destinatario'] = clean_value
             elif header == 'cc':
-                html_header_view['CC'] = parsed_headers["Data"][header]
+                html_header_view['CC'] = clean_value
             elif header == 'bcc':
-                html_header_view['BCC'] = parsed_headers["Data"][header]
+                html_header_view['BCC'] = clean_value
             elif header == 'subject':
-                html_header_view['Oggetto'] = f'<h4>{parsed_headers["Data"][header]}</h4>'
+                html_header_view['Oggetto'] = f'<h4>{clean_value}</h4>'
             elif header == 'date':
-                html_header_view['Data'] = f'<em>{parsed_headers["Data"][header]}</em>'
+                html_header_view['Data'] = f'<em>{clean_value}</em>'
             elif header == 'message-id':
-                html_header_view['ID Messaggio'] = f'<code>{parsed_headers["Data"][header]}</code>'
+                html_header_view['ID Messaggio'] = f'<code>{clean_value}</code>'
             elif header == 'reply-to':
-                html_header_view['Rispondi A'] = parsed_headers["Data"][header]
+                html_header_view['Rispondi A'] = clean_value
     
     # Poi aggiungi gli altri header ordinati alfabeticamente
     other_headers = {}
     for k, v in sorted(parsed_headers["Data"].items()):
         if k not in priority_headers:
-            other_headers[k] = v
+            other_headers[k] = clean_text_for_html(v)
     
     # Aggiungi la sezione "Altri Header" se ci sono altri header
     if other_headers:
-        html_header_view['Dettagli Tecnici'] = """
+        other_headers_html = """
         <div class="accordion" id="headerAccordion">
             <div class="card">
                 <div class="card-header" id="headingDetails">
@@ -79,9 +99,9 @@ def parse_email_headers(mail_data, investigation=False):
         """
         
         for k, v in other_headers.items():
-            html_header_view['Dettagli Tecnici'] += f'<tr><th>{k}</th><td><small>{v}</small></td></tr>'
+            other_headers_html += f'<tr><th>{k}</th><td><small>{v}</small></td></tr>'
             
-        html_header_view['Dettagli Tecnici'] += """
+        other_headers_html += """
                             </tbody>
                         </table>
                     </div>
@@ -89,6 +109,7 @@ def parse_email_headers(mail_data, investigation=False):
             </div>
         </div>
         """
+        html_header_view['Dettagli Tecnici'] = other_headers_html
 
     # Aggiungi HTML_View ai dati di output
     parsed_headers["HTML_View"] = html_header_view

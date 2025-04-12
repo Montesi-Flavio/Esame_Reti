@@ -169,11 +169,19 @@ def generate_attachment_section(attachments):
             </thead>
         <tbody>
     """
-    for key,value in attachments["Data"].items():
-        # Populate table rows
-        html += "<tr>"
-        html += "<td>{}</td><td>{}</td>".format(key,value)
-        html += "</tr>"
+    
+    # Verifica che ci siano dati disponibili
+    if "Data" in attachments and attachments["Data"]:
+        for key, value in attachments["Data"].items():
+            # Populate table rows with proper escaping
+            html += "<tr>"
+            html += "<td>{}</td><td>{}</td>".format(
+                escape(str(key)) if key is not None else "",
+                escape(str(value)) if value is not None else ""
+            )
+            html += "</tr>"
+    else:
+        html += "<tr><td colspan='2'>No attachment data found</td></tr>"
         
     html += """
         </tbody>
@@ -186,63 +194,102 @@ def generate_attachment_section(attachments):
         <h3 id="attachments-investigation-section"><i class="fa-solid fa-magnifying-glass"></i> Investigation</h3>
         <div class="row">
     """
-    for index, values in attachments["Investigation"].items():
-        # Verifica se abbiamo un formato HTML_View predefinito
-        if "HTML_View" in values:
-            html_view = values["HTML_View"]
-            html += """
-            <div class="col-md-6 mb-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">{}</h4>
+    
+    # Verifica che ci siano dati di investigazione disponibili
+    if "Investigation" in attachments and attachments["Investigation"]:
+        for index, values in attachments["Investigation"].items():
+            try:
+                # Verifica se abbiamo un formato HTML_View predefinito
+                if isinstance(values, dict) and "HTML_View" in values:
+                    html_view = values["HTML_View"]
+                    html += """
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">{}</h4>
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-sm">
+                                    <tbody>
+                    """.format(escape(str(index)))
+                    
+                    # Inserisci i valori formattati per HTML
+                    if isinstance(html_view, dict):
+                        for label, value in html_view.items():
+                            safe_value = escape(str(value)) if value is not None else ""
+                            html += f"<tr><th>{escape(str(label))}</th><td>{safe_value}</td></tr>"
+                    
+                    # Se ci sono formatted results di VirusTotal, li aggiungiamo
+                    if "HTML_Formatted" in values and isinstance(values["HTML_Formatted"], dict):
+                        html += """
+                        <tr>
+                            <th colspan="2" class="bg-light">Analisi VirusTotal</th>
+                        </tr>
+                        """
+                        for hash_type, hash_data in values["HTML_Formatted"].items():
+                            if isinstance(hash_data, dict) and "Tipo" in hash_data and "Link VirusTotal" in hash_data and "Rilevamenti" in hash_data:
+                                html += f"""<tr>
+                                    <th>{escape(str(hash_data['Tipo']))}</th>
+                                    <td>{escape(str(hash_data['Link VirusTotal']))} - {escape(str(hash_data['Rilevamenti']))}</td>
+                                </tr>"""
+                    
+                    html += """
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <table class="table table-sm">
-                            <tbody>
-            """.format(index)
-            
-            # Inserisci i valori formattati per HTML
-            for label, value in html_view.items():
-                html += f"<tr><th>{label}</th><td>{value}</td></tr>"
-            
-            # Se ci sono formatted results di VirusTotal, li aggiungiamo
-            if "HTML_Formatted" in values:
-                html += """
-                <tr>
-                    <th colspan="2" class="bg-light">Analisi VirusTotal</th>
-                </tr>
+                    """
+                else:
+                    # Fallback alla vecchia formattazione per compatibilità con gestione errori migliorata
+                    html += """
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">{}</h4>
+                            </div>
+                            <div class="card-body">
+                    """.format(escape(str(index)))
+                    
+                    if isinstance(values, dict):
+                        for k, v in values.items():
+                            if isinstance(v, dict):
+                                for x, y in v.items():
+                                    html += f"<p><strong>{escape(str(x))} ({escape(str(k))})</strong>: Potentially suspicious</p>"
+                            else:
+                                html += f"<p><strong>{escape(str(k))}</strong>: {escape(str(v))}</p>"
+                    else:
+                        html += "<p>Invalid data structure for this attachment</p>"
+                    
+                    html += """
+                            </div>
+                        </div>
+                    </div>
+                    """
+            except Exception as e:
+                # Gestione degli errori per evitare interruzioni
+                html += f"""
+                <div class="col-md-6 mb-4">
+                    <div class="card border-danger">
+                        <div class="card-header bg-danger text-white">
+                            <h4 class="card-title">Error Processing Attachment</h4>
+                        </div>
+                        <div class="card-body">
+                            <p>An error occurred while processing this attachment: {escape(str(e))}</p>
+                            <p>Attachment ID: {escape(str(index))}</p>
+                        </div>
+                    </div>
+                </div>
                 """
-                for hash_type, hash_data in values["HTML_Formatted"].items():
-                    html += f"<tr><th>{hash_data['Tipo']}</th><td>{hash_data['Link VirusTotal']} - {hash_data['Rilevamenti']}</td></tr>"
-            
-            html += """
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+    else:
+        html += """
+        <div class="col-12">
+            <div class="alert alert-info">
+                No investigation data available for attachments
             </div>
-            """
-        else:
-            # Fallback alla vecchia formattazione per compatibilità
-            html += """
-            <div class="col-md-6 mb-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">{}</h4>
-                    </div>
-                    <div class="card-body">
-            """.format(index)
-            
-            for k, v in values.items():
-                for x, y in v.items():
-                    html += f"<p><strong>{x} ({k})</strong>: Potentially suspicious</p>"
-            
-            html += """
-                    </div>
-                </div>
-            </div>
-            """
-        
+        </div>
+        """
+    
     html += """
         </div>
         <hr>"""

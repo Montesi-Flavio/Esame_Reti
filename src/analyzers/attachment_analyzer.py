@@ -150,9 +150,21 @@ def analyze_attachments(email_file, investigation=False, save_attachments=False,
     # Estrai l'ID dell'email dal nome del file
     email_id = os.path.basename(email_file).split('.')[0]
     
-    # Parse email
-    with open(email_file, 'r', encoding='utf-8', errors='ignore') as f:
-        email_message = message_from_file(f)
+    # Parse email usando un approccio binario per garantire la lettura corretta degli allegati
+    try:
+        # Prima prova con la lettura binaria che preserva gli allegati binari
+        from email import message_from_binary_file
+        from email.parser import BytesParser, Parser
+        
+        with open(email_file, 'rb') as f:
+            # Usa BytesParser per gestire i contenuti binari, molto più affidabile per gli allegati
+            email_message = BytesParser().parse(f)
+    except Exception as e:
+        # Fallback al vecchio metodo in caso di errore
+        print(f"Errore nella lettura binaria dell'email {email_file}: {e}")
+        print("Tentativo con il metodo alternativo...")
+        with open(email_file, 'r', encoding='utf-8', errors='ignore') as f:
+            email_message = message_from_file(f)
     
     # Extract attachments
     attachments_dir = os.path.join(output_dir, "attachments") if output_dir and save_attachments else None
