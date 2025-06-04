@@ -17,7 +17,7 @@ from analyzers.link_analyzer import analyze_links
 from analyzers.hash_analyzer import calculate_hashes
 from analyzers.attachment_analyzer import analyze_attachments
 from output.json_output import generate_json_output, format_analysis_result
-from output.html_output import generate_html_output
+from output.json_to_html import save_html_from_json
 
 def parse_arguments():
     """Parse command line arguments."""
@@ -95,13 +95,16 @@ def main():
     # Analyze the emails
     analysis_results = analyze_emails(eml_files, args.investigate, args.save_attachments, args.output_dir)
     
-    # Generate output file based on extension
+    # Generate JSON output first
+    json_file = 'outputfile.json'
+    json_output_file = generate_json_output(analysis_results, json_file)
+    
+    # If HTML output is requested, convert from JSON
     if args.output.endswith('.html'):
-        output_file = generate_html_output(analysis_results, args.output)
+        save_html_from_json(json_output_file, args.output)
+        print(f"Analysis complete. Results saved to {args.output}")
     else:
-        output_file = generate_json_output(analysis_results, args.output)
-        
-    print(f"Analysis complete. Results saved to {output_file}")
+        print(f"Analysis complete. Results saved to {json_output_file}")
 
 if __name__ == "__main__":
     main()

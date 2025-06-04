@@ -64,8 +64,24 @@ def get_email_content(eml_file):
     Returns:
         Email message object
     """
-    with open(eml_file, "rb") as file:
-        return BytesParser(policy=default).parse(file)
+    try:
+        with open(eml_file, "rb") as file:
+            msg = BytesParser(policy=default).parse(file)
+            
+            # Pre-decode email parts for easier access
+            for part in msg.walk():
+                if part.get_content_type() in ['text/plain', 'text/html']:
+                    try:
+                        content = part.get_payload(decode=True)
+                        if content:
+                            part.decoded_content = content.decode(part.get_content_charset() or 'utf-8', errors='replace')
+                    except:
+                        part.decoded_content = ""
+            
+            return msg
+    except Exception as e:
+        print(f"Error reading email file {eml_file}: {str(e)}")
+        return None
 
 def extract_email_text(msg):
     """

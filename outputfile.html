@@ -1,0 +1,161 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Email Analysis Results</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 20px;
+                background-color: #f5f5f5;
+            }
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+            .email-card {
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                margin-bottom: 20px;
+                padding: 20px;
+            }
+            .section {
+                margin-bottom: 20px;
+                padding: 15px;
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            }
+            .section h3 {
+                margin-top: 0;
+                color: #333;
+                border-bottom: 2px solid #eee;
+                padding-bottom: 10px;
+            }
+            .link-list {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+            .link-item {
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                padding: 15px;
+                background-color: #f8f9fa;
+            }
+            .link-item.safe-link { border-left: 4px solid #28a745; }
+            .link-item.warning-link { border-left: 4px solid #ffc107; }
+            .link-item.danger-link { border-left: 4px solid #dc3545; }
+            .link-url a {
+                color: #0066cc;
+                text-decoration: none;
+                word-break: break-all;
+            }
+            .link-details {
+                margin-top: 8px;
+                font-size: 0.9em;
+                color: #666;
+            }
+            .threats {
+                color: #dc3545;
+                margin-top: 5px;
+            }
+            .tab-container {
+                display: flex;
+                margin-bottom: 20px;
+            }
+            .tab {
+                padding: 10px 20px;
+                cursor: pointer;
+                border: none;
+                background: #f8f9fa;
+                margin-right: 5px;
+                border-radius: 5px 5px 0 0;
+            }
+            .tab.active {
+                background: #fff;
+                border-bottom: 2px solid #007bff;
+            }
+            .email-content {
+                display: none;
+            }
+            .email-content.active {
+                display: block;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 15px;
+            }
+            th, td {
+                padding: 12px;
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+            }
+            th {
+                background-color: #f8f9fa;
+                font-weight: 600;
+            }
+            .badge {
+                display: inline-block;
+                padding: 3px 8px;
+                border-radius: 3px;
+                font-size: 12px;
+                font-weight: 600;
+            }
+            .badge-success { background-color: #d4edda; color: #155724; }
+            .badge-warning { background-color: #fff3cd; color: #856404; }
+            .badge-danger { background-color: #f8d7da; color: #721c24; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Email Analysis Results</h1>
+    <div class="tab-container"><button class="tab active" onclick="showEmail(0)">Email 1</button></div><div id="email-0" class="email-content active"><div class="section"><h3>Headers</h3><div class="header-item"><strong>Oggetto:</strong> <h4>test</h4></div><div class="header-item"><strong>Mittente:</strong> <strong>Maurizio <maurimori@gmail.com></strong></div><div class="header-item"><strong>Destinatario:</strong> test@maurimori.eu</div><div class="header-item"><strong>Data:</strong> <em>Tue, 8 Apr 2025 17:07:29 +0200</em></div><div class="header-item"><strong>ID Messaggio:</strong> <code><630242a1-35e7-4269-a972-05ba31400c99@gmail.com></code></div><div class="header-item"><strong>Dettagli Tecnici:</strong> 
+        <div class="accordion" id="headerAccordion">
+            <div class="card">
+                <div class="card-header" id="headingDetails">
+                    <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" 
+                            data-target="#collapseDetails" aria-expanded="false" aria-controls="collapseDetails">
+                        Mostra Altri Header
+                    </button>
+                </div>
+                <div id="collapseDetails" class="collapse" aria-labelledby="headingDetails" data-parent="#headerAccordion">
+                    <div class="card-body">
+                        <table class="table table-sm table-striped">
+                            <tbody>
+        <tr><th>arc-authentication-results</th><td><small>i=1; scott15; spf=pass (scott15: domain of maurimori@gmail.com designates 209.85.218.41 as permited sender) smtp.mailfrom=maurimori@gmail.com;arc=none;dkim=pass header.d=gmail.com header.b=nswV1cH3</small></td></tr><tr><th>arc-message-signature</th><td><small>i=1; a=rsa-sha256; d=securemail.pro; s=arc20240405;t=1744124746; c=relaxed/relaxed;bh=S50vumvFyIi38V+EiVuBqzfcrTARpUKwVfxu02pPJl0=;h=DKIM-Signature:Message-ID:Date:To:From:Subject; =?utf-8?q?b=3DazCYiQdXFXQ?= =?utf-8?q?feF8BGSN10S072Cb8rzUnkdbtWdPEkmfLDoYeWn4I1Ut6NbE91eVFimYBJivt0n3d?= =?utf-8?q?oudG8VeNTJu4pCVwqNNiMaUBKYgWIyutpCOIHd3cE0LkLmvSj7HA11itWQjZfMXDt?= =?utf-8?q?GVpPGrk5fh03I87tj4q8sxepND8iicejvYStfnw0Bz5JJsnBxwdY1b14sPNG8I7c+?= =?utf-8?q?weWG/snoLRy7UMEOSj8fNnyO/J5tYNmRuC+WqUfTHy7SaURb6nxyb9b9OSBErFYYX?= =?utf-8?q?QjV/xyA1bZdS2wQAfwpc9jT6oTdfN8fEF//UOT1JBytR7CywfViPnYBpkVeTJvN7I?= =?utf-8?q?BUJ+pw=3D=3D?=</small></td></tr><tr><th>arc-seal</th><td><small>i=1; a=rsa-sha256; d=securemail.pro; s=arc20240405; t=1744124746;cv=none; =?utf-8?q?b=3Dc9YoHsGGK+Jsm5DaP5DIicg93JgUFCBC8t1tQl0LVMZBIViZ3B/M?= =?utf-8?q?P8dfDo76e6iYeBD0Cq6+JQGVcOonpjFuAeGse1fVaGB/2m5ce4D4R/pIaaCtfQuqc?= =?utf-8?q?oJc82DJ0/IBCl3vpaulbLYxLq/z8X/tUKWKwkTSCFjXrQVFPrRZd6RS1K8amuy5aS?= =?utf-8?q?4KQIWGng6zHtUgptfP+15703urdD2fKR1WU0axtZkqDbkZE7WXyGAQhjG8w0/8p8e?= =?utf-8?q?lkaHpWOoIYHcBHdOgCYXY6bXyrmxsdqryLj22Bviy1UPOq3raDjDnwEVqhPe6KnwG?= =?utf-8?q?X6LaZysFY6m4PRlf+c1+Pv7V7WFkDA=3D=3D?=</small></td></tr><tr><th>content-language</th><td><small>it</small></td></tr><tr><th>content-type</th><td><small>multipart/mixed; boundary="------------mZilOvlypg1PHEudUMEhjnyN"</small></td></tr><tr><th>delivered-to</th><td><small>test@maurimori.eu</small></td></tr><tr><th>dkim-signature</th><td><small>v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20230601; t=1744124745; x=1744729545; darn=maurimori.eu; h=subject:from:to:content-language:user-agent:mime-version:date :message-id:from:to:cc:subject:date:message-id:reply-to; bh=S50vumvFyIi38V+EiVuBqzfcrTARpUKwVfxu02pPJl0=; b=nswV1cH3U79/q2Ubih516Ro1AG/puUk8kCnwd5HtExC70PAxs4K7SYQTYY1zdZrc1J cKWJvUkccBdTyWDKlS1JiZLcDHDcOCWrqUvq3TH5hSO4UBt15beI5JYcT7E6kucXa5u+ 1YdQSJ3qh09kuaFU9uDypdI8d8Rg25M4wUgZUtKRnzHS76ca4fy+3HE9/HG/SpAdUMWq W9Fg8L8NqV/lq1Lkj/TyTCeBm80N3sWC6a08S1DANbRuijiGmUWigweTkVycLX9djZ6v g8qXFkyjB74/gbAJK/I/YRcvsRNOl5FNob+tXGqtzpKvcH+qlGGuG7k9857M9U0jw/S5 FZlg==</small></td></tr><tr><th>mime-version</th><td><small>1.0</small></td></tr><tr><th>received</th><td><small>from montiit-dir03.it.dadainternal ([172.29.136.15])by montiit-be31.it.dadainternal with LMTPid xgXaHUs79WdKPQAABBHseQ(envelope-from <maurimori@gmail.com>)for <test@maurimori.eu>; Tue, 08 Apr 2025 17:05:47 +0200 from scott15 ([172.29.136.15])by montiit-dir03.it.dadainternal with LMTPid 2FsiHUs79WcsKgAAS21KyQ(envelope-from <maurimori@gmail.com>)for <test@maurimori.eu>; Tue, 08 Apr 2025 17:05:47 +0200 from mail-ej1-f41.google.com ([209.85.218.41])by cmsmtp with ESMTPSid 2AWHuEMxIeNMu2AWIuobwq; Tue, 08 Apr 2025 17:05:46 +0200 by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ac2bb7ca40bso648175966b.3 for <test@maurimori.eu>; Tue, 08 Apr 2025 08:05:46 -0700 (PDT) from [192.168.1.60] (93-41-32-21.ip79.fastwebnet.it. [93.41.32.21]) by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7c018b109sm919915466b.160.2025.04.08.08.05.41 for <test@maurimori.eu> (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128); Tue, 08 Apr 2025 08:05:42 -0700 (PDT)</small></td></tr><tr><th>received-spf</th><td><small>pass</small></td></tr><tr><th>return-path</th><td><small><maurimori@gmail.com></small></td></tr><tr><th>user-agent</th><td><small>Mozilla Thunderbird</small></td></tr><tr><th>x-cloudmark-reporter</th><td><small>test@maurimori.eu</small></td></tr><tr><th>x-cmae-envelope</th><td><small>=?utf-8?q?MS4xfDnnW682Ld2vXWi0hfliaelz9pMyqP7be/CHbBcz++9oo?= =?utf-8?q?R0K1xyAL03EI/+FjpLv3uAIgUW35ODfw9u39kPGBVXqz948pH2sGM4pdMAsw+HP1c?= =?utf-8?q?gSz2zn_WGuJfB/3n9aMZnsnuc5dOrAnPFpkYHZ2ET2NjN+OaMdU9t6bTzvjPYok+f?= =?utf-8?q?ApR5OlOpo5HWmu4SR8p3L8QM3IXos/fsPwCCupqC8=3D?=</small></td></tr><tr><th>x-cnfs-analysis</th><td><small>v=2.4 cv=INnJCRvG c=1 sm=1 tr=0 ts=67f53b4a cx=a_idp_d a=/XEA4Vg4RWeMfXAJl6kgpw==:117 a=EZ+gcyUjseCe9fGqrnKx2A==:17 a=XR8D0OoHHMoA:10 a=x7bEGLp0ZPQA:10 a=BytA9ynTsDQA:10 a=95EFz5htlIgA:10 a=r77TgQKjGQsHNAKrUKIA:9 a=nS36O97Bj3wUElCrIrAA:9 a=QEXdDO2ut3YA:10 a=LPMgiDy0bqDdadZML-sA:9 a=mXuCJ--y6OYA:10 a=wwAePvBONnjDQaqHVNx2:22 a=bMrFyaAnRwegQDxt2Pzk:22 a=pHzHmUro8NiASowvMSCR:22 a=nt3jZW36AmriUCFCBwmW:22</small></td></tr><tr><th>x-gm-gg</th><td><small>ASbGncvBe5vf9ionLcITqCLHJ+aTboyBgVzqwSJD+Ix3fBwcsAVvbtxR+zS1FVdFW+2sYak43UoGCClmhsB5K8S7rl7KSoU5QoHW3/nI3U+XbsXsYVcHN9iI6dtsrPC/a0UNgsmgsh2OrN45AkZKCRL1B3d9T0lyn136MizQEdpJVfBptR4BhDDih2HD/LkAgVH/yDTxqIvga8S2pOn0fhyMovtx9zq/xS4waqRCk/bUS0Jb34b/odSO24/UBiby/t1Nfj0z/Cb/Yd0PCrKSTLUuZtlp7XIbJ2aR/JYc8yjiELE8DYnWpOj1bQNvmx4LJzaIUx7M90q77BfD4ub2Lc5cUPAxlij4qLuXQ5UNUZCX2zS+Oa3JyYO83s2qD80=</small></td></tr><tr><th>x-gm-message-state</th><td><small>AOJu0YxJKWdvJj6WdXP5OU0kC5qRLi2eLB8NxFSlwxq4UCqhU0Axzy8NI8bMjHdOIJdOeJnYIWcYJ+wA49LfRRQ6R2cdKo/Cz/MB3hsFVz/h/ausPJfF</small></td></tr><tr><th>x-google-dkim-signature</th><td><small>v=1; a=rsa-sha256; c=relaxed/relaxed; d=1e100.net; s=20230601; t=1744124745; x=1744729545; h=subject:from:to:content-language:user-agent:mime-version:date :message-id:x-gm-message-state:from:to:cc:subject:date:message-id :reply-to; bh=S50vumvFyIi38V+EiVuBqzfcrTARpUKwVfxu02pPJl0=; b=ZViDIARlfzyQhvNcSolXWbha7qs1k5IqSq+XAcpHFmiC2oVj1GAUZnLdZQyppLfBfb fcib2H/pubRsFhyAheufmkXVYSZncREWbnBOXKVP08g+p9GosF61mKvdokMc2Q0C3L7B XtMfgbq13JO73Vl4DEmnz8Iz6WIJs4eaF2XDHHx40e++GuTgKs91WoXNdNnqB7Fg34uT fF0fTupZr8i7ppKHLyt3xVyWdJ9ZMllRU5rBKOiOKoK6amz3vN2PzcH3Zvkq5sPQDghe H6qZNFzcv8X+mZPl/P2AEzxHGjs1vPTB9TL2uSrX0SXOW+QudlnVkN03rtsp96YJB4OF KhuA==</small></td></tr><tr><th>x-google-smtp-source</th><td><small>=?utf-8?q?AGHT+IGXzkoNQMHJbBMV5bW3BJPKiemdSa/kTeIVcvSk?= =?utf-8?q?GYS3mZlsKgXcGVPfZ51krnFbwoSLpa1ilw=3D=3D?=</small></td></tr><tr><th>x-received</th><td><small>by 2002:a17:907:72c5:b0:ac7:3911:35e6 with SMTP id a640c23a62f3a-ac7d1cceaa2mr1266037366b.58.1744124745091; Tue, 08 Apr 2025 08:05:45 -0700 (PDT)</small></td></tr><tr><th>x-rid-domain</th><td><small>FWD-test@maurimori.eu</small></td></tr><tr><th>x-rid-platform</th><td><small>FORWARDLNX</small></td></tr><tr><th>x-rspamd-server</th><td><small>rspamd14</small></td></tr><tr><th>x-spam-status</th><td><small>No, score=0.00, required=95.00</small></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div></div><div class="section"><h3>Links Analysis</h3><p>Found 1 unique links</p><div class="link-list"><div class="link-item warning-link"><div class="link-url"><a href="http://80.210.112.106" target="_blank">http://80.210.112.106</a></div><div class="link-details"><span>Domain: 80.210.112.106</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;NotFoundError&#x27;, &#x27;URL &quot;aHR0cDovLzgwLjIxMC4xMTIuMTA2&quot; not found&#x27;)</div></div></div></div></div><div class="section"><h3>File Hashes</h3><div><strong>Data:</strong> </div><div><strong>Investigation:</strong> </div></div></div>
+        </div>
+        <script>
+        function showEmail(index) {
+            // Hide all email contents
+            document.querySelectorAll('.email-content').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Show selected email content
+            document.getElementById(`email-${index}`).classList.add('active');
+            
+            // Add active class to selected tab
+            document.querySelectorAll('.tab')[index].classList.add('active');
+        }
+        </script>
+    </body>
+    </html>
+    
