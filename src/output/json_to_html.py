@@ -55,6 +55,327 @@ def format_hash_value(hash_data):
         return result
     return ''
 
+def generate_headers_section(result):
+    """Generate the headers section HTML for an email."""
+    if "Headers" not in result or "Headers" not in result["Headers"]:
+        return ""
+    
+    html_parts = []
+    headers = result["Headers"]["Headers"]
+    
+    html_parts.append('            <div class="section">')
+    html_parts.append('                <h3>📧 Email Headers</h3>')
+    
+    if "HTML_View" in headers:
+        # Display formatted headers from header analyzer
+        html_parts.append('                <div class="headers-container">')
+        for key, value in headers["HTML_View"].items():
+            if key == "Dettagli Tecnici":
+                # Special handling for accordion-style technical details
+                html_parts.append('                    <div class="header-section-expandable">')
+                html_parts.append('                        <details>')
+                html_parts.append(f'                            <summary>🔧 {escape(key)}</summary>')
+                html_parts.append(f'                            <div class="expandable-content">{value}</div>')
+                html_parts.append('                        </details>')
+                html_parts.append('                    </div>')
+            else:
+                html_parts.append('                    <div class="header-item">')
+                html_parts.append(f'                        <div class="header-label">{escape(key)}:</div>')
+                html_parts.append(f'                        <div class="header-value">{value}</div>')
+                html_parts.append('                    </div>')
+        html_parts.append('                </div>')
+    elif "Data" in headers:
+        # Fallback to basic headers display
+        html_parts.append('                <div class="headers-basic">')
+        for key, value in headers["Data"].items():
+            if key in ['subject', 'from', 'to', 'date', 'message-id']:
+                html_parts.append(f'                    <div class="header-item"><strong>{escape(key.title())}:</strong> {escape(str(value))}</div>')
+        html_parts.append('                </div>')
+    
+    html_parts.append('            </div>')
+    return '\n'.join(html_parts)
+
+def generate_links_section(result):
+    """Generate the links section HTML for an email."""
+    if "Links" not in result or "Links" not in result["Links"]:
+        return ""
+    
+    html_parts = []
+    links = result["Links"]["Links"]
+    
+    html_parts.append('            <div class="section">')
+    html_parts.append('                <h3>🔗 Links Analysis</h3>')
+    
+    if links.get("unique_links"):
+        html_parts.append(f'                <p>Found {links["total_links"]} unique links</p>')
+        html_parts.append('                <div class="link-list">')
+        for link in links["unique_links"]:
+            safety_class = ""
+            if "safety_score" in link:
+                if link["safety_score"] >= 80:
+                    safety_class = " safe-link"
+                elif link["safety_score"] >= 50:
+                    safety_class = " warning-link"
+                else:
+                    safety_class = " danger-link"
+            html_parts.append(f'                    <div class="link-item{safety_class}">')            
+            html_parts.append(f'                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="{escape(link["url"])}" target="_blank">{escape(link["url"])}</a></div>')
+            html_parts.append('                        <div style="clear: both; margin-top: 15px;"></div>') # Aggiungo spazio verticale e clear
+            html_parts.append('                        <div class="link-details" style="display: block; margin-top: 8px;">')
+            html_parts.append(f'                            <div class="domain-info">Domain: {escape(link["domain"])}</div>')
+            if "safety_score" in link:
+                html_parts.append(f'                            <div>Safety Score: {link["safety_score"]}%</div>')
+            if link.get("threats"):
+                html_parts.append(f'                            <div class="threats">Threats: {", ".join(escape(str(t)) for t in link["threats"])}</div>')
+            if link.get("error"):
+                html_parts.append(f'                            <div class="threats">Error: {escape(link["error"])}</div>')
+            html_parts.append('                        </div>')
+            html_parts.append('                    </div>')
+        html_parts.append('                </div>')
+    else:
+        html_parts.append('                <p>No links found in this email</p>')
+    
+    html_parts.append('            </div>')
+    return '\n'.join(html_parts)
+
+def generate_attachments_section(result):
+    """Generate the attachments section HTML for an email."""
+    if "Attachments" not in result or "Attachments" not in result["Attachments"]:
+        return ""
+    
+    html_parts = []
+    attachments = result["Attachments"]["Attachments"]
+    
+    html_parts.append('            <div class="section">')
+    html_parts.append('                <h3>📎 Attachments Analysis</h3>')
+    
+    # Check if there are attachments
+    if "Allegati" in attachments and attachments["Allegati"]:
+        # Warning message if present
+        if "Avviso" in attachments:
+            alert_class = "danger" if "ATTENZIONE" in attachments["Avviso"] else "info"
+            html_parts.append(f'                <div class="alert alert-{alert_class}">')
+            html_parts.append(f'                    <strong>⚠️ Warning:</strong> {escape(attachments["Avviso"])}')
+            html_parts.append('                </div>')
+        
+        html_parts.append('                <div class="attachments-container">')
+        
+        for attachment_id, attachment in attachments["Allegati"].items():
+            # Determine safety status
+            is_suspicious = attachment.get("Sospetto", "No") == "Sì - File eseguibile (.exe/.bat)"
+            safety_class = "danger" if is_suspicious else "success"
+            safety_icon = "🚨" if is_suspicious else "✅"
+            
+            html_parts.append('                    <div class="attachment-card">')
+            html_parts.append('                        <div class="attachment-header">')
+            html_parts.append('                            <div class="attachment-name">')
+            html_parts.append(f'                                {safety_icon} <strong>{escape(attachment.get("Filename", "Unknown"))}</strong>')
+            html_parts.append('                            </div>')
+            html_parts.append(f'                            <span class="badge badge-{safety_class}">')
+            html_parts.append(f'                                {escape(attachment.get("Sospetto", "Unknown"))}')
+            html_parts.append('                            </span>')
+            html_parts.append('                        </div>')
+            html_parts.append('                        <div class="attachment-details">')
+            html_parts.append('                            <div class="attachment-info">')
+            html_parts.append(f'                                <strong>Type:</strong> {escape(attachment.get("MIME Type", "Unknown"))}<br>')
+            html_parts.append(f'                                <strong>Size:</strong> {escape(attachment.get("Size", "Unknown"))}<br>')
+            html_parts.append(f'                                <strong>Email ID:</strong> {escape(str(attachment.get("Email ID", "Unknown")))}')
+            html_parts.append('                            </div>')
+            
+            html_parts.append('                            <div class="hash-section">')
+            html_parts.append('                                <details>')
+            html_parts.append('                                    <summary>🔐 File Hashes</summary>')
+            html_parts.append('                                    <div class="hash-content">')
+            for hash_type in ["MD5", "SHA1", "SHA256"]:
+                if hash_type in attachment:
+                    hash_value = attachment[hash_type]
+                    html_parts.append('                                        <div class="hash-item">')
+                    html_parts.append(f'                                            <span class="hash-label">{hash_type}:</span>')
+                    html_parts.append('                                            <code class="hash-value">')
+                    html_parts.append(f'                                                <a href="https://www.virustotal.com/gui/file/{hash_value}" target="_blank" title="Check on VirusTotal">')
+                    html_parts.append(f'                                                    {escape(hash_value)}')
+                    html_parts.append('                                                </a>')
+                    html_parts.append('                                            </code>')
+                    html_parts.append('                                        </div>')
+            html_parts.append('                                    </div>')
+            html_parts.append('                                </details>')
+            html_parts.append('                            </div>')
+            
+            # Add security analysis if available
+            if "Stato Sicurezza" in attachment:
+                security_safe = "Sicuro" in attachment["Stato Sicurezza"]
+                security_class = "success" if security_safe else "danger"
+                security_icon = "🛡️" if security_safe else "⚠️"
+                
+                html_parts.append('                            <div class="security-analysis">')
+                html_parts.append(f'                                <h5>{security_icon} Security Analysis</h5>')
+                html_parts.append(f'                                <span class="badge badge-{security_class}">')
+                html_parts.append(f'                                    {escape(attachment["Stato Sicurezza"])}')
+                html_parts.append('                                </span>')
+                
+                if "Dettagli Sicurezza" in attachment:
+                    html_parts.append('                                <div class="security-details"><ul>')
+                    for detail in attachment["Dettagli Sicurezza"]:
+                        html_parts.append(f'                                    <li>{escape(detail)}</li>')
+                    html_parts.append('                                </ul></div>')
+                
+                html_parts.append('                            </div>')
+            
+            # Add file path if available
+            if "File Path" in attachment:
+                file_path = attachment["File Path"]
+                file_name = os.path.basename(file_path)
+                html_parts.append('                            <div class="file-link">')
+                html_parts.append('                                <strong>📁 Saved as:</strong>')
+                html_parts.append(f'                                <a href="attachments/{escape(file_name)}" target="_blank">{escape(file_name)}</a>')
+                html_parts.append('                            </div>')
+            
+            html_parts.append('                        </div>')  # Close attachment-details
+            html_parts.append('                    </div>')      # Close attachment-card
+        
+        html_parts.append('                </div>')  # Close attachments-container
+    else:
+        html_parts.append('                <div class="alert alert-info">')
+        html_parts.append('                    <strong>📎 No attachments found in this email</strong>')
+        html_parts.append('                </div>')
+    
+    html_parts.append('            </div>')  # Close section
+    return '\n'.join(html_parts)
+
+def generate_dmarc_section(result):
+    """Generate the DMARC section HTML for an email."""
+    if "DMARC" not in result or "DMARC" not in result["DMARC"]:
+        return ""
+    
+    html_parts = []
+    dmarc_data = result["DMARC"]["DMARC"]
+    
+    html_parts.append('            <div class="section">')
+    html_parts.append('                <h3>🔐 DMARC & DKIM Authentication Analysis</h3>')
+    
+    if dmarc_data:
+        html_parts.append('                <div class="dmarc-container">')
+        
+        # Display domain information
+        if "Data" in dmarc_data:
+            data_section = dmarc_data["Data"]
+            from_domain = data_section.get("From_Domain", "Unknown")
+            
+            html_parts.append('                    <div class="domain-info">')
+            html_parts.append(f'                        <h4>📧 Domain Analysis: {escape(from_domain)}</h4>')
+            html_parts.append('                    </div>')
+            
+            # DKIM Analysis Section
+            dkim_present = data_section.get("DKIM_Present", False)
+            html_parts.append('                    <div class="dkim-analysis">')
+            html_parts.append('                        <h5>🔑 DKIM (DomainKeys Identified Mail) Analysis</h5>')
+            html_parts.append('                        <div class="auth-status-box">')
+            
+            if dkim_present:
+                html_parts.append('                            <div class="status-item success">')
+                html_parts.append('                                <span class="status-icon">✅</span>')
+                html_parts.append('                                <span class="status-text">DKIM Signature Present</span>')
+                html_parts.append('                            </div>')
+                
+                # Display detailed DKIM analysis if available
+                if "DKIM_Analysis" in data_section:
+                    dkim_analysis = data_section["DKIM_Analysis"]
+                    html_parts.append('                            <div class="dkim-details">')
+                    html_parts.append('                                <h6>📋 DKIM Signature Details</h6>')
+                    html_parts.append('                                <div class="dkim-details-grid">')
+                    
+                    # Version, Algorithm, Domain, Selector, Canonicalization
+                    for field, label in [("Version", "Version"), ("Algorithm", "Algorithm"), 
+                                       ("Domain", "Signing Domain"), ("Selector", "Selector"), 
+                                       ("Canonicalization", "Canonicalization")]:
+                        if field in dkim_analysis:
+                            html_parts.append('                                    <div class="detail-item">')
+                            html_parts.append(f'                                        <span class="detail-label">{label}:</span>')
+                            if field in ["Algorithm", "Selector"]:
+                                html_parts.append(f'                                        <span class="detail-value"><code>{escape(str(dkim_analysis[field]))}</code></span>')
+                            elif field == "Domain":
+                                html_parts.append(f'                                        <span class="detail-value"><strong>{escape(str(dkim_analysis[field]))}</strong></span>')
+                            else:
+                                html_parts.append(f'                                        <span class="detail-value">{escape(str(dkim_analysis[field]))}</span>')
+                            html_parts.append('                                    </div>')
+                    
+                    html_parts.append('                                </div>')  # Close dkim-details-grid
+                    html_parts.append('                            </div>')  # Close dkim-details
+            else:
+                html_parts.append('                            <div class="status-item danger">')
+                html_parts.append('                                <span class="status-icon">❌</span>')
+                html_parts.append('                                <span class="status-text">No DKIM Signature Found</span>')
+                html_parts.append('                            </div>')
+            
+            html_parts.append('                        </div>')  # Close auth-status-box
+            html_parts.append('                    </div>')      # Close dkim-analysis
+        
+        html_parts.append('                </div>')  # Close dmarc-container
+    else:
+        html_parts.append('                <div class="alert alert-info">')
+        html_parts.append('                    <strong>🔐 No DMARC analysis data available</strong>')
+        html_parts.append('                </div>')
+    
+    html_parts.append('            </div>')  # Close section
+    return '\n'.join(html_parts)
+
+def generate_hashes_section(result):
+    """Generate the hashes section HTML for an email."""
+    if "Hashes" not in result or "Hashes" not in result["Hashes"]:
+        return ""
+    
+    html_parts = []
+    hashes = result["Hashes"]["Hashes"]
+    
+    html_parts.append('            <div class="section">')
+    html_parts.append('                <h3>🔐 File Hashes</h3>')
+    
+    for hash_type, hash_value in hashes.items():
+        formatted_hash = format_hash_value(hash_value)
+        html_parts.append(f'                <div><strong>{escape(hash_type)}:</strong> {formatted_hash}</div>')
+    
+    html_parts.append('            </div>')
+    return '\n'.join(html_parts)
+
+def generate_investigation_section(result):
+    """Generate the header investigation section HTML for an email."""
+    if "Headers" not in result or "Investigation" not in result["Headers"]:
+        return ""
+    
+    html_parts = []
+    investigation = result["Headers"]["Investigation"]
+    
+    html_parts.append('            <div class="section">')
+    html_parts.append('                <h3>🔍 Header Security Investigation</h3>')
+    
+    # Check if there's HTML formatted investigation data
+    if "Headers" in result and "HTML_Investigation" in result["Headers"]:
+        html_investigation = result["Headers"]["HTML_Investigation"]
+        for key, value in html_investigation.items():
+            html_parts.append(f'                {value}')
+    else:
+        # Fallback to basic investigation display
+        # Sender IP investigation
+        if "X-Sender-Ip" in investigation:
+            ip_info = investigation["X-Sender-Ip"]
+            safety_class = "success" if ip_info["Safety"] == "Safe" else "danger"
+            safety_icon = "✅" if ip_info["Safety"] == "Safe" else "🚨"
+            
+            html_parts.append('                <div class="investigation-card">')
+            html_parts.append('                    <div class="investigation-header">')
+            html_parts.append(f'                        <h4>{safety_icon} Sender IP Analysis</h4>')
+            html_parts.append('                    </div>')
+            html_parts.append('                    <div class="investigation-content">')
+            html_parts.append('                        <div class="ip-details">')
+            html_parts.append(f'                            <strong>Safety Status:</strong> <span class="badge badge-{safety_class}">{ip_info["Safety"]}</span><br>')
+            html_parts.append(f'                            <strong>Positive Detections:</strong> {ip_info["Positives"]}')
+            html_parts.append('                        </div>')
+            html_parts.append('                    </div>')
+            html_parts.append('                </div>')
+    
+    html_parts.append('            </div>')  # Close section
+    return '\n'.join(html_parts)
+
 def generate_html_from_json(json_file):
     """
     Generate HTML from JSON analysis results.
@@ -69,489 +390,54 @@ def generate_html_from_json(json_file):
     if not data:
         return "<h1>No analysis data available</h1>"
         
-    html = f"""
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Email Analysis Results</title>
-        {get_base_styles()}
-    </head>
-    <body>
-        <div class="container">
-            <h1>Email Analysis Results</h1>    """
+    # Start building HTML with proper structure
+    html_parts = []
+    
+    # HTML head and opening structure
+    html_parts.append(f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Analysis Results</title>
+    {get_base_styles()}
+</head>
+<body>
+    <div class="container">
+        <h1>Email Analysis Results</h1>""")
     
     # Generate tabs for each email
-    html += '\n    <div class="tab-container">\n'
+    html_parts.append('        <div class="tab-container">')
     for i, result in enumerate(data):
         active = " active" if i == 0 else ""
-        html += f'        <button class="tab{active}" onclick="showEmail({i})">Email {i+1}</button>\n'
-    html += '    </div>\n'
-      # Generate content for each email
-    for i, result in enumerate(data):
-        active = " active" if i == 0 else ""
-        html += f'\n    <div id="email-{i}" class="email-content{active}">\n'
-        
-        # Headers section with enhanced display
-        if "Headers" in result and "Headers" in result["Headers"]:
-            headers = result["Headers"]["Headers"]
-            html += '        <div class="section">\n'
-            html += '            <h3>📧 Email Headers</h3>\n'
-            
-            if "HTML_View" in headers:
-                # Display formatted headers from header analyzer
-                html += '            <div class="headers-container">\n'
-                for key, value in headers["HTML_View"].items():
-                    if key == "Dettagli Tecnici":
-                        # Special handling for accordion-style technical details
-                        html += f'''<div class="header-section-expandable">
-                            <details>
-                                <summary>🔧 {escape(key)}</summary>
-                                <div class="expandable-content">{value}</div>
-                            </details>
-                        </div>'''
-                    else:
-                        html += f'''<div class="header-item">
-                            <div class="header-label">{escape(key)}:</div>
-                            <div class="header-value">{value}</div>
-                        </div>'''
-                html += '</div>'
-            elif "Data" in headers:
-                # Fallback to basic headers display
-                html += '<div class="headers-basic">'
-                for key, value in headers["Data"].items():
-                    if key in ['subject', 'from', 'to', 'date', 'message-id']:
-                        html += f'<div class="header-item"><strong>{escape(key.title())}:</strong> {escape(str(value))}</div>'
-                html += '</div>'
-            
-            html += '</div>'
-        
-        # Links section
-        if "Links" in result and "Links" in result["Links"]:
-            html += '<div class="section">'
-            html += '<h3>🔗 Links Analysis</h3>'
-            links = result["Links"]["Links"]
-            if links.get("unique_links"):
-                html += f'<p>Found {links["total_links"]} unique links</p>'
-                html += '<div class="link-list">'
-                for link in links["unique_links"]:
-                    safety_class = ""
-                    if "safety_score" in link:
-                        if link["safety_score"] >= 80:
-                            safety_class = " safe-link"
-                        elif link["safety_score"] >= 50:
-                            safety_class = " warning-link"
-                        else:
-                            safety_class = " danger-link"
-                    
-                    html += f'<div class="link-item{safety_class}">'
-                    html += f'<div class="link-url"><a href="{escape(link["url"])}" target="_blank">{escape(link["url"])}</a></div>'
-                    html += '<div class="link-details">'
-                    html += f'<span class="domain-info">Domain: {escape(link["domain"])}</span>'
-                    if "safety_score" in link:
-                        html += f'<div>Safety Score: {link["safety_score"]}%</div>'
-                    if link.get("threats"):
-                        html += f'<div class="threats">Threats: {", ".join(escape(str(t)) for t in link["threats"])}</div>'
-                    if link.get("error"):
-                        html += f'<div class="threats">Error: {escape(link["error"])}</div>'
-                    html += '</div></div>'
-                html += '</div>'
-            else:
-                html += '<p>No links found in this email</p>'
-            html += '</div>'
-        
-        # Attachments section
-        if "Attachments" in result and "Attachments" in result["Attachments"]:
-            attachments = result["Attachments"]["Attachments"]
-            html += '<div class="section">'
-            html += '<h3>📎 Attachments Analysis</h3>'
-            
-            # Check if there are attachments
-            if "Allegati" in attachments and attachments["Allegati"]:
-                # Warning message if present
-                if "Avviso" in attachments:
-                    alert_class = "danger" if "ATTENZIONE" in attachments["Avviso"] else "info"
-                    html += f'''<div class="alert alert-{alert_class}">
-                        <strong>⚠️ Warning:</strong> {escape(attachments["Avviso"])}
-                    </div>'''
-                
-                html += '<div class="attachments-container">'
-                
-                for attachment_id, attachment in attachments["Allegati"].items():
-                    # Determine safety status
-                    is_suspicious = attachment.get("Sospetto", "No") == "Sì - File eseguibile (.exe/.bat)"
-                    safety_class = "danger" if is_suspicious else "success"
-                    safety_icon = "🚨" if is_suspicious else "✅"
-                    
-                    html += f'''<div class="attachment-card">
-                        <div class="attachment-header">
-                            <div class="attachment-name">
-                                {safety_icon} <strong>{escape(attachment.get("Filename", "Unknown"))}</strong>
-                            </div>
-                            <span class="badge badge-{safety_class}">
-                                {escape(attachment.get("Sospetto", "Unknown"))}
-                            </span>
-                        </div>
-                        <div class="attachment-details">
-                            <div class="attachment-info">
-                                <strong>Type:</strong> {escape(attachment.get("MIME Type", "Unknown"))}<br>
-                                <strong>Size:</strong> {escape(attachment.get("Size", "Unknown"))}<br>
-                                <strong>Email ID:</strong> {escape(str(attachment.get("Email ID", "Unknown")))}
-                            </div>
-                            
-                            <div class="hash-section">
-                                <details>
-                                    <summary>🔐 File Hashes</summary>
-                                    <div class="hash-content">
-                                        <div class="hash-item">
-                                            <span class="hash-label">MD5:</span>
-                                            <code class="hash-value">
-                                                <a href="https://www.virustotal.com/gui/file/{attachment.get("MD5", "")}" target="_blank" title="Check on VirusTotal">
-                                                    {escape(attachment.get("MD5", ""))}
-                                                </a>
-                                            </code>
-                                        </div>
-                                        <div class="hash-item">
-                                            <span class="hash-label">SHA1:</span>
-                                            <code class="hash-value">
-                                                <a href="https://www.virustotal.com/gui/file/{attachment.get("SHA1", "")}" target="_blank" title="Check on VirusTotal">
-                                                    {escape(attachment.get("SHA1", ""))}
-                                                </a>
-                                            </code>
-                                        </div>
-                                        <div class="hash-item">
-                                            <span class="hash-label">SHA256:</span>
-                                            <code class="hash-value">
-                                                <a href="https://www.virustotal.com/gui/file/{attachment.get("SHA256", "")}" target="_blank" title="Check on VirusTotal">
-                                                    {escape(attachment.get("SHA256", ""))}
-                                                </a>
-                                            </code>
-                                        </div>
-                                    </div>
-                                </details>
-                            </div>'''
-                    
-                    # Add security analysis if available
-                    if "Stato Sicurezza" in attachment:
-                        security_safe = "Sicuro" in attachment["Stato Sicurezza"]
-                        security_class = "success" if security_safe else "danger"
-                        security_icon = "🛡️" if security_safe else "⚠️"
-                        
-                        html += f'''<div class="security-analysis">
-                            <h5>{security_icon} Security Analysis</h5>
-                            <span class="badge badge-{security_class}">
-                                {escape(attachment["Stato Sicurezza"])}
-                            </span>'''
-                        
-                        if "Dettagli Sicurezza" in attachment:
-                            html += '<div class="security-details"><ul>'
-                            for detail in attachment["Dettagli Sicurezza"]:
-                                html += f'<li>{escape(detail)}</li>'
-                            html += '</ul></div>'
-                        
-                        html += '</div>'
-                    
-                    # Add file path if available
-                    if "File Path" in attachment:
-                        file_path = attachment["File Path"]
-                        file_name = os.path.basename(file_path)
-                        html += f'''<div class="file-link">
-                            <strong>📁 Saved as:</strong> 
-                            <a href="attachments/{escape(file_name)}" target="_blank">{escape(file_name)}</a>
-                        </div>'''
-                    
-                    html += '</div>'  # Close attachment-card
-                
-                html += '</div>'  # Close attachments-container
-            else:
-                html += '''<div class="alert alert-info">
-                    <strong>📎 No attachments found in this email</strong>
-                </div>'''
-            
-            html += '</div>'  # Close section
-          # DMARC Authentication section
-        if "DMARC" in result and "DMARC" in result["DMARC"]:
-            dmarc_data = result["DMARC"]["DMARC"]
-            html += '<div class="section">'
-            html += '<h3>🔐 DMARC & DKIM Authentication Analysis</h3>'
-            
-            if dmarc_data:
-                html += '<div class="dmarc-container">'
-                
-                # Display domain information
-                if "Data" in dmarc_data:
-                    data_section = dmarc_data["Data"]
-                    from_domain = data_section.get("From_Domain", "Unknown")
-                    
-                    html += f'''<div class="domain-info">
-                        <h4>📧 Domain Analysis: {escape(from_domain)}</h4>
-                    </div>'''
-                    
-                    # DKIM Analysis Section
-                    dkim_present = data_section.get("DKIM_Present", False)
-                    html += f'''<div class="dkim-analysis">
-                        <h5>🔑 DKIM (DomainKeys Identified Mail) Analysis</h5>
-                        <div class="auth-status-box">'''
-                    
-                    if dkim_present:
-                        html += '''<div class="status-item success">
-                            <span class="status-icon">✅</span>
-                            <span class="status-text">DKIM Signature Present</span>
-                        </div>'''
-                        
-                        # Display detailed DKIM analysis if available
-                        if "DKIM_Analysis" in data_section:
-                            dkim_analysis = data_section["DKIM_Analysis"]
-                            html += '''<div class="dkim-details">
-                                <h6>📋 DKIM Signature Details</h6>
-                                <div class="dkim-details-grid">'''
-                            
-                            # Version
-                            if "Version" in dkim_analysis:
-                                html += f'''<div class="detail-item">
-                                    <span class="detail-label">Version:</span>
-                                    <span class="detail-value">{escape(str(dkim_analysis["Version"]))}</span>
-                                </div>'''
-                            
-                            # Algorithm
-                            if "Algorithm" in dkim_analysis:
-                                html += f'''<div class="detail-item">
-                                    <span class="detail-label">Algorithm:</span>
-                                    <span class="detail-value"><code>{escape(str(dkim_analysis["Algorithm"]))}</code></span>
-                                </div>'''
-                            
-                            # Domain
-                            if "Domain" in dkim_analysis:
-                                html += f'''<div class="detail-item">
-                                    <span class="detail-label">Signing Domain:</span>
-                                    <span class="detail-value"><strong>{escape(str(dkim_analysis["Domain"]))}</strong></span>
-                                </div>'''
-                            
-                            # Selector
-                            if "Selector" in dkim_analysis:
-                                html += f'''<div class="detail-item">
-                                    <span class="detail-label">Selector:</span>
-                                    <span class="detail-value"><code>{escape(str(dkim_analysis["Selector"]))}</code></span>
-                                </div>'''
-                            
-                            # Canonicalization
-                            if "Canonicalization" in dkim_analysis:
-                                html += f'''<div class="detail-item">
-                                    <span class="detail-label">Canonicalization:</span>
-                                    <span class="detail-value">{escape(str(dkim_analysis["Canonicalization"]))}</span>
-                                </div>'''
-                            
-                            # Validity
-                            if "Validity" in dkim_analysis:
-                                validity = dkim_analysis["Validity"]
-                                validity_class = "success" if "valid" in str(validity).lower() else "danger"
-                                validity_icon = "✅" if "valid" in str(validity).lower() else "❌"
-                                html += f'''<div class="detail-item">
-                                    <span class="detail-label">Signature Validity:</span>
-                                    <span class="badge badge-{validity_class}">
-                                        {validity_icon} {escape(str(validity)).replace('_', ' ').title()}
-                                    </span>
-                                </div>'''
-                            
-                            html += '</div>'  # Close dkim-details-grid
-                            
-                            # Headers Signed
-                            if "Headers_Signed" in dkim_analysis and dkim_analysis["Headers_Signed"]:
-                                html += '''<div class="signed-headers">
-                                    <h6>📝 Signed Headers</h6>
-                                    <div class="headers-list">'''
-                                for header in dkim_analysis["Headers_Signed"]:
-                                    html += f'<span class="header-tag">{escape(str(header))}</span>'
-                                html += '</div></div>'
-                            
-                            # Body Hash Status
-                            if "Body_Hash" in dkim_analysis:
-                                body_hash_status = dkim_analysis["Body_Hash"]
-                                hash_class = "success" if "present" in str(body_hash_status).lower() else "warning"
-                                hash_icon = "✅" if "present" in str(body_hash_status).lower() else "⚠️"
-                                html += f'''<div class="body-hash-status">
-                                    <span class="detail-label">Body Hash:</span>
-                                    <span class="badge badge-{hash_class}">
-                                        {hash_icon} {escape(str(body_hash_status)).title()}
-                                    </span>
-                                </div>'''
-                            
-                            html += '</div>'  # Close dkim-details
-                    else:
-                        html += '''<div class="status-item danger">
-                            <span class="status-icon">❌</span>
-                            <span class="status-text">No DKIM Signature Found</span>
-                        </div>
-                        <div class="alert alert-warning">
-                            <strong>⚠️ Security Risk:</strong> This email lacks DKIM authentication, making it more vulnerable to spoofing.
-                        </div>'''
-                    
-                    html += '</div></div>'  # Close auth-status-box and dkim-analysis
-                    
-                    # SPF Analysis Section
-                    spf_present = data_section.get("SPF_Present", False)
-                    html += f'''<div class="spf-analysis">
-                        <h5>📨 SPF (Sender Policy Framework) Analysis</h5>
-                        <div class="auth-status-box">'''
-                    
-                    if spf_present:
-                        html += '''<div class="status-item success">
-                            <span class="status-icon">✅</span>
-                            <span class="status-text">SPF Record Present</span>
-                        </div>'''
-                    else:
-                        html += '''<div class="status-item danger">
-                            <span class="status-icon">❌</span>
-                            <span class="status-text">No SPF Record Found</span>
-                        </div>
-                        <div class="alert alert-warning">
-                            <strong>⚠️ Security Risk:</strong> This domain lacks SPF configuration for email authentication.
-                        </div>'''
-                    
-                    html += '</div></div>'  # Close auth-status-box and spf-analysis
-                
-                # Check if domain has DMARC record
-                has_dmarc = dmarc_data.get("has_dmarc", False)
-                dmarc_record = dmarc_data.get("dmarc_record")
-                
-                if has_dmarc and dmarc_record:
-                    html += f'''<div class="dmarc-record">
-                        <div class="dmarc-status success">
-                            <h4>✅ DMARC Record Found</h4>
-                        </div>
-                        <div class="dmarc-details">
-                            <strong>DMARC Record:</strong>
-                            <div class="dmarc-record-text">
-                                <code>{escape(str(dmarc_record))}</code>
-                            </div>
-                        </div>
-                    </div>'''
-                    
-                    # Parse DMARC policy from record
-                    if "p=" in str(dmarc_record):
-                        policy_match = str(dmarc_record).split("p=")[1].split(";")[0] if "p=" in str(dmarc_record) else "none"
-                        policy_icon = {"none": "⚠️", "quarantine": "📥", "reject": "🚫"}.get(policy_match, "❓")
-                        policy_class = {"none": "warning", "quarantine": "info", "reject": "success"}.get(policy_match, "secondary")
-                        
-                        html += f'''<div class="dmarc-policy">
-                            <h5>📋 DMARC Policy</h5>
-                            <span class="badge badge-{policy_class}">
-                                {policy_icon} Policy: {policy_match.upper()}
-                            </span>
-                        </div>'''
-                else:
-                    html += f'''<div class="dmarc-record">
-                        <div class="dmarc-status danger">
-                            <h4>❌ No DMARC Record Found</h4>
-                        </div>
-                        <div class="dmarc-warning">
-                            <div class="alert alert-warning">
-                                <strong>⚠️ Security Risk:</strong> This domain does not have a DMARC record configured. 
-                                This makes it more vulnerable to email spoofing attacks.
-                            </div>
-                        </div>
-                    </div>'''
-                
-                # Authentication results from headers
-                if "authentication_results" in dmarc_data:
-                    auth_results = dmarc_data["authentication_results"]
-                    html += f'''<div class="auth-results">
-                        <h5>🔍 Authentication Results</h5>
-                        <div class="auth-details">'''
-                    
-                    for auth_type, result in auth_results.items():
-                        result_class = "success" if "pass" in str(result).lower() else "danger" if "fail" in str(result).lower() else "warning"
-                        result_icon = "✅" if "pass" in str(result).lower() else "❌" if "fail" in str(result).lower() else "⚠️"
-                        
-                        html += f'''<div class="auth-item">
-                            <span class="auth-type">{escape(auth_type.upper())}:</span>
-                            <span class="badge badge-{result_class}">
-                                {result_icon} {escape(str(result))}
-                            </span>
-                        </div>'''
-                    
-                    html += '</div></div>'
-                
-                html += '</div>'  # Close dmarc-container
-            else:
-                html += '''<div class="alert alert-info">
-                    <strong>🔐 No DMARC analysis data available</strong>
-                </div>'''
-            
-            html += '</div>'  # Close section
-        
-        # Hashes section
-        if "Hashes" in result and "Hashes" in result["Hashes"]:
-            html += '<div class="section">'
-            html += '<h3>File Hashes</h3>'
-            hashes = result["Hashes"]["Hashes"]
-            for hash_type, hash_value in hashes.items():
-                formatted_hash = format_hash_value(hash_value)
-                html += f'<div><strong>{escape(hash_type)}:</strong> {formatted_hash}</div>'
-            html += '</div>'
-        
-        # Header Investigation section
-        if "Headers" in result and "Investigation" in result["Headers"]:
-            investigation = result["Headers"]["Investigation"]
-            html += '<div class="section">'
-            html += '<h3>🔍 Header Security Investigation</h3>'
-            
-            # Check if there's HTML formatted investigation data
-            if "Headers" in result and "HTML_Investigation" in result["Headers"]:
-                html_investigation = result["Headers"]["HTML_Investigation"]
-                for key, value in html_investigation.items():
-                    html += value
-            else:
-                # Fallback to basic investigation display
-                # Sender IP investigation
-                if "X-Sender-Ip" in investigation:
-                    ip_info = investigation["X-Sender-Ip"]
-                    safety_class = "success" if ip_info["Safety"] == "Safe" else "danger"
-                    safety_icon = "✅" if ip_info["Safety"] == "Safe" else "🚨"
-                    
-                    html += f'''<div class="investigation-card">
-                        <div class="investigation-header">
-                            <h4>{safety_icon} Sender IP Analysis</h4>
-                        </div>
-                        <div class="investigation-content">
-                            <div class="ip-details">
-                                <strong>Safety Status:</strong> <span class="badge badge-{safety_class}">{ip_info["Safety"]}</span><br>
-                                <strong>Positive Detections:</strong> {ip_info["Positives"]}
-                            </div>
-                            <div class="investigation-links">
-                                <a href="{ip_info["Virustotal"]}" target="_blank" class="btn btn-outline-primary">
-                                    🔍 VirusTotal Analysis
-                                </a>
-                                <a href="{ip_info["Abuseipdb"]}" target="_blank" class="btn btn-outline-secondary">
-                                    📊 AbuseIPDB Check
-                                </a>
-                            </div>
-                        </div>
-                    </div>'''
-                
-                # Blacklist check
-                if "Blacklist_Check" in investigation:
-                    blacklist_info = investigation["Blacklist_Check"]
-                    blacklist_status = blacklist_info.get("Blacklist_Status", "Unknown")
-                    blacklist_icon = "✅" if "Not Blacklisted" in blacklist_status else "🚨"
-                    blacklist_class = "success" if "Not Blacklisted" in blacklist_status else "danger"
-                    
-                    html += f'''<div class="investigation-card">
-                        <div class="investigation-header">
-                            <h4>{blacklist_icon} Blacklist Check</h4>
-                        </div>
-                        <div class="investigation-content">                            <div class="blacklist-details">
-                                <strong>Status:</strong> <span class="badge badge-{blacklist_class}">{blacklist_status}</span>
-                            </div>                        </div>
-                    </div>'''
-            
-            html += '</div>'  # Close section
-        
-        html += '</div>'  # Close email-content
+        html_parts.append(f'            <button class="tab{active}" onclick="showEmail({i})">Email {i+1}</button>')
+    html_parts.append('        </div>')
     
-    html += """
-        </div>
+    # Generate content for each email
+    for i, result in enumerate(data):
+        active = " active" if i == 0 else ""
+        html_parts.append(f'        <div id="email-{i}" class="email-content{active}">')        # Add headers section
+        html_parts.append(generate_headers_section(result))
+        
+        # Add header investigation section
+        html_parts.append(generate_investigation_section(result))
+        
+        # Add links section
+        html_parts.append(generate_links_section(result))
+        
+        # Add DMARC section
+        html_parts.append(generate_dmarc_section(result))
+        
+        # Add attachments section
+        html_parts.append(generate_attachments_section(result))
+        
+        # Add hashes section
+        html_parts.append(generate_hashes_section(result))
+        
+        html_parts.append('        </div>')  # Close email-content
+    
+    # Close container and add JavaScript
+    html_parts.append("""        </div>
         <script>
         function showEmail(index) {
             console.log('Switching to email:', index);
@@ -594,10 +480,9 @@ def generate_html_from_json(json_file):
         });
         </script>
     </body>
-    </html>
-    """
+    </html>""")
     
-    return html
+    return '\n'.join(html_parts)
 
 def save_html_from_json(json_file, output_file):
     """

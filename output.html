@@ -1,11 +1,10 @@
-
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Email Analysis Results</title>
-        
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Analysis Results</title>
+    
     <style>
         /* Base styles */
         body {
@@ -70,11 +69,14 @@
             border-radius: 0 0 8px 8px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             padding: 20px;
+            width: 100%;
+            box-sizing: border-box;
+            max-width: 1200px;
         }
 
         .email-content.active {
             display: block;
-        }        /* Section styles */
+        }/* Section styles */
         .section {
             margin-bottom: 20px;
             padding: 15px;
@@ -83,12 +85,13 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
-        /* Section styles inside email content */
-        .email-content .section {
+        /* Section styles inside email content */        .email-content .section {
             background: transparent;
             box-shadow: none;
             border: 1px solid #e9ecef;
             border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .section h3 {
@@ -959,40 +962,44 @@
         }
     </style>
     
-    </head>
-    <body>
-        <div class="container">
-            <h1>Email Analysis Results</h1>    
-    <div class="tab-container">
-        <button class="tab active" onclick="showEmail(0)">Email 1</button>
-        <button class="tab" onclick="showEmail(1)">Email 2</button>
-        <button class="tab" onclick="showEmail(2)">Email 3</button>
-        <button class="tab" onclick="showEmail(3)">Email 4</button>
-    </div>
-
-    <div id="email-0" class="email-content active">
-        <div class="section">
-            <h3>📧 Email Headers</h3>
-            <div class="headers-container">
-<div class="header-item">
-                            <div class="header-label">Oggetto:</div>
-                            <div class="header-value"><h4>test</h4></div>
-                        </div><div class="header-item">
-                            <div class="header-label">Mittente:</div>
-                            <div class="header-value"><strong>Maurizio <maurimori@gmail.com></strong></div>
-                        </div><div class="header-item">
-                            <div class="header-label">Destinatario:</div>
-                            <div class="header-value">test@maurimori.eu</div>
-                        </div><div class="header-item">
-                            <div class="header-label">Data:</div>
-                            <div class="header-value"><em>Tue, 8 Apr 2025 17:07:29 +0200</em></div>
-                        </div><div class="header-item">
-                            <div class="header-label">ID Messaggio:</div>
-                            <div class="header-value"><code><630242a1-35e7-4269-a972-05ba31400c99@gmail.com></code></div>
-                        </div><div class="header-section-expandable">
-                            <details>
-                                <summary>🔧 Dettagli Tecnici</summary>
-                                <div class="expandable-content">
+</head>
+<body>
+    <div class="container">
+        <h1>Email Analysis Results</h1>
+        <div class="tab-container">
+            <button class="tab active" onclick="showEmail(0)">Email 1</button>
+            <button class="tab" onclick="showEmail(1)">Email 2</button>
+            <button class="tab" onclick="showEmail(2)">Email 3</button>
+            <button class="tab" onclick="showEmail(3)">Email 4</button>
+        </div>
+        <div id="email-0" class="email-content active">
+            <div class="section">
+                <h3>📧 Email Headers</h3>
+                <div class="headers-container">
+                    <div class="header-item">
+                        <div class="header-label">Oggetto:</div>
+                        <div class="header-value"><h4>test</h4></div>
+                    </div>
+                    <div class="header-item">
+                        <div class="header-label">Mittente:</div>
+                        <div class="header-value"><strong>Maurizio <maurimori@gmail.com></strong></div>
+                    </div>
+                    <div class="header-item">
+                        <div class="header-label">Destinatario:</div>
+                        <div class="header-value">test@maurimori.eu</div>
+                    </div>
+                    <div class="header-item">
+                        <div class="header-label">Data:</div>
+                        <div class="header-value"><em>Tue, 8 Apr 2025 17:07:29 +0200</em></div>
+                    </div>
+                    <div class="header-item">
+                        <div class="header-label">ID Messaggio:</div>
+                        <div class="header-value"><code><630242a1-35e7-4269-a972-05ba31400c99@gmail.com></code></div>
+                    </div>
+                    <div class="header-section-expandable">
+                        <details>
+                            <summary>🔧 Dettagli Tecnici</summary>
+                            <div class="expandable-content">
         <div class="accordion" id="headerAccordion">
             <div class="card">
             
@@ -1008,10 +1015,64 @@
             </div>
         </div>
         </div>
-                            </details>
-                        </div></div></div><div class="section"><h3>🔗 Links Analysis</h3><p>Found 1 unique links</p><div class="link-list"><div class="link-item warning-link"><div class="link-url"><a href="http://80.210.112.106" target="_blank">http://80.210.112.106</a></div><div class="link-details"><span class="domain-info">Domain: 80.210.112.106</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)</div></div></div></div></div><div class="section"><h3>📎 Attachments Analysis</h3><div class="alert alert-info">
-                        <strong>⚠️ Warning:</strong> Nessun file sospetto rilevato negli allegati.
-                    </div><div class="attachments-container"><div class="attachment-card">
+                        </details>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>🔗 Links Analysis</h3>
+                <p>No links found in this email</p>
+            </div>
+            <div class="section">
+                <h3>🔐 DMARC & DKIM Authentication Analysis</h3>
+                <div class="dmarc-container">
+                    <div class="domain-info">
+                        <h4>📧 Domain Analysis: gmail.com</h4>
+                    </div>
+                    <div class="dkim-analysis">
+                        <h5>🔑 DKIM (DomainKeys Identified Mail) Analysis</h5>
+                        <div class="auth-status-box">
+                            <div class="status-item success">
+                                <span class="status-icon">✅</span>
+                                <span class="status-text">DKIM Signature Present</span>
+                            </div>
+                            <div class="dkim-details">
+                                <h6>📋 DKIM Signature Details</h6>
+                                <div class="dkim-details-grid">
+                                    <div class="detail-item">
+                                        <span class="detail-label">Version:</span>
+                                        <span class="detail-value">1</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Algorithm:</span>
+                                        <span class="detail-value"><code>rsa-sha256</code></span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Signing Domain:</span>
+                                        <span class="detail-value"><strong>gmail.com</strong></span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Selector:</span>
+                                        <span class="detail-value"><code>20230601</code></span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Canonicalization:</span>
+                                        <span class="detail-value">relaxed/relaxed</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <h3>📎 Attachments Analysis</h3>
+                <div class="alert alert-info">
+                    <strong>⚠️ Warning:</strong> Nessun file sospetto rilevato negli allegati.
+                </div>
+                <div class="attachments-container">
+                    <div class="attachment-card">
                         <div class="attachment-header">
                             <div class="attachment-name">
                                 ✅ <strong>maurizio (2).ovpn</strong>
@@ -1026,7 +1087,6 @@
                                 <strong>Size:</strong> 4921 bytes<br>
                                 <strong>Email ID:</strong> 1
                             </div>
-                            
                             <div class="hash-section">
                                 <details>
                                     <summary>🔐 File Hashes</summary>
@@ -1057,85 +1117,41 @@
                                         </div>
                                     </div>
                                 </details>
-                            </div><div class="security-analysis">
-                            <h5>🛡️ Security Analysis</h5>
-                            <span class="badge badge-success">
-                                Sicuro - Nessuna minaccia rilevata
-                            </span></div></div></div></div><div class="section"><h3>🔐 DMARC & DKIM Authentication Analysis</h3><div class="dmarc-container"><div class="domain-info">
-                        <h4>📧 Domain Analysis: gmail.com</h4>
-                    </div><div class="dkim-analysis">
-                        <h5>🔑 DKIM (DomainKeys Identified Mail) Analysis</h5>
-                        <div class="auth-status-box"><div class="status-item success">
-                            <span class="status-icon">✅</span>
-                            <span class="status-text">DKIM Signature Present</span>
-                        </div><div class="dkim-details">
-                                <h6>📋 DKIM Signature Details</h6>
-                                <div class="dkim-details-grid"><div class="detail-item">
-                                    <span class="detail-label">Version:</span>
-                                    <span class="detail-value">1</span>
-                                </div><div class="detail-item">
-                                    <span class="detail-label">Algorithm:</span>
-                                    <span class="detail-value"><code>rsa-sha256</code></span>
-                                </div><div class="detail-item">
-                                    <span class="detail-label">Signing Domain:</span>
-                                    <span class="detail-value"><strong>gmail.com</strong></span>
-                                </div><div class="detail-item">
-                                    <span class="detail-label">Selector:</span>
-                                    <span class="detail-value"><code>20230601</code></span>
-                                </div><div class="detail-item">
-                                    <span class="detail-label">Canonicalization:</span>
-                                    <span class="detail-value">relaxed/relaxed</span>
-                                </div><div class="detail-item">
-                                    <span class="detail-label">Signature Validity:</span>
-                                    <span class="badge badge-success">
-                                        ✅ Valid Structure
-                                    </span>
-                                </div></div><div class="signed-headers">
-                                    <h6>📝 Signed Headers</h6>
-                                    <div class="headers-list"><span class="header-tag">subject</span><span class="header-tag">from</span><span class="header-tag">to</span><span class="header-tag">content-language</span><span class="header-tag">user-agent</span><span class="header-tag">mime-version</span><span class="header-tag">date</span><span class="header-tag">message-id</span><span class="header-tag">from</span><span class="header-tag">to</span><span class="header-tag">cc</span><span class="header-tag">subject</span><span class="header-tag">date</span><span class="header-tag">message-id</span><span class="header-tag">reply-to</span></div></div><div class="body-hash-status">
-                                    <span class="detail-label">Body Hash:</span>
-                                    <span class="badge badge-success">
-                                        ✅ Present
-                                    </span>
-                                </div></div></div></div><div class="spf-analysis">
-                        <h5>📨 SPF (Sender Policy Framework) Analysis</h5>
-                        <div class="auth-status-box"><div class="status-item success">
-                            <span class="status-icon">✅</span>
-                            <span class="status-text">SPF Record Present</span>
-                        </div></div></div><div class="dmarc-record">
-                        <div class="dmarc-status danger">
-                            <h4>❌ No DMARC Record Found</h4>
-                        </div>
-                        <div class="dmarc-warning">
-                            <div class="alert alert-warning">
-                                <strong>⚠️ Security Risk:</strong> This domain does not have a DMARC record configured. 
-                                This makes it more vulnerable to email spoofing attacks.
                             </div>
                         </div>
-                    </div></div></div></div>
-    <div id="email-1" class="email-content">
-        <div class="section">
-            <h3>📧 Email Headers</h3>
-            <div class="headers-container">
-<div class="header-item">
-                            <div class="header-label">Oggetto:</div>
-                            <div class="header-value"><h4>[TEST] 1. Test Sender spoofing</h4></div>
-                        </div><div class="header-item">
-                            <div class="header-label">Mittente:</div>
-                            <div class="header-value"><strong>John Doe <boss@maurimori.eu></strong></div>
-                        </div><div class="header-item">
-                            <div class="header-label">Destinatario:</div>
-                            <div class="header-value">test@maurimori.eu</div>
-                        </div><div class="header-item">
-                            <div class="header-label">Data:</div>
-                            <div class="header-value"><em>Sun, 8 Dec 2024 14:45:40 +0000</em></div>
-                        </div><div class="header-item">
-                            <div class="header-label">ID Messaggio:</div>
-                            <div class="header-value"><code><dca4c0316232439bba27b042ecb5a85f@emailsecuritytester.com></code></div>
-                        </div><div class="header-section-expandable">
-                            <details>
-                                <summary>🔧 Dettagli Tecnici</summary>
-                                <div class="expandable-content">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div id="email-1" class="email-content">
+            <div class="section">
+                <h3>📧 Email Headers</h3>
+                <div class="headers-container">
+                    <div class="header-item">
+                        <div class="header-label">Oggetto:</div>
+                        <div class="header-value"><h4>[TEST] 1. Test Sender spoofing</h4></div>
+                    </div>
+                    <div class="header-item">
+                        <div class="header-label">Mittente:</div>
+                        <div class="header-value"><strong>John Doe <boss@maurimori.eu></strong></div>
+                    </div>
+                    <div class="header-item">
+                        <div class="header-label">Destinatario:</div>
+                        <div class="header-value">test@maurimori.eu</div>
+                    </div>
+                    <div class="header-item">
+                        <div class="header-label">Data:</div>
+                        <div class="header-value"><em>Sun, 8 Dec 2024 14:45:40 +0000</em></div>
+                    </div>
+                    <div class="header-item">
+                        <div class="header-label">ID Messaggio:</div>
+                        <div class="header-value"><code><dca4c0316232439bba27b042ecb5a85f@emailsecuritytester.com></code></div>
+                    </div>
+                    <div class="header-section-expandable">
+                        <details>
+                            <summary>🔧 Dettagli Tecnici</summary>
+                            <div class="expandable-content">
         <div class="accordion" id="headerAccordion">
             <div class="card">
             
@@ -1151,58 +1167,133 @@
             </div>
         </div>
         </div>
-                            </details>
-                        </div></div></div><div class="section"><h3>🔗 Links Analysis</h3><p>Found 9 unique links</p><div class="link-list"><div class="link-item warning-link"><div class="link-url"><a href="http://twitter.com/libraesva" target="_blank">http://twitter.com/libraesva</a></div><div class="link-details"><span class="domain-info">Domain: twitter.com</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)</div></div></div><div class="link-item warning-link"><div class="link-url"><a href="http://www.linkedin.com/company/libraesva" target="_blank">http://www.linkedin.com/company/libraesva</a></div><div class="link-details"><span class="domain-info">Domain: www.linkedin.com</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)</div></div></div><div class="link-item warning-link"><div class="link-url"><a href="http://www.youtube.com/user/librasrl" target="_blank">http://www.youtube.com/user/librasrl</a></div><div class="link-details"><span class="domain-info">Domain: www.youtube.com</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)</div></div></div><div class="link-item warning-link"><div class="link-url"><a href="https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-link-48.png" target="_blank">https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-link-48.png</a></div><div class="link-details"><span class="domain-info">Domain: docs.libraesva.com</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)</div></div></div><div class="link-item warning-link"><div class="link-url"><a href="https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-linkedin-48.png" target="_blank">https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-linkedin-48.png</a></div><div class="link-details"><span class="domain-info">Domain: docs.libraesva.com</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)</div></div></div><div class="link-item warning-link"><div class="link-url"><a href="https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-twitter-48.png" target="_blank">https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-twitter-48.png</a></div><div class="link-details"><span class="domain-info">Domain: docs.libraesva.com</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)</div></div></div><div class="link-item warning-link"><div class="link-url"><a href="https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-youtube-48.png" target="_blank">https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-youtube-48.png</a></div><div class="link-details"><span class="domain-info">Domain: docs.libraesva.com</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)</div></div></div><div class="link-item warning-link"><div class="link-url"><a href="https://emailsecuritytester.com/images/mail/logo.png" target="_blank">https://emailsecuritytester.com/images/mail/logo.png</a></div><div class="link-details"><span class="domain-info">Domain: emailsecuritytester.com</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)</div></div></div><div class="link-item warning-link"><div class="link-url"><a href="https://www.libraesva.com" target="_blank">https://www.libraesva.com</a></div><div class="link-details"><span class="domain-info">Domain: www.libraesva.com</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)</div></div></div></div></div><div class="section"><h3>📎 Attachments Analysis</h3><div class="alert alert-info">
-                    <strong>📎 No attachments found in this email</strong>
-                </div></div><div class="section"><h3>🔐 DMARC & DKIM Authentication Analysis</h3><div class="dmarc-container"><div class="domain-info">
+                        </details>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>🔗 Links Analysis</h3>
+                <p>Found 9 unique links</p>
+                <div class="link-list">
+                    <div class="link-item">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="http://twitter.com/libraesva" target="_blank">http://twitter.com/libraesva</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: twitter.com</div>
+                        </div>
+                    </div>
+                    <div class="link-item">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="http://www.linkedin.com/company/libraesva" target="_blank">http://www.linkedin.com/company/libraesva</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: www.linkedin.com</div>
+                        </div>
+                    </div>
+                    <div class="link-item">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="http://www.youtube.com/user/librasrl" target="_blank">http://www.youtube.com/user/librasrl</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: www.youtube.com</div>
+                        </div>
+                    </div>
+                    <div class="link-item">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-link-48.png" target="_blank">https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-link-48.png</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: docs.libraesva.com</div>
+                        </div>
+                    </div>
+                    <div class="link-item">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-linkedin-48.png" target="_blank">https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-linkedin-48.png</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: docs.libraesva.com</div>
+                        </div>
+                    </div>
+                    <div class="link-item">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-twitter-48.png" target="_blank">https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-twitter-48.png</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: docs.libraesva.com</div>
+                        </div>
+                    </div>
+                    <div class="link-item">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-youtube-48.png" target="_blank">https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-youtube-48.png</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: docs.libraesva.com</div>
+                        </div>
+                    </div>
+                    <div class="link-item">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://emailsecuritytester.com/images/mail/logo.png" target="_blank">https://emailsecuritytester.com/images/mail/logo.png</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: emailsecuritytester.com</div>
+                        </div>
+                    </div>
+                    <div class="link-item">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://www.libraesva.com/" target="_blank">https://www.libraesva.com/</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: www.libraesva.com</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <h3>🔐 DMARC & DKIM Authentication Analysis</h3>
+                <div class="dmarc-container">
+                    <div class="domain-info">
                         <h4>📧 Domain Analysis: maurimori.eu</h4>
-                    </div><div class="dkim-analysis">
+                    </div>
+                    <div class="dkim-analysis">
                         <h5>🔑 DKIM (DomainKeys Identified Mail) Analysis</h5>
-                        <div class="auth-status-box"><div class="status-item danger">
-                            <span class="status-icon">❌</span>
-                            <span class="status-text">No DKIM Signature Found</span>
-                        </div>
-                        <div class="alert alert-warning">
-                            <strong>⚠️ Security Risk:</strong> This email lacks DKIM authentication, making it more vulnerable to spoofing.
-                        </div></div></div><div class="spf-analysis">
-                        <h5>📨 SPF (Sender Policy Framework) Analysis</h5>
-                        <div class="auth-status-box"><div class="status-item success">
-                            <span class="status-icon">✅</span>
-                            <span class="status-text">SPF Record Present</span>
-                        </div></div></div><div class="dmarc-record">
-                        <div class="dmarc-status danger">
-                            <h4>❌ No DMARC Record Found</h4>
-                        </div>
-                        <div class="dmarc-warning">
-                            <div class="alert alert-warning">
-                                <strong>⚠️ Security Risk:</strong> This domain does not have a DMARC record configured. 
-                                This makes it more vulnerable to email spoofing attacks.
+                        <div class="auth-status-box">
+                            <div class="status-item danger">
+                                <span class="status-icon">❌</span>
+                                <span class="status-text">No DKIM Signature Found</span>
                             </div>
                         </div>
-                    </div></div></div></div>
-    <div id="email-2" class="email-content">
-        <div class="section">
-            <h3>📧 Email Headers</h3>
-            <div class="headers-container">
-<div class="header-item">
-                            <div class="header-label">Oggetto:</div>
-                            <div class="header-value"><h4>[TEST] 4. Test EICAR Virus</h4></div>
-                        </div><div class="header-item">
-                            <div class="header-label">Mittente:</div>
-                            <div class="header-value"><strong>Email Security Tester <test-d0643290@emailsecuritytester.com></strong></div>
-                        </div><div class="header-item">
-                            <div class="header-label">Destinatario:</div>
-                            <div class="header-value">test@maurimori.eu</div>
-                        </div><div class="header-item">
-                            <div class="header-label">Data:</div>
-                            <div class="header-value"><em>Sun, 8 Dec 2024 14:45:41 +0000</em></div>
-                        </div><div class="header-item">
-                            <div class="header-label">ID Messaggio:</div>
-                            <div class="header-value"><code><01070193a6bbbcf6-519373b6-de28-4e2f-b338-8480393c181f-000000@eu-central-1.amazonses.com></code></div>
-                        </div><div class="header-section-expandable">
-                            <details>
-                                <summary>🔧 Dettagli Tecnici</summary>
-                                <div class="expandable-content">
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <h3>📎 Attachments Analysis</h3>
+                <div class="alert alert-info">
+                    <strong>📎 No attachments found in this email</strong>
+                </div>
+            </div>
+
+        </div>
+        <div id="email-2" class="email-content">
+            <div class="section">
+                <h3>📧 Email Headers</h3>
+                <div class="headers-container">
+                    <div class="header-item">
+                        <div class="header-label">Oggetto:</div>
+                        <div class="header-value"><h4>[TEST] 4. Test EICAR Virus</h4></div>
+                    </div>
+                    <div class="header-item">
+                        <div class="header-label">Mittente:</div>
+                        <div class="header-value"><strong>Email Security Tester <test-d0643290@emailsecuritytester.com></strong></div>
+                    </div>
+                    <div class="header-item">
+                        <div class="header-label">Destinatario:</div>
+                        <div class="header-value">test@maurimori.eu</div>
+                    </div>
+                    <div class="header-item">
+                        <div class="header-label">Data:</div>
+                        <div class="header-value"><em>Sun, 8 Dec 2024 14:45:41 +0000</em></div>
+                    </div>
+                    <div class="header-item">
+                        <div class="header-label">ID Messaggio:</div>
+                        <div class="header-value"><code><01070193a6bbbcf6-519373b6-de28-4e2f-b338-8480393c181f-000000@eu-central-1.amazonses.com></code></div>
+                    </div>
+                    <div class="header-section-expandable">
+                        <details>
+                            <summary>🔧 Dettagli Tecnici</summary>
+                            <div class="expandable-content">
         <div class="accordion" id="headerAccordion">
             <div class="card">
             
@@ -1218,86 +1309,158 @@
             </div>
         </div>
         </div>
-                            </details>
-                        </div></div></div><div class="section"><h3>🔗 Links Analysis</h3><p>Found 9 unique links</p><div class="link-list"><div class="link-item warning-link"><div class="link-url"><a href="http://twitter.com/libraesva" target="_blank">http://twitter.com/libraesva</a></div><div class="link-details"><span class="domain-info">Domain: twitter.com</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)</div></div></div><div class="link-item warning-link"><div class="link-url"><a href="http://www.linkedin.com/company/libraesva" target="_blank">http://www.linkedin.com/company/libraesva</a></div><div class="link-details"><span class="domain-info">Domain: www.linkedin.com</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)</div></div></div><div class="link-item warning-link"><div class="link-url"><a href="http://www.youtube.com/user/librasrl" target="_blank">http://www.youtube.com/user/librasrl</a></div><div class="link-details"><span class="domain-info">Domain: www.youtube.com</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)</div></div></div><div class="link-item warning-link"><div class="link-url"><a href="https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-link-48.png" target="_blank">https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-link-48.png</a></div><div class="link-details"><span class="domain-info">Domain: docs.libraesva.com</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)</div></div></div><div class="link-item warning-link"><div class="link-url"><a href="https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-linkedin-48.png" target="_blank">https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-linkedin-48.png</a></div><div class="link-details"><span class="domain-info">Domain: docs.libraesva.com</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)</div></div></div><div class="link-item warning-link"><div class="link-url"><a href="https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-twitter-48.png" target="_blank">https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-twitter-48.png</a></div><div class="link-details"><span class="domain-info">Domain: docs.libraesva.com</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)</div></div></div><div class="link-item warning-link"><div class="link-url"><a href="https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-youtube-48.png" target="_blank">https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-youtube-48.png</a></div><div class="link-details"><span class="domain-info">Domain: docs.libraesva.com</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)</div></div></div><div class="link-item warning-link"><div class="link-url"><a href="https://emailsecuritytester.com/images/mail/logo.png" target="_blank">https://emailsecuritytester.com/images/mail/logo.png</a></div><div class="link-details"><span class="domain-info">Domain: emailsecuritytester.com</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)</div></div></div><div class="link-item warning-link"><div class="link-url"><a href="https://www.libraesva.com" target="_blank">https://www.libraesva.com</a></div><div class="link-details"><span class="domain-info">Domain: www.libraesva.com</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)</div></div></div></div></div><div class="section"><h3>📎 Attachments Analysis</h3><div class="alert alert-info">
-                    <strong>📎 No attachments found in this email</strong>
-                </div></div><div class="section"><h3>🔐 DMARC & DKIM Authentication Analysis</h3><div class="dmarc-container"><div class="domain-info">
-                        <h4>📧 Domain Analysis: emailsecuritytester.com</h4>
-                    </div><div class="dkim-analysis">
-                        <h5>🔑 DKIM (DomainKeys Identified Mail) Analysis</h5>
-                        <div class="auth-status-box"><div class="status-item success">
-                            <span class="status-icon">✅</span>
-                            <span class="status-text">DKIM Signature Present</span>
-                        </div><div class="dkim-details">
-                                <h6>📋 DKIM Signature Details</h6>
-                                <div class="dkim-details-grid"><div class="detail-item">
-                                    <span class="detail-label">Version:</span>
-                                    <span class="detail-value">1</span>
-                                </div><div class="detail-item">
-                                    <span class="detail-label">Algorithm:</span>
-                                    <span class="detail-value"><code>rsa-sha256</code></span>
-                                </div><div class="detail-item">
-                                    <span class="detail-label">Signing Domain:</span>
-                                    <span class="detail-value"><strong>emailsecuritytester.com</strong></span>
-                                </div><div class="detail-item">
-                                    <span class="detail-label">Selector:</span>
-                                    <span class="detail-value"><code>iuoqqwfunilueazswvoxeow57fitvqzq</code></span>
-                                </div><div class="detail-item">
-                                    <span class="detail-label">Canonicalization:</span>
-                                    <span class="detail-value">relaxed/simple</span>
-                                </div><div class="detail-item">
-                                    <span class="detail-label">Signature Validity:</span>
-                                    <span class="badge badge-danger">
-                                        ❌ Minor Issues
-                                    </span>
-                                </div></div><div class="signed-headers">
-                                    <h6>📝 Signed Headers</h6>
-                                    <div class="headers-list"><span class="header-tag">3DDate=3ATo=3AFrom=3ASubject=3AMessage-ID=3AMIME-Version=3ACont?=
- =?utf-8?q?ent-Type=3AContent-Transfer-Encoding=3B?=
-	bh=UK+7IuROuGqmIgHOR3Hm1GUmr99ctFB+hWRzPQ+Fjpg=</span></div></div><div class="body-hash-status">
-                                    <span class="detail-label">Body Hash:</span>
-                                    <span class="badge badge-success">
-                                        ✅ Present
-                                    </span>
-                                </div></div></div></div><div class="spf-analysis">
-                        <h5>📨 SPF (Sender Policy Framework) Analysis</h5>
-                        <div class="auth-status-box"><div class="status-item success">
-                            <span class="status-icon">✅</span>
-                            <span class="status-text">SPF Record Present</span>
-                        </div></div></div><div class="dmarc-record">
-                        <div class="dmarc-status danger">
-                            <h4>❌ No DMARC Record Found</h4>
+                        </details>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>🔗 Links Analysis</h3>
+                <p>Found 9 unique links</p>
+                <div class="link-list">
+                    <div class="link-item">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="http://twitter.com/libraesva" target="_blank">http://twitter.com/libraesva</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: twitter.com</div>
                         </div>
-                        <div class="dmarc-warning">
-                            <div class="alert alert-warning">
-                                <strong>⚠️ Security Risk:</strong> This domain does not have a DMARC record configured. 
-                                This makes it more vulnerable to email spoofing attacks.
+                    </div>
+                    <div class="link-item">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="http://www.linkedin.com/company/libraesva" target="_blank">http://www.linkedin.com/company/libraesva</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: www.linkedin.com</div>
+                        </div>
+                    </div>
+                    <div class="link-item">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="http://www.youtube.com/user/librasrl" target="_blank">http://www.youtube.com/user/librasrl</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: www.youtube.com</div>
+                        </div>
+                    </div>
+                    <div class="link-item">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-link-48.png" target="_blank">https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-link-48.png</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: docs.libraesva.com</div>
+                        </div>
+                    </div>
+                    <div class="link-item">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-linkedin-48.png" target="_blank">https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-linkedin-48.png</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: docs.libraesva.com</div>
+                        </div>
+                    </div>
+                    <div class="link-item">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-twitter-48.png" target="_blank">https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-twitter-48.png</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: docs.libraesva.com</div>
+                        </div>
+                    </div>
+                    <div class="link-item">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-youtube-48.png" target="_blank">https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-youtube-48.png</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: docs.libraesva.com</div>
+                        </div>
+                    </div>
+                    <div class="link-item">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://emailsecuritytester.com/images/mail/logo.png" target="_blank">https://emailsecuritytester.com/images/mail/logo.png</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: emailsecuritytester.com</div>
+                        </div>
+                    </div>
+                    <div class="link-item">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://www.libraesva.com/" target="_blank">https://www.libraesva.com/</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: www.libraesva.com</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <h3>🔐 DMARC & DKIM Authentication Analysis</h3>
+                <div class="dmarc-container">
+                    <div class="domain-info">
+                        <h4>📧 Domain Analysis: emailsecuritytester.com</h4>
+                    </div>
+                    <div class="dkim-analysis">
+                        <h5>🔑 DKIM (DomainKeys Identified Mail) Analysis</h5>
+                        <div class="auth-status-box">
+                            <div class="status-item success">
+                                <span class="status-icon">✅</span>
+                                <span class="status-text">DKIM Signature Present</span>
+                            </div>
+                            <div class="dkim-details">
+                                <h6>📋 DKIM Signature Details</h6>
+                                <div class="dkim-details-grid">
+                                    <div class="detail-item">
+                                        <span class="detail-label">Version:</span>
+                                        <span class="detail-value">1</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Algorithm:</span>
+                                        <span class="detail-value"><code>rsa-sha256</code></span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Signing Domain:</span>
+                                        <span class="detail-value"><strong>emailsecuritytester.com</strong></span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Selector:</span>
+                                        <span class="detail-value"><code>iuoqqwfunilueazswvoxeow57fitvqzq</code></span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Canonicalization:</span>
+                                        <span class="detail-value">relaxed/simple</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div></div></div></div>
-    <div id="email-3" class="email-content">
-        <div class="section">
-            <h3>📧 Email Headers</h3>
-            <div class="headers-container">
-<div class="header-item">
-                            <div class="header-label">Oggetto:</div>
-                            <div class="header-value"><h4>[TEST] 6. Test Dangerous html link</h4></div>
-                        </div><div class="header-item">
-                            <div class="header-label">Mittente:</div>
-                            <div class="header-value"><strong>Email Security Tester <test-d0643290@emailsecuritytester.com></strong></div>
-                        </div><div class="header-item">
-                            <div class="header-label">Destinatario:</div>
-                            <div class="header-value">test@maurimori.eu</div>
-                        </div><div class="header-item">
-                            <div class="header-label">Data:</div>
-                            <div class="header-value"><em>Sun, 8 Dec 2024 14:45:42 +0000</em></div>
-                        </div><div class="header-item">
-                            <div class="header-label">ID Messaggio:</div>
-                            <div class="header-value"><code><01070193a6bbbeff-ca4f76e3-bd35-45fe-963c-0d491fb68421-000000@eu-central-1.amazonses.com></code></div>
-                        </div><div class="header-section-expandable">
-                            <details>
-                                <summary>🔧 Dettagli Tecnici</summary>
-                                <div class="expandable-content">
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <h3>📎 Attachments Analysis</h3>
+                <div class="alert alert-info">
+                    <strong>📎 No attachments found in this email</strong>
+                </div>
+            </div>
+
+        </div>
+        <div id="email-3" class="email-content">
+            <div class="section">
+                <h3>📧 Email Headers</h3>
+                <div class="headers-container">
+                    <div class="header-item">
+                        <div class="header-label">Oggetto:</div>
+                        <div class="header-value"><h4>[TEST] 6. Test Dangerous html link</h4></div>
+                    </div>
+                    <div class="header-item">
+                        <div class="header-label">Mittente:</div>
+                        <div class="header-value"><strong>Email Security Tester <test-d0643290@emailsecuritytester.com></strong></div>
+                    </div>
+                    <div class="header-item">
+                        <div class="header-label">Destinatario:</div>
+                        <div class="header-value">test@maurimori.eu</div>
+                    </div>
+                    <div class="header-item">
+                        <div class="header-label">Data:</div>
+                        <div class="header-value"><em>Sun, 8 Dec 2024 14:45:42 +0000</em></div>
+                    </div>
+                    <div class="header-item">
+                        <div class="header-label">ID Messaggio:</div>
+                        <div class="header-value"><code><01070193a6bbbeff-ca4f76e3-bd35-45fe-963c-0d491fb68421-000000@eu-central-1.amazonses.com></code></div>
+                    </div>
+                    <div class="header-section-expandable">
+                        <details>
+                            <summary>🔧 Dettagli Tecnici</summary>
+                            <div class="expandable-content">
         <div class="accordion" id="headerAccordion">
             <div class="card">
             
@@ -1313,63 +1476,137 @@
             </div>
         </div>
         </div>
-                            </details>
-                        </div></div></div><div class="section"><h3>🔗 Links Analysis</h3><p>Found 10 unique links</p><div class="link-list"><div class="link-item warning-link"><div class="link-url"><a href="http://twitter.com/libraesva" target="_blank">http://twitter.com/libraesva</a></div><div class="link-details"><span class="domain-info">Domain: twitter.com</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)</div></div></div><div class="link-item warning-link"><div class="link-url"><a href="http://www.linkedin.com/company/libraesva" target="_blank">http://www.linkedin.com/company/libraesva</a></div><div class="link-details"><span class="domain-info">Domain: www.linkedin.com</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)</div></div></div><div class="link-item warning-link"><div class="link-url"><a href="http://www.youtube.com/user/librasrl" target="_blank">http://www.youtube.com/user/librasrl</a></div><div class="link-details"><span class="domain-info">Domain: www.youtube.com</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)</div></div></div><div class="link-item warning-link"><div class="link-url"><a href="https://bit.ly/3KoKOcP" target="_blank">https://bit.ly/3KoKOcP</a></div><div class="link-details"><span class="domain-info">Domain: bit.ly</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)</div></div></div><div class="link-item warning-link"><div class="link-url"><a href="https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-link-48.png" target="_blank">https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-link-48.png</a></div><div class="link-details"><span class="domain-info">Domain: docs.libraesva.com</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)</div></div></div><div class="link-item warning-link"><div class="link-url"><a href="https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-linkedin-48.png" target="_blank">https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-linkedin-48.png</a></div><div class="link-details"><span class="domain-info">Domain: docs.libraesva.com</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)</div></div></div><div class="link-item warning-link"><div class="link-url"><a href="https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-twitter-48.png" target="_blank">https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-twitter-48.png</a></div><div class="link-details"><span class="domain-info">Domain: docs.libraesva.com</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)</div></div></div><div class="link-item warning-link"><div class="link-url"><a href="https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-youtube-48.png" target="_blank">https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-youtube-48.png</a></div><div class="link-details"><span class="domain-info">Domain: docs.libraesva.com</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)</div></div></div><div class="link-item warning-link"><div class="link-url"><a href="https://emailsecuritytester.com/images/mail/logo.png" target="_blank">https://emailsecuritytester.com/images/mail/logo.png</a></div><div class="link-details"><span class="domain-info">Domain: emailsecuritytester.com</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)</div></div></div><div class="link-item warning-link"><div class="link-url"><a href="https://www.libraesva.com" target="_blank">https://www.libraesva.com</a></div><div class="link-details"><span class="domain-info">Domain: www.libraesva.com</span><div>Safety Score: 50%</div><div class="threats">Error: Error making request to VirusTotal: (&#x27;QuotaExceededError&#x27;, &#x27;Quota exceeded&#x27;)</div></div></div></div></div><div class="section"><h3>📎 Attachments Analysis</h3><div class="alert alert-info">
-                    <strong>📎 No attachments found in this email</strong>
-                </div></div><div class="section"><h3>🔐 DMARC & DKIM Authentication Analysis</h3><div class="dmarc-container"><div class="domain-info">
-                        <h4>📧 Domain Analysis: emailsecuritytester.com</h4>
-                    </div><div class="dkim-analysis">
-                        <h5>🔑 DKIM (DomainKeys Identified Mail) Analysis</h5>
-                        <div class="auth-status-box"><div class="status-item success">
-                            <span class="status-icon">✅</span>
-                            <span class="status-text">DKIM Signature Present</span>
-                        </div><div class="dkim-details">
-                                <h6>📋 DKIM Signature Details</h6>
-                                <div class="dkim-details-grid"><div class="detail-item">
-                                    <span class="detail-label">Version:</span>
-                                    <span class="detail-value">1</span>
-                                </div><div class="detail-item">
-                                    <span class="detail-label">Algorithm:</span>
-                                    <span class="detail-value"><code>rsa-sha256</code></span>
-                                </div><div class="detail-item">
-                                    <span class="detail-label">Signing Domain:</span>
-                                    <span class="detail-value"><strong>emailsecuritytester.com</strong></span>
-                                </div><div class="detail-item">
-                                    <span class="detail-label">Selector:</span>
-                                    <span class="detail-value"><code>iuoqqwfunilueazswvoxeow57fitvqzq</code></span>
-                                </div><div class="detail-item">
-                                    <span class="detail-label">Canonicalization:</span>
-                                    <span class="detail-value">relaxed/simple</span>
-                                </div><div class="detail-item">
-                                    <span class="detail-label">Signature Validity:</span>
-                                    <span class="badge badge-danger">
-                                        ❌ Minor Issues
-                                    </span>
-                                </div></div><div class="signed-headers">
-                                    <h6>📝 Signed Headers</h6>
-                                    <div class="headers-list"><span class="header-tag">3DDate=3ATo=3AFrom=3ASubject=3AMessage-ID=3AMIME-Version=3ACont?=
- =?utf-8?q?ent-Type=3AContent-Transfer-Encoding=3B?=
-	bh=LCG3n0OAVdmuaYhyqKB20yr7xL+tt16dWqA1cUIXmHE=</span></div></div><div class="body-hash-status">
-                                    <span class="detail-label">Body Hash:</span>
-                                    <span class="badge badge-success">
-                                        ✅ Present
-                                    </span>
-                                </div></div></div></div><div class="spf-analysis">
-                        <h5>📨 SPF (Sender Policy Framework) Analysis</h5>
-                        <div class="auth-status-box"><div class="status-item success">
-                            <span class="status-icon">✅</span>
-                            <span class="status-text">SPF Record Present</span>
-                        </div></div></div><div class="dmarc-record">
-                        <div class="dmarc-status danger">
-                            <h4>❌ No DMARC Record Found</h4>
+                        </details>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>🔗 Links Analysis</h3>
+                <p>Found 10 unique links</p>
+                <div class="link-list">
+                    <div class="link-item">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="http://twitter.com/libraesva" target="_blank">http://twitter.com/libraesva</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: twitter.com</div>
                         </div>
-                        <div class="dmarc-warning">
-                            <div class="alert alert-warning">
-                                <strong>⚠️ Security Risk:</strong> This domain does not have a DMARC record configured. 
-                                This makes it more vulnerable to email spoofing attacks.
+                    </div>
+                    <div class="link-item">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="http://www.linkedin.com/company/libraesva" target="_blank">http://www.linkedin.com/company/libraesva</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: www.linkedin.com</div>
+                        </div>
+                    </div>
+                    <div class="link-item">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="http://www.youtube.com/user/librasrl" target="_blank">http://www.youtube.com/user/librasrl</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: www.youtube.com</div>
+                        </div>
+                    </div>
+                    <div class="link-item">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://bit.ly/3KoKOcP" target="_blank">https://bit.ly/3KoKOcP</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: bit.ly</div>
+                        </div>
+                    </div>
+                    <div class="link-item">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-link-48.png" target="_blank">https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-link-48.png</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: docs.libraesva.com</div>
+                        </div>
+                    </div>
+                    <div class="link-item">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-linkedin-48.png" target="_blank">https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-linkedin-48.png</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: docs.libraesva.com</div>
+                        </div>
+                    </div>
+                    <div class="link-item">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-twitter-48.png" target="_blank">https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-twitter-48.png</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: docs.libraesva.com</div>
+                        </div>
+                    </div>
+                    <div class="link-item">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-youtube-48.png" target="_blank">https://docs.libraesva.com/wordpress/wp-content/uploads/2019/11/color-youtube-48.png</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: docs.libraesva.com</div>
+                        </div>
+                    </div>
+                    <div class="link-item">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://emailsecuritytester.com/images/mail/logo.png" target="_blank">https://emailsecuritytester.com/images/mail/logo.png</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: emailsecuritytester.com</div>
+                        </div>
+                    </div>
+                    <div class="link-item">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://www.libraesva.com/" target="_blank">https://www.libraesva.com/</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: www.libraesva.com</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <h3>🔐 DMARC & DKIM Authentication Analysis</h3>
+                <div class="dmarc-container">
+                    <div class="domain-info">
+                        <h4>📧 Domain Analysis: emailsecuritytester.com</h4>
+                    </div>
+                    <div class="dkim-analysis">
+                        <h5>🔑 DKIM (DomainKeys Identified Mail) Analysis</h5>
+                        <div class="auth-status-box">
+                            <div class="status-item success">
+                                <span class="status-icon">✅</span>
+                                <span class="status-text">DKIM Signature Present</span>
+                            </div>
+                            <div class="dkim-details">
+                                <h6>📋 DKIM Signature Details</h6>
+                                <div class="dkim-details-grid">
+                                    <div class="detail-item">
+                                        <span class="detail-label">Version:</span>
+                                        <span class="detail-value">1</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Algorithm:</span>
+                                        <span class="detail-value"><code>rsa-sha256</code></span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Signing Domain:</span>
+                                        <span class="detail-value"><strong>emailsecuritytester.com</strong></span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Selector:</span>
+                                        <span class="detail-value"><code>iuoqqwfunilueazswvoxeow57fitvqzq</code></span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Canonicalization:</span>
+                                        <span class="detail-value">relaxed/simple</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div></div></div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <h3>📎 Attachments Analysis</h3>
+                <div class="alert alert-info">
+                    <strong>📎 No attachments found in this email</strong>
+                </div>
+            </div>
+
+        </div>
         </div>
         <script>
         function showEmail(index) {
@@ -1414,4 +1651,3 @@
         </script>
     </body>
     </html>
-    

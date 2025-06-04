@@ -74,11 +74,14 @@ def get_base_styles():
             border-radius: 0 0 8px 8px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             padding: 20px;
+            width: 100%;
+            box-sizing: border-box;
+            max-width: 1200px;
         }
 
         .email-content.active {
             display: block;
-        }        /* Section styles */
+        }/* Section styles */
         .section {
             margin-bottom: 20px;
             padding: 15px;
@@ -87,12 +90,13 @@ def get_base_styles():
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
-        /* Section styles inside email content */
-        .email-content .section {
+        /* Section styles inside email content */        .email-content .section {
             background: transparent;
             box-shadow: none;
             border: 1px solid #e9ecef;
             border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .section h3 {
