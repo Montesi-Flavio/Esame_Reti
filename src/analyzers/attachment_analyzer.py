@@ -4,10 +4,14 @@ Attachment analysis functionality for email investigation.
 
 import os
 import hashlib
+import logging
 import mimetypes  # Utilizziamo mimetypes invece di magic
 from email import message_from_file
 from email.message import EmailMessage
 from connectors import check_hash_safety
+
+# Configure logging
+logger = logging.getLogger('email_analyzer.attachment_analyzer')
 
 def is_executable_file(filename):
     """
@@ -209,35 +213,48 @@ def analyze_attachments(email_file, investigation=False, save_attachments=False,
             if is_executable:
                 security_details.append("File eseguibile rilevato (.exe o .bat) - Alto rischio di malware")
                 is_safe = False
-            
-            # Controllo hash con VirusTotal
+              # Controllo hash con VirusTotal
             vt_results = {}
             html_formatted_results = {}
+            quota_exceeded = False
             
             for hash_type, hash_value in [("MD5", attachment["md5"]), 
                                          ("SHA1", attachment["sha1"]), 
                                          ("SHA256", attachment["sha256"])]:
                 safe, positives, error = check_hash_safety(hash_value)
                 
-                if not error:
-                    vt_link = f"https://www.virustotal.com/gui/file/{hash_value}"
-                    if not safe:
-                        is_safe = False
-                        security_details.append(f"Rilevato da VirusTotal: {positives} positivi")
-                        suspicious_files_found = True
-                    
-                    vt_results[hash_type] = {
-                        "Link": vt_link,
-                        "Positives": positives
-                    }
-                    
-                    # Creazione di una versione formattata per HTML
-                    html_formatted_results[hash_type] = {
-                        "Tipo": hash_type,
-                        "Valore": hash_value,
-                        "Link VirusTotal": f'<a href="{vt_link}" target="_blank">Verifica su VirusTotal</a>',
-                        "Rilevamenti": f"{positives} positivi" if not safe else "Nessun rilevamento"
-                    }
+                if error:
+                    if "QuotaExceeded" in error:
+                        logger.warning(f"VirusTotal API quota exceeded for {hash_type} hash check")
+                        quota_exceeded = True
+                        # Continue checking other hashes in case quota resets
+                        continue
+                    else:
+                        logger.error(f"Error checking {hash_type} hash: {error}")
+                        continue
+                  # Process successful result
+                vt_link = f"https://www.virustotal.com/gui/file/{hash_value}"
+                if not safe:
+                    is_safe = False
+                    security_details.append(f"Rilevato da VirusTotal: {positives} positivi")
+                    suspicious_files_found = True
+                
+                vt_results[hash_type] = {
+                    "Link": vt_link,
+                    "Positives": positives
+                }
+                
+                # Creazione di una versione formattata per HTML
+                html_formatted_results[hash_type] = {
+                    "Tipo": hash_type,
+                    "Valore": hash_value,
+                    "Link VirusTotal": f'<a href="{vt_link}" target="_blank">Verifica su VirusTotal</a>',
+                    "Rilevamenti": f"{positives} positivi" if not safe else "Nessun rilevamento"
+                }
+            
+            # Add quota exceeded warning if it occurred
+            if quota_exceeded:
+                security_details.append("VirusTotal API quota exceeded - Some hash checks unavailable")
             
             # Aggiorna lo stato di sicurezza generale
             security_status = "Sicuro - Nessuna minaccia rilevata" if (is_safe and not is_executable) else "Non sicuro - Potenziale minaccia"

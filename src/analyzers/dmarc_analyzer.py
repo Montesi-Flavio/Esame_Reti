@@ -3,8 +3,12 @@ DMARC analysis functionality for email authentication verification.
 """
 
 import re
+import logging
 import dns.resolver
 from email.parser import HeaderParser
+
+# Configure logging
+logger = logging.getLogger('email_analyzer.dmarc_analyzer')
 
 
 def analyze_dmarc(mail_data, investigation=False):

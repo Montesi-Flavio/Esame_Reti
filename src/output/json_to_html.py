@@ -543,11 +543,10 @@ def generate_html_from_json(json_file):
                         </div>
                         <div class="investigation-content">                            <div class="blacklist-details">
                                 <strong>Status:</strong> <span class="badge badge-{blacklist_class}">{blacklist_status}</span>
-                            </div>
-                        </div>
+                            </div>                        </div>
                     </div>'''
             
-            html += '</div>'
+            html += '</div>'  # Close section
         
         html += '</div>'  # Close email-content
     
