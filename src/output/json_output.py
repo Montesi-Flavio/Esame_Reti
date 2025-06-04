@@ -28,7 +28,7 @@ def generate_json_output(analysis_results, output_filename):
     
     return output_filename
 
-def format_analysis_result(email_file, headers_data, links_data, hashes_data, attachments_data=None):
+def format_analysis_result(email_file, headers_data, links_data, dmarc_data, attachments_data=None):
     """
     Format analysis data for output.
     
@@ -36,7 +36,7 @@ def format_analysis_result(email_file, headers_data, links_data, hashes_data, at
         email_file: Path to the email file
         headers_data: Header analysis data
         links_data: Link analysis data
-        hashes_data: Hash analysis data
+        dmarc_data: DMARC analysis data
         attachments_data: Attachment analysis data
         
     Returns:
@@ -46,7 +46,7 @@ def format_analysis_result(email_file, headers_data, links_data, hashes_data, at
         "File": email_file,
         "Headers": {"Headers": headers_data},
         "Links": {"Links": links_data},
-        "Hashes": {"Hashes": hashes_data}
+        "DMARC": {"DMARC": dmarc_data}
     }
     
     # Add attachments data if available

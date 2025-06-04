@@ -14,7 +14,7 @@ from config import (
 from email_core import fetch_emails, get_email_content
 from analyzers.header_analyzer import parse_email_headers
 from analyzers.link_analyzer import analyze_links
-from analyzers.hash_analyzer import calculate_hashes
+from analyzers.dmarc_analyzer import analyze_dmarc
 from analyzers.attachment_analyzer import analyze_attachments
 from output.json_output import generate_json_output, format_analysis_result
 from output.json_to_html import save_html_from_json
@@ -30,6 +30,7 @@ def parse_arguments():
     parser.add_argument("-i", "--investigate", action="store_true", help="Enable investigation mode")
     parser.add_argument("-o", "--output", default="outputfile.json", help="Output file name (JSON or HTML)")
     parser.add_argument("-a", "--save-attachments", action="store_true", help="Save email attachments to disk")
+    parser.add_argument("-f", "--files", help="Directory containing .eml files to analyze instead of downloading from server")
 
     args = parser.parse_args()
 
@@ -58,21 +59,18 @@ def analyze_emails(eml_files, investigate=False, save_attachments=False, output_
     for eml_file in eml_files:
         # Get email content
         mail_data = get_email_content(eml_file)
-        
-        # Analyze headers
+          # Analyze headers
         headers = parse_email_headers(mail_data.as_string(), investigate)
         
-        # Calculate file hashes
-        hashes = calculate_hashes(eml_file, investigate)
+        # Analyze DMARC authentication
+        dmarc_data = analyze_dmarc(mail_data.as_string(), investigate)
         
         # Analyze links
         links_data = analyze_links(mail_data.as_string(), investigate)
         
         # Analyze attachments
-        attachments_data = analyze_attachments(eml_file, investigate, save_attachments, output_dir)
-
-        # Format the result
-        result = format_analysis_result(eml_file, headers, links_data, hashes, attachments_data)
+        attachments_data = analyze_attachments(eml_file, investigate, save_attachments, output_dir)        # Format the result
+        result = format_analysis_result(eml_file, headers, links_data, dmarc_data, attachments_data)
         all_data.append(result)
 
     return all_data
@@ -82,15 +80,26 @@ def main():
     # Parse command line arguments
     args = parse_arguments()
     
-    # Fetch emails from server
-    eml_files = fetch_emails(
-        args.server, args.user, args.password, 
-        args.mailbox, args.output_dir
-    )
-    
-    if not eml_files:
-        print("No email files found or downloaded.")
-        sys.exit(1)
+    # Get email files to analyze
+    if args.files:
+        # Analyze existing .eml files from specified directory
+        import glob
+        pattern = os.path.join(args.files, "*.eml")
+        eml_files = glob.glob(pattern)
+        if not eml_files:
+            print(f"No .eml files found in directory: {args.files}")
+            sys.exit(1)
+        print(f"Found {len(eml_files)} .eml files to analyze")
+    else:
+        # Fetch emails from server
+        eml_files = fetch_emails(
+            args.server, args.user, args.password, 
+            args.mailbox, args.output_dir
+        )
+        
+        if not eml_files:
+            print("No email files found or downloaded.")
+            sys.exit(1)
     
     # Analyze the emails
     analysis_results = analyze_emails(eml_files, args.investigate, args.save_attachments, args.output_dir)

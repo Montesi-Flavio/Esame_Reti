@@ -86,12 +86,7 @@ def parse_email_headers(mail_data, investigation=False):
         other_headers_html = """
         <div class="accordion" id="headerAccordion">
             <div class="card">
-                <div class="card-header" id="headingDetails">
-                    <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" 
-                            data-target="#collapseDetails" aria-expanded="false" aria-controls="collapseDetails">
-                        Mostra Altri Header
-                    </button>
-                </div>
+            
                 <div id="collapseDetails" class="collapse" aria-labelledby="headingDetails" data-parent="#headerAccordion">
                     <div class="card-body">
                         <table class="table table-sm table-striped">
@@ -212,8 +207,16 @@ def investigate_sender_ip(ip):
         Dictionary with investigation results
     """
     # Check IP on VirusTotal
-    safe, positives = check_ip_safety(ip)
+    safe, positives, error = check_ip_safety(ip)
     if safe is None:
+        if error:
+            return {
+                "Virustotal": f"https://www.virustotal.com/gui/search/{ip}",
+                "Abuseipdb": f"https://www.abuseipdb.com/check/{ip}",
+                "Safety": "Unknown",
+                "Positives": "N/A",
+                "Error": error
+            }
         return None
         
     safety_status = "Safe" if safe else "Unsafe"
