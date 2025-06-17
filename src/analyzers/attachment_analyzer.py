@@ -8,7 +8,7 @@ import logging
 import mimetypes  # Utilizziamo mimetypes invece di magic
 from email import message_from_file
 from email.message import EmailMessage
-from connectors import check_hash_safety
+from connectors import check_hash_safety, comprehensive_hash_analysis
 
 # Configure logging
 logger = logging.getLogger('email_analyzer.attachment_analyzer')
@@ -212,60 +212,94 @@ def analyze_attachments(email_file, investigation=False, save_attachments=False,
             # Controllo di sicurezza basato sull'estensione
             if is_executable:
                 security_details.append("File eseguibile rilevato (.exe o .bat) - Alto rischio di malware")
-                is_safe = False
-              # Controllo hash con VirusTotal
-            vt_results = {}
-            html_formatted_results = {}
-            quota_exceeded = False
+                is_safe = False            # Comprehensive hash analysis with multiple security services
+            security_analysis = {}
+            hash_analysis_results = {}
             
-            for hash_type, hash_value in [("MD5", attachment["md5"]), 
-                                         ("SHA1", attachment["sha1"]), 
-                                         ("SHA256", attachment["sha256"])]:
-                safe, positives, error = check_hash_safety(hash_value)
+            # Analyze SHA256 hash first (most reliable)
+            sha256_hash = attachment["sha256"]
+            try:
+                comprehensive_results = comprehensive_hash_analysis(sha256_hash)
                 
-                if error:
-                    if "QuotaExceeded" in error:
-                        logger.warning(f"VirusTotal API quota exceeded for {hash_type} hash check")
-                        quota_exceeded = True
-                        # Continue checking other hashes in case quota resets
-                        continue
+                if comprehensive_results:
+                    # Extract threat assessment
+                    threat_score = comprehensive_results.get('threat_score', 0)
+                    risk_level = comprehensive_results.get('risk_level', 'Unknown')
+                    recommendations = comprehensive_results.get('recommendations', [])
+                    
+                    # Update safety status based on comprehensive analysis
+                    if threat_score > 50:  # High threat threshold
+                        is_safe = False
+                        security_details.append(f"Threat Score: {threat_score}/100 - {risk_level}")
+                        security_details.extend(recommendations)
+                    
+                    # Store detailed results for each service
+                    service_results = comprehensive_results.get('results', {})
+                    for service_name, service_data in service_results.items():
+                        if service_data and not service_data.get('error'):
+                            security_analysis[service_name] = service_data
+                    
+                    # Create formatted results for HTML display
+                    hash_analysis_results = {
+                        "SHA256": {
+                            "Tipo": "SHA256",
+                            "Valore": sha256_hash,
+                            "Threat Score": f"{threat_score}/100",
+                            "Risk Level": risk_level,
+                            "Services": len([s for s in service_results.values() if s and not s.get('error')]),
+                            "Recommendations": recommendations
+                        }
+                    }
+                    
+                    # Add service-specific links
+                    for service_name, service_data in service_results.items():
+                        if service_data and not service_data.get('error'):
+                            link = service_data.get('link')
+                            if link:
+                                hash_analysis_results["SHA256"][f"{service_name.title()} Link"] = f'<a href="{link}" target="_blank">Check on {service_name.title()}</a>'
+                
+                else:
+                    logger.warning("No results from comprehensive hash analysis")
+                    # Fallback to single VirusTotal check
+                    safe, positives, error = check_hash_safety(sha256_hash)
+                    if not error:
+                        vt_link = f"https://www.virustotal.com/gui/file/{sha256_hash}"
+                        if not safe:
+                            is_safe = False
+                            security_details.append(f"VirusTotal: {positives} detections")
+                        
+                        security_analysis["virustotal"] = {
+                            "safe": safe,
+                            "positives": positives,
+                            "link": vt_link
+                        }
+                        
+                        hash_analysis_results = {
+                            "SHA256": {
+                                "Tipo": "SHA256",
+                                "Valore": sha256_hash,
+                                "VirusTotal Link": f'<a href="{vt_link}" target="_blank">Check on VirusTotal</a>',
+                                "Detections": f"{positives} positives" if not safe else "No detections"
+                            }
+                        }
                     else:
-                        logger.error(f"Error checking {hash_type} hash: {error}")
-                        continue
-                  # Process successful result
-                vt_link = f"https://www.virustotal.com/gui/file/{hash_value}"
-                if not safe:
-                    is_safe = False
-                    security_details.append(f"Rilevato da VirusTotal: {positives} positivi")
-                    suspicious_files_found = True
-                
-                vt_results[hash_type] = {
-                    "Link": vt_link,
-                    "Positives": positives
-                }
-                
-                # Creazione di una versione formattata per HTML
-                html_formatted_results[hash_type] = {
-                    "Tipo": hash_type,
-                    "Valore": hash_value,
-                    "Link VirusTotal": f'<a href="{vt_link}" target="_blank">Verifica su VirusTotal</a>',
-                    "Rilevamenti": f"{positives} positivi" if not safe else "Nessun rilevamento"
-                }
-            
-            # Add quota exceeded warning if it occurred
-            if quota_exceeded:
-                security_details.append("VirusTotal API quota exceeded - Some hash checks unavailable")
+                        security_details.append(f"Hash analysis error: {error}")
+                        
+            except Exception as e:
+                logger.error(f"Error in comprehensive hash analysis: {e}")
+                security_details.append(f"Hash analysis unavailable: {str(e)}")
             
             # Aggiorna lo stato di sicurezza generale
             security_status = "Sicuro - Nessuna minaccia rilevata" if (is_safe and not is_executable) else "Non sicuro - Potenziale minaccia"
             
             attachment_info["Stato Sicurezza"] = security_status
             if not is_safe or is_executable:
-                attachment_info["Dettagli Sicurezza"] = security_details
-            
-            if vt_results:
-                attachment_info["VirusTotal"] = vt_results
-                attachment_info["HTML_Formatted"] = html_formatted_results
+                attachment_info["Dettagli Sicurezza"] = security_details            
+            # Store security analysis results
+            if security_analysis:
+                attachment_info["Security Analysis"] = security_analysis
+            if hash_analysis_results:
+                attachment_info["Hash Analysis"] = hash_analysis_results
         
         # Crea una versione formattata per HTML dell'attachment info
         html_info = {

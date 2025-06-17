@@ -17,7 +17,7 @@ from html.parser import HTMLParser
 from urllib.parse import urljoin, urlparse
 import hashlib
 from config import LINK_REGEX
-from connectors import check_url_safety
+from connectors import check_url_safety, comprehensive_url_analysis
 
 # Configure logging with a more specific name for better filtering
 logging.basicConfig(level=logging.INFO, 
@@ -277,14 +277,14 @@ def analyze_links(mail_data, investigation=False):
 
     # Batch processing for better performance
     batch_size = 5  # Process links in small batches to avoid overloading
-    
-    # Helper function to create link data object
-    def create_link_data(link, safety_info=None):
+      # Helper function to create link data object
+    def create_link_data(link, safety_info=None, comprehensive_results=None):
         """Create a structured data object for a URL.
         
         Args:
             link: URL string
-            safety_info: Optional tuple of (is_safe, detections, error) from security checks
+            safety_info: Optional tuple of (is_safe, detections, error) from single security checks
+            comprehensive_results: Optional results from comprehensive_url_analysis
             
         Returns:
             Dictionary with URL information and optional security data
@@ -296,7 +296,33 @@ def analyze_links(mail_data, investigation=False):
             "scheme": parsed.scheme
         }
         
-        if safety_info:
+        # Handle comprehensive security analysis results
+        if comprehensive_results:
+            threat_score = comprehensive_results.get('threat_score', 50)
+            risk_level = comprehensive_results.get('risk_level', 'Unknown')
+            recommendations = comprehensive_results.get('recommendations', [])
+            service_results = comprehensive_results.get('results', {})
+            
+            # Add comprehensive security information
+            link_data.update({
+                "safety_score": 100 - threat_score,  # Invert threat score to safety score
+                "threat_score": threat_score,
+                "risk_level": risk_level,
+                "threats": recommendations,
+                "security_services": {}
+            })
+            
+            # Add service-specific results
+            for service_name, service_data in service_results.items():
+                if service_data and not service_data.get('error'):
+                    link_data["security_services"][service_name] = {
+                        "safe": service_data.get('safe', True),
+                        "details": service_data.get('details', 'No details available'),
+                        "link": service_data.get('link')
+                    }
+                    
+        # Handle legacy single service results (fallback)
+        elif safety_info:
             is_safe, detections, error = safety_info
             
             # Calculate safety score: 100 for safe, 0 for unsafe, 50 for unknown
@@ -309,27 +335,41 @@ def analyze_links(mail_data, investigation=False):
                 "error": error if error else None
             })
             
-        return link_data    # Perform security investigation if requested
+        return link_data
+    
+    # Perform security investigation if requested
     if investigation and cleaned_links:
         logger.info(f"Starting safety investigation for {len(cleaned_links)} links...")
         investigation_start_time = time.time()
-        
-        # Process links in batches to avoid rate limit issues
+          # Process links in batches to avoid rate limit issues
         for i in range(0, len(cleaned_links), batch_size):
             batch = cleaned_links[i:i+batch_size]
             
             # Process each link in the current batch
             for link in batch:
+                error = None  # Initialize error variable
                 try:
                     # Add delay between batches to respect API limits
                     if i > 0 and i % batch_size == 0:
                         time.sleep(1)
-                    
-                    # Check link safety with VirusTotal
-                    is_safe, detections, error = check_url_safety(link)
-                    
-                    # Create structured data with safety information
-                    link_data = create_link_data(link, (is_safe, detections, error))
+                      # Comprehensive URL analysis with multiple security services
+                    try:
+                        comprehensive_results = comprehensive_url_analysis(link)
+                        
+                        if comprehensive_results:
+                            # Use comprehensive analysis results
+                            link_data = create_link_data(link, comprehensive_results=comprehensive_results)
+                        else:
+                            # Fallback to single VirusTotal check
+                            logger.warning(f"No comprehensive results for {link}, falling back to VirusTotal")
+                            is_safe, detections, error = check_url_safety(link)
+                            link_data = create_link_data(link, (is_safe, detections, error))
+                            
+                    except Exception as e:
+                        logger.error(f"Error in comprehensive URL analysis for {link}: {e}")
+                        # Fallback to single VirusTotal check
+                        is_safe, detections, error = check_url_safety(link)
+                        link_data = create_link_data(link, (is_safe, detections, error))
                     
                     # Add to results
                     result["unique_links"].append(link_data)

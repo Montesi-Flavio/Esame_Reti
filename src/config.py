@@ -30,3 +30,32 @@ BLACKLISTS = ["zen.spamhaus.org", "bl.spamcop.net", "b.barracudacentral.org"]
 # Cache Settings
 CACHE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "cache")
 CACHE_EXPIRY_DAYS = 7  # Cache expiry in days
+
+# Additional Security Service API Keys (Optional)
+# Set these as environment variables for enhanced security analysis
+
+# URLScan.io - Free tier available with registration
+URLSCAN_API_KEY = os.getenv('URLSCAN_API_KEY', '0197794c-7780-77dc-879f-5f0ef588b06c')
+
+# AbuseIPDB - Enhanced features with API key
+ABUSEIPDB_API_KEY = os.getenv('ABUSEIPDB_API_KEY', 'e280c07cb4fcaa941f9dcb1d246189f629230f0af54919b654b90c1a33a96eee4f1ca711489d1e2a')
+
+# Security Analysis Configuration
+SECURITY_ANALYSIS_CONFIG = {
+    'enable_multiple_services': True,  # Use multiple services for comprehensive analysis
+    'virustotal_enabled': True,        # Always enabled as primary service
+    'urlscan_enabled': True,           # Free service, no API key required
+    'phishtank_enabled': True,         # Free service
+    'malwarebazaar_enabled': True,     # Free service
+    'abuseipdb_enhanced': bool(ABUSEIPDB_API_KEY)  # Enhanced features with API key
+}
+
+# Threat Intelligence Sources
+THREAT_INTEL_SOURCES = {
+    'virustotal': 'https://www.virustotal.com/gui/search/',
+    'urlscan': 'https://urlscan.io/search/#',
+    'abuseipdb': 'https://www.abuseipdb.com/check/',
+    'phishtank': 'https://www.phishtank.com/',
+    'malwarebazaar': 'https://bazaar.abuse.ch/browse/',
+    'urlvoid': 'https://www.urlvoid.com/scan/'
+}
