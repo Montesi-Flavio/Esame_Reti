@@ -151,7 +151,7 @@ def _get_from_cache(cache_key, cache_type='url'):
     
     return None
 
-def _save_to_cache(cache_key, is_safe, positives, cache_type='url'):
+def _save_to_cache(cache_key, is_safe, positives, cache_type='url', total_scanners=None):
     """
     Save data to local cache.
     
@@ -160,6 +160,7 @@ def _save_to_cache(cache_key, is_safe, positives, cache_type='url'):
         is_safe: Safety status
         positives: Number of positive detections
         cache_type: Type of data being cached ('url', 'ip', or 'hash')
+        total_scanners: Optional total number of scanners used (for calculating detection ratio)
     """
     # Save to in-memory cache
     _vt_cache[cache_key] = (is_safe, positives, None)
@@ -170,6 +171,10 @@ def _save_to_cache(cache_key, is_safe, positives, cache_type='url'):
         'is_safe': is_safe,
         'positives': positives
     }
+    
+    # Add total scanners if provided
+    if total_scanners:
+        cache_data['total_scanners'] = total_scanners
     
     cache_path = os.path.join(CACHE_DIR, f"{cache_type}_{cache_key}.json")
     try:
@@ -208,10 +213,39 @@ def check_url_safety(url):
                 analysis = client.get_object(f"/urls/{vt.url_id(url)}")
                 if hasattr(analysis, 'last_analysis_stats'):
                     positives = analysis.last_analysis_stats.get('malicious', 0)
-                    is_safe = positives == 0
+                    total = sum(analysis.last_analysis_stats.values())                    # URL è considerato non sicuro se:
+                    # 1. Ha 2 o più rilevamenti positivi, O
+                    # 2. Ha almeno 1 rilevamento e è un URL shortener, O
+                    # 3. Ha almeno 1 rilevamento e contiene domini/parole sospette, O
+                    # 4. La percentuale di rilevamenti positivi è superiore al 2%
+                    shorteners = [
+                        'bit.ly', 't.co', 'goo.gl', 'tinyurl', 'ow.ly', 'is.gd', 'cutt.ly', 'tiny.cc', 'shrturi.com', 'shorturl', 'tr.im',
+                        'buff.ly', 'adf.ly', 'rebrand.ly', 'snip.ly', 'bl.ink', 'shor.by', 'tiny.pl', 'clicky.me', 's2r.co', 'tinyurl.com',
+                        'v.gd', 'shorturl.at', 'x.co', 'clickme.to', 'go2l.ink', 'surl.li', 'qr.ae', 'rb.gy', 'su.pr', 'dlvr.it',
+                        'urlz.fr', 'urlcut', 'shorturl', 'snipurl', 'cli.gs', 'filoops.info', 'migre.me', 'short.ie', 'shrinkster'
+                    ]
+                    suspicious_terms = [
+                        'login', 'account', 'secure', 'banking', 'update', 'security', 'verify', 'wallet', 'confirm', 'payment',
+                        'password', 'credential', 'signin', 'authorize', 'authentication', 'token', 'verify', 'validation',
+                        'recover', 'access', 'reset', 'card', 'credit', 'debit', 'paypal', 'bank', 'transfer', 'document',
+                        'identity', 'support', 'helpdesk', 'service', 'subscription', 'billing', 'invoice'
+                    ]
+                    is_shortener = any(shortener in url.lower() for shortener in shorteners)
+                    has_suspicious_terms = any(term in url.lower() for term in suspicious_terms)
+                    detection_percentage = (positives / total * 100) if total > 0 else 0
                     
-                    # Cache the result
-                    _save_to_cache(cache_key, is_safe, positives, 'url')
+                    # Logica più restrittiva:
+                    # - Anche solo 2 rilevamenti è sufficiente per considerarlo non sicuro
+                    # - Per shortener e URL con termini sospetti, basta 1 segnalazione
+                    # - La soglia di rilevamento percentuale è mantenuta al 2%
+                    is_safe = (positives == 0 or
+                              (positives == 1 and 
+                               not is_shortener and 
+                               not has_suspicious_terms and
+                               detection_percentage <= 2.0))
+                    
+                    # Salva anche il numero totale di scanner per calcolare la percentuale
+                    _save_to_cache(cache_key, is_safe, positives, 'url', total_scanners=total)
                     
                     return is_safe, positives, None
                 else:
@@ -219,7 +253,6 @@ def check_url_safety(url):
                     print(f"No analysis stats for URL: {url}")
                     _save_to_cache(cache_key, True, 0, 'url') # Cache as safe
                     return True, 0, "No analysis stats available"
-                    
             except vt.error.APIError as e:
                 error = str(e)
                 if "QuotaExceededError" in error and attempt < max_retries:
@@ -863,28 +896,103 @@ def calculate_url_risk_score(analysis_results):
     """
     score = 0
     services = analysis_results.get('services', {})
+    url = analysis_results.get('url', '').lower()
     
-    # VirusTotal weight: 3 points
+    # URL base risk assessment (indipendentemente dai servizi)
+    
+    # Check for URL shorteners (higher base risk)
+    shorteners = [
+        'bit.ly', 't.co', 'goo.gl', 'tinyurl', 'ow.ly', 'is.gd', 'cutt.ly', 'tiny.cc', 'shrturi.com', 'shorturl', 'tr.im',
+        'buff.ly', 'adf.ly', 'rebrand.ly', 'snip.ly', 'bl.ink', 'shor.by', 'tiny.pl', 'clicky.me', 's2r.co', 'tinyurl.com',
+        'v.gd', 'shorturl.at', 'x.co', 'clickme.to', 'go2l.ink', 'surl.li', 'qr.ae', 'rb.gy', 'su.pr', 'dlvr.it',
+        'urlz.fr', 'urlcut', 'shorturl', 'snipurl', 'cli.gs', 'filoops.info', 'migre.me', 'short.ie', 'shrinkster'
+    ]
+    if any(shortener in url for shortener in shorteners):
+        score += 2.0  # Aumento del rischio base per gli URL shortener
+    
+    # Check for suspicious terms in URL
+    suspicious_terms = [
+        'login', 'account', 'secure', 'banking', 'update', 'security', 'verify', 'wallet', 'confirm', 'payment',
+        'password', 'credential', 'signin', 'authorize', 'authentication', 'token', 'verify', 'validation',
+        'recover', 'access', 'reset', 'card', 'credit', 'debit', 'paypal', 'bank', 'transfer', 'document',
+        'identity', 'support', 'helpdesk', 'service', 'subscription', 'billing', 'invoice'
+    ]
+    if any(term in url for term in suspicious_terms):
+        score += 1.5  # Aumento del rischio per termini sospetti
+    
+    # VirusTotal weight: increased to 5 points with more aggressive scaling
     vt = services.get('virustotal', {})
-    if not vt.get('is_safe') and vt.get('positives', 0) > 0:
-        score += min(3, vt.get('positives', 0) / 10 * 3)
+    if vt.get('positives', 0) > 0:  # Anche un solo rilevamento è significativo
+        # Scaling più aggressivo: anche 1 rilevamento positivo è importante
+        positives = vt.get('positives', 0)
+        total_scanners = vt.get('total_scanners', 1)
+        detection_rate = positives / total_scanners if total_scanners > 0 else 0
+        
+        # Punteggio per numero di positivi
+        if positives == 1:
+            score += 2  # Un singolo rilevamento ora assegna 2 punti
+        elif positives == 2:
+            score += 3  # Due rilevamenti assegnano 3 punti
+        else:
+            score += min(5, 3 + (positives / 3))  # Scaling più aggressivo per 3+ rilevamenti
+        
+        # Punteggio aggiuntivo se la percentuale è significativa
+        if detection_rate > 0.05:  # >5% dei rilevamenti
+            score += 1
     
     # PhishTank weight: 4 points (high for phishing)
     pt = services.get('phishtank', {}).get('result')
     if pt and pt.get('is_phish'):
         score += 4
+        # Se è anche verificato, aggiungi un punto extra
+        if pt.get('verified', False):
+            score += 1
     
-    # URLVoid weight: 2 points
+    # URLVoid weight: increased to 4 points
     uv = services.get('urlvoid', {}).get('result')
-    if uv and not uv.get('is_safe'):
+    if uv:
         detections = int(uv.get('detections', 0))
         engines = int(uv.get('engines_count', 1))
-        score += min(2, (detections / engines) * 2)
+        
+        # Anche un solo rilevamento è ora più significativo
+        if detections == 1:
+            score += 1.5
+        elif detections >= 2:
+            score += min(4, (detections / engines) * 4 + 1)
     
-    # Google Safe Browsing weight: 3 points
+    # Google Safe Browsing weight: increased to 5 points (più autorevole)
     gsb = services.get('google_safe_browsing', {})
     if not gsb.get('is_safe') and gsb.get('threats'):
-        score += 3
+        score += 5  # Google's opinion ha un peso maggiore
+    
+    # URLScan.io results if available
+    us = services.get('urlscan', {}).get('result')
+    if us:
+        if us.get('malicious', False):
+            score += 3  # Aumentato il peso per verdetto malicious
+        elif us.get('suspicious', False):
+            score += 1.5  # Aggiunto punteggio per verdetto suspicious
+    
+    # Special cases:
+    
+    # 1. Se nessun servizio restituisce risultati conclusivi ma è un URL shortener
+    if all(service.get('error') for service in services.values() if service):
+        if any(shortener in url for shortener in shorteners):
+            score = max(score, 3)  # Rischio minimo aumentato per shortener con errori
+    
+    # 2. Se è uno shortener E ha qualsiasi positivo in qualsiasi servizio
+    has_any_detection = any(
+        (service.get('result', {}).get('detections', 0) > 0 if service_name == 'urlvoid' else
+         service.get('positives', 0) > 0 if service_name == 'virustotal' else
+         service.get('result', {}).get('is_phish', False) if service_name == 'phishtank' else
+         service.get('threats', []) if service_name == 'google_safe_browsing' else
+         service.get('result', {}).get('malicious', False) or service.get('result', {}).get('suspicious', False) if service_name == 'urlscan' else
+         False)
+        for service_name, service in services.items() if service and not service.get('error')
+    )
+    
+    if any(shortener in url for shortener in shorteners) and has_any_detection:
+        score = max(score, 4)  # Rischio minimo per shortener con qualsiasi rilevamento
     
     return min(10, score)
 

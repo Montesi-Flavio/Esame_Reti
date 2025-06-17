@@ -184,6 +184,32 @@ def extract_text_links(text):
     
     return links
 
+def is_url_shortener(url):
+    """Check if the URL is from a known URL shortener service.
+    
+    Args:
+        url: The URL to check
+        
+    Returns:
+        Boolean indicating if the URL is from a shortener service
+    """
+    shorteners = [
+        'bit.ly', 'tinyurl.com', 't.co', 'goo.gl', 'ow.ly', 'is.gd', 'buff.ly', 
+        'adf.ly', 'tiny.cc', 'tr.im', 'x.co', 'cli.gs', 'u.to', 'qr.net', 'j.mp',
+        'rebrand.ly', 'snip.ly', 'bl.ink', 'shor.by', 'tiny.pl', 'clicky.me',
+        's2r.co', 'v.gd', 'shorturl.at', 'clickme.to', 'go2l.ink', 'surl.li',
+        'qr.ae', 'rb.gy', 'su.pr', 'dlvr.it', 'urlz.fr', 'shorturl', 'snipurl',
+        'filoops.info', 'migre.me', 'short.ie', 'shrinkster', 'vurl.bz',
+        'href.li', 'cutt.ly', 'yourls.org', 'plu.sh', 'zws.im', 'shrunken.com', 
+        'mcaf.ee'  # McAfee shortener, often used in phishing
+    ]
+    
+    parsed = urlparse(url)
+    domain = parsed.netloc.lower()
+    
+    # Controlla sia il dominio esatto che i sottodomini
+    return any(domain == shortener or domain.endswith('.' + shortener) for shortener in shorteners)
+
 def create_link_data(link, safety_info=None, comprehensive_results=None):
     """Create a structured data object for a URL.
     
@@ -202,6 +228,11 @@ def create_link_data(link, safety_info=None, comprehensive_results=None):
         "scheme": parsed.scheme
     }
     
+    # Check if the URL is from a shortener service
+    is_shortener = is_url_shortener(link)
+    if is_shortener:
+        link_data["shortener"] = True
+    
     # Handle comprehensive security analysis results
     if comprehensive_results:
         # Get risk score and recommendation from comprehensive results
@@ -211,21 +242,42 @@ def create_link_data(link, safety_info=None, comprehensive_results=None):
         # Convert risk_score (0-10) to threat_score (0-100)
         threat_score = risk_score * 10
         
-        # Determine risk level based on recommendation
+        # Apply stricter risk level determination
         risk_level = "Unknown"
-        if "SAFE" in recommendation:
-            risk_level = "Safe"
-        elif "WARNING" in recommendation:
-            risk_level = "Low Risk"
-        elif "CAUTION" in recommendation:
-            risk_level = "Medium Risk"
-        elif "BLOCK" in recommendation or "QUARANTINE" in recommendation:
+        
+        # Per URL shortener, utilizziamo una logica più aggressiva
+        if is_shortener:
+            if threat_score > 0:
+                # Qualsiasi threat score per uno shortener è considerato almeno medio rischio
+                risk_level = "Medium Risk"
+                if threat_score >= 20:
+                    risk_level = "High Risk"
+            else:
+                # Anche se non ci sono minacce, gli shortener sono comunque "Low Risk"
+                risk_level = "Low Risk"
+        else:
+            # Logica normale ma più severa per gli URL standard
+            if "SAFE" in recommendation and threat_score == 0:
+                risk_level = "Safe"
+            elif threat_score <= 10:
+                risk_level = "Low Risk"
+            elif threat_score <= 30:
+                risk_level = "Medium Risk"
+            else:
+                risk_level = "High Risk"
+                
+        # Override espliciti basati sulla raccomandazione
+        if "BLOCK" in recommendation or "QUARANTINE" in recommendation:
             risk_level = "High Risk"
         
         # Extract recommendations from the comprehensive results
         recommendations = []
         if recommendation and ("SAFE" not in recommendation):
             recommendations.append(recommendation)
+            
+        # Add URL shortener warning
+        if is_shortener:
+            recommendations.append("URL shortener detected - consider analyzing the full destination URL")
         
         # Get service results from the proper field
         service_results = comprehensive_results.get('services', {})
@@ -244,9 +296,31 @@ def create_link_data(link, safety_info=None, comprehensive_results=None):
             if service_data and not service_data.get('error'):
                 # Handle different service result formats
                 if service_name == 'virustotal':
+                    positives = service_data.get('positives', 0)
+                    total = service_data.get('total_scanners', 0)
+                    details = "No detections"
+                    if positives > 0:
+                        if total > 0:
+                            percentage = (positives/total)*100
+                            details = f"{positives}/{total} malicious detections ({percentage:.1f}%)"
+                            
+                            # Aggiungi indicatori di gravità in base alla percentuale di rilevamento
+                            if percentage > 10:
+                                details += " - CRITICAL"
+                            elif percentage > 5:
+                                details += " - HIGH"
+                            elif percentage > 0:
+                                details += " - SUSPICIOUS"
+                        else:
+                            details = f"{positives} malicious detections - SUSPICIOUS"
+                            
+                        # Avviso più forte per URL shortener con rilevamenti
+                        if is_shortener:
+                            details += " - URL SHORTENER, HIGH RISK"
+                            
                     link_data["security_services"][service_name] = {
                         "safe": service_data.get('is_safe', True),
-                        "details": f"{service_data.get('positives', 0)} malicious detections" if service_data.get('positives', 0) > 0 else "No detections",
+                        "details": details,
                         "link": None
                     }
                 elif service_name == 'phishtank':
@@ -279,15 +353,27 @@ def create_link_data(link, safety_info=None, comprehensive_results=None):
     elif safety_info:
         is_safe, detections, error = safety_info
         
+        # Apply stricter checking for URL shorteners
+        if is_shortener and detections and detections > 0:
+            # Always consider URL shorteners with any detections as unsafe
+            is_safe = False
+        
         # Calculate safety score: 100 for safe, 0 for unsafe, 50 for unknown
         safety_score = 100 if is_safe else (0 if is_safe is not None else 50)
         
         # Add security information to the link data
+        threats = []
+        if detections:
+            threats.append(f"{detections} malicious detections")
+        
+        if is_shortener:
+            threats.append("URL shortener detected - consider analyzing the full destination URL")
+        
         link_data.update({
             "safety_score": safety_score,
             "threat_score": 100 - safety_score,  # Ensure threat score is also set
-            "risk_level": "Safe" if is_safe else ("High Risk" if is_safe is not None else "Unknown"),
-            "threats": [f"{detections} malicious detections"] if detections else [],
+            "risk_level": "Safe" if is_safe else ("High Risk" if is_shortener or (is_safe is not None and detections > 2) else "Medium Risk"),
+            "threats": threats,
             "error": error if error else None
         })
         
