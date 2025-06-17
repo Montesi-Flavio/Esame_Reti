@@ -92,7 +92,7 @@ def check_ip_safety(ip):
                 if "QuotaExceededError" in error and attempt < max_retries:
                     time.sleep(retry_delay * (attempt + 1))  # Exponential backoff
                     continue
-                      # Log the error but don't propagate it
+                # Log the error but don't propagate it
                 print(f"Error making request to VirusTotal: {e}")
                 return None, None, f"Error making request to VirusTotal: {e}"
             except Exception as e:

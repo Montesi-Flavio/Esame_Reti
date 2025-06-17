@@ -21,7 +21,7 @@ from connectors import check_url_safety, comprehensive_url_analysis
 
 # Configure logging with a more specific name for better filtering
 logging.basicConfig(level=logging.INFO, 
-                   format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger('email_analyzer.link_analyzer')
 
 class LinkExtractor(HTMLParser):
@@ -184,6 +184,115 @@ def extract_text_links(text):
     
     return links
 
+def create_link_data(link, safety_info=None, comprehensive_results=None):
+    """Create a structured data object for a URL.
+    
+    Args:
+        link: URL string
+        safety_info: Optional tuple of (is_safe, detections, error) from single security checks
+        comprehensive_results: Optional results from comprehensive_url_analysis
+        
+    Returns:
+        Dictionary with URL information and optional security data
+    """
+    parsed = urlparse(link)
+    link_data = {
+        "url": link,
+        "domain": parsed.netloc,
+        "scheme": parsed.scheme
+    }
+    
+    # Handle comprehensive security analysis results
+    if comprehensive_results:
+        # Get risk score and recommendation from comprehensive results
+        risk_score = comprehensive_results.get('risk_score', 5)
+        recommendation = comprehensive_results.get('recommendation', 'Unknown')
+        
+        # Convert risk_score (0-10) to threat_score (0-100)
+        threat_score = risk_score * 10
+        
+        # Determine risk level based on recommendation
+        risk_level = "Unknown"
+        if "SAFE" in recommendation:
+            risk_level = "Safe"
+        elif "WARNING" in recommendation:
+            risk_level = "Low Risk"
+        elif "CAUTION" in recommendation:
+            risk_level = "Medium Risk"
+        elif "BLOCK" in recommendation or "QUARANTINE" in recommendation:
+            risk_level = "High Risk"
+        
+        # Extract recommendations from the comprehensive results
+        recommendations = []
+        if recommendation and ("SAFE" not in recommendation):
+            recommendations.append(recommendation)
+        
+        # Get service results from the proper field
+        service_results = comprehensive_results.get('services', {})
+        
+        # Add comprehensive security information
+        link_data.update({
+            "safety_score": max(0, 100 - threat_score),  # Ensure safety score is between 0-100
+            "threat_score": threat_score,
+            "risk_level": risk_level,
+            "threats": recommendations,
+            "security_services": {}
+        })
+        
+        # Add service-specific results
+        for service_name, service_data in service_results.items():
+            if service_data and not service_data.get('error'):
+                # Handle different service result formats
+                if service_name == 'virustotal':
+                    link_data["security_services"][service_name] = {
+                        "safe": service_data.get('is_safe', True),
+                        "details": f"{service_data.get('positives', 0)} malicious detections" if service_data.get('positives', 0) > 0 else "No detections",
+                        "link": None
+                    }
+                elif service_name == 'phishtank':
+                    pt_result = service_data.get('result', {})
+                    if pt_result:
+                        link_data["security_services"][service_name] = {
+                            "safe": not pt_result.get('is_phish', False),
+                            "details": "Verified phishing site" if pt_result.get('verified', False) else "Reported as phishing",
+                            "link": None
+                        }
+                elif service_name == 'google_safe_browsing':
+                    threats = service_data.get('threats', [])
+                    is_safe = service_data.get('is_safe', True)
+                    link_data["security_services"][service_name] = {
+                        "safe": is_safe,
+                        "details": f"Threats detected: {', '.join([t.get('threatType', 'Unknown') for t in threats])}" if threats else "No threats detected",
+                        "link": None
+                    }
+                elif service_name in ['urlvoid', 'urlscan']:
+                    result = service_data.get('result', {})
+                    if result:
+                        is_safe = result.get('is_safe', True)
+                        link_data["security_services"][service_name] = {
+                            "safe": is_safe,
+                            "details": "Malicious content detected" if not is_safe else "No threats detected",
+                            "link": None
+                        }
+    
+    # Handle legacy single service results (fallback)
+    elif safety_info:
+        is_safe, detections, error = safety_info
+        
+        # Calculate safety score: 100 for safe, 0 for unsafe, 50 for unknown
+        safety_score = 100 if is_safe else (0 if is_safe is not None else 50)
+        
+        # Add security information to the link data
+        link_data.update({
+            "safety_score": safety_score,
+            "threat_score": 100 - safety_score,  # Ensure threat score is also set
+            "risk_level": "Safe" if is_safe else ("High Risk" if is_safe is not None else "Unknown"),
+            "threats": [f"{detections} malicious detections"] if detections else [],
+            "error": error if error else None
+        })
+        
+    return link_data
+
 def analyze_links(mail_data, investigation=False):
     """
     Extract links from email content and optionally investigate their safety.
@@ -248,7 +357,9 @@ def analyze_links(mail_data, investigation=False):
                     text_links = extract_text_links(text_content)
                     links.update(text_links)
             except Exception as e:
-                logger.debug(f"Error parsing plain text content: {e}")    # Process, normalize and deduplicate links
+                logger.debug(f"Error parsing plain text content: {e}")
+
+    # Process, normalize and deduplicate links
     cleaned_links = []
     unique_normalized_urls = set()
     
@@ -277,71 +388,13 @@ def analyze_links(mail_data, investigation=False):
 
     # Batch processing for better performance
     batch_size = 5  # Process links in small batches to avoid overloading
-      # Helper function to create link data object
-    def create_link_data(link, safety_info=None, comprehensive_results=None):
-        """Create a structured data object for a URL.
-        
-        Args:
-            link: URL string
-            safety_info: Optional tuple of (is_safe, detections, error) from single security checks
-            comprehensive_results: Optional results from comprehensive_url_analysis
-            
-        Returns:
-            Dictionary with URL information and optional security data
-        """
-        parsed = urlparse(link)
-        link_data = {
-            "url": link,
-            "domain": parsed.netloc,
-            "scheme": parsed.scheme
-        }
-        
-        # Handle comprehensive security analysis results
-        if comprehensive_results:
-            threat_score = comprehensive_results.get('threat_score', 50)
-            risk_level = comprehensive_results.get('risk_level', 'Unknown')
-            recommendations = comprehensive_results.get('recommendations', [])
-            service_results = comprehensive_results.get('results', {})
-            
-            # Add comprehensive security information
-            link_data.update({
-                "safety_score": 100 - threat_score,  # Invert threat score to safety score
-                "threat_score": threat_score,
-                "risk_level": risk_level,
-                "threats": recommendations,
-                "security_services": {}
-            })
-            
-            # Add service-specific results
-            for service_name, service_data in service_results.items():
-                if service_data and not service_data.get('error'):
-                    link_data["security_services"][service_name] = {
-                        "safe": service_data.get('safe', True),
-                        "details": service_data.get('details', 'No details available'),
-                        "link": service_data.get('link')
-                    }
-                    
-        # Handle legacy single service results (fallback)
-        elif safety_info:
-            is_safe, detections, error = safety_info
-            
-            # Calculate safety score: 100 for safe, 0 for unsafe, 50 for unknown
-            safety_score = 100 if is_safe else (0 if is_safe is not None else 50)
-            
-            # Add security information to the link data
-            link_data.update({
-                "safety_score": safety_score,
-                "threats": [f"{detections} malicious detections"] if detections else [],
-                "error": error if error else None
-            })
-            
-        return link_data
     
     # Perform security investigation if requested
     if investigation and cleaned_links:
         logger.info(f"Starting safety investigation for {len(cleaned_links)} links...")
         investigation_start_time = time.time()
-          # Process links in batches to avoid rate limit issues
+        
+        # Process links in batches to avoid rate limit issues
         for i in range(0, len(cleaned_links), batch_size):
             batch = cleaned_links[i:i+batch_size]
             
@@ -352,7 +405,8 @@ def analyze_links(mail_data, investigation=False):
                     # Add delay between batches to respect API limits
                     if i > 0 and i % batch_size == 0:
                         time.sleep(1)
-                      # Comprehensive URL analysis with multiple security services
+                    
+                    # Comprehensive URL analysis with multiple security services
                     try:
                         comprehensive_results = comprehensive_url_analysis(link)
                         
