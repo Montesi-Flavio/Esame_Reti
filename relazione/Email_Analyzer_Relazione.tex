@@ -55,172 +55,104 @@
 
 L'applicazione "Email Analyzer" è uno strumento avanzato progettato per analizzare le email scaricate da un server IMAP con un approccio multi-servizio alla sicurezza informatica. Questo sistema fornisce un'analisi completa e dettagliata di vari componenti delle email, inclusi header, link, allegati e verifiche di autenticazione.
 
-Il progetto è stato sviluppato come evoluzione di un sistema inizialmente basato esclusivamente su VirusTotal, trasformandolo in una piattaforma robusta che integra oltre 8 servizi di sicurezza diversi, garantendo così una copertura completa delle minacce digitali e riducendo la dipendenza da un singolo fornitore.
-
 \section{Architettura del Sistema}
 
 \subsection{Panoramica Generale}
 
-Il sistema Email Analyzer è strutturato secondo un'architettura modulare che separa chiaramente le responsabilità:
-
-\begin{itemize}
-    \item \textbf{Core Application} (`app.py`): Entry point principale con gestione parametri CLI
-    \item \textbf{Email Processing} (`email\_core.py`): Gestione connessioni IMAP e elaborazione email
-    \item \textbf{Analysis Modules} (`analyzers/`): Moduli specializzati per diversi tipi di analisi
-    \item \textbf{Security Connectors} (`connectors.py`): Interfacce con servizi di sicurezza esterni
-    \item \textbf{Output Generation} (`output/`): Generazione report JSON e HTML
-    \item \textbf{Configuration} (`config.py`): Configurazione centralizzata e chiavi API
-\end{itemize}
+Il sistema Email Analyzer è progettato seguendo un'architettura modulare. Al centro dell'applicazione troviamo la classe \texttt{app.py}, che funge da entry point principale e gestisce tutti i parametri della command line interface, orchestrando l'intero processo di analisi.
+\newline\newline La gestione delle connessioni IMAP e l'elaborazione delle email è affidata al modulo \texttt{email\_core.py}, che si occupa di stabilire connessioni sicure con i server di posta e di processare i messaggi nel loro formato nativo. Questo approccio permette di preservare tutte le informazioni tecniche necessarie per l'analisi.
+\newline\newline
+Per quanto riguarda l'analisi vera e propria, il sistema si avvale di moduli specializzati contenuti nella directory \texttt{/analyzers}, ciascuno focalizzato su un aspetto specifico della sicurezza email. L'interfacciamento con i servizi di sicurezza esterni è gestito dal modulo \texttt{connectors.py}, che implementa tutte le logiche di comunicazione con le API dei vari provider.
+\newline\newline
+La generazione dei report, sia in formato JSON che HTML, è delegata ai moduli contenuti nella directory \texttt{/output}, mentre la configurazione centralizzata del sistema, incluse le chiavi API e i parametri operativi, è gestita dal file \texttt{config.py}.
 
 \subsection{Moduli di Analisi Specializzati}
 
-Il sistema include quattro moduli di analisi specializzati:
-
-\begin{enumerate}
-    \item \textbf{Header Analyzer}: Analisi completa degli header email con categorizzazione automatica
-    \item \textbf{Link Analyzer}: Estrazione e verifica sicurezza di tutti i link presenti
-    \item \textbf{Attachment Analyzer}: Analisi hash degli allegati e rilevamento malware
-    \item \textbf{DMARC Analyzer}: Verifica protocolli di autenticazione DKIM, SPF e DMARC
-\end{enumerate}
+L'architettura modulare del sistema comprende quattro componenti di analisi specializzati, ciascuno progettato per affrontare specifici aspetti della sicurezza email.
+\newline\newline
+L'\textbf{Header Analyzer} si occupa dell'analisi completa degli header email, implementando un sistema di categorizzazione automatica che permette di organizzare e interpretare efficacemente i metadati del messaggio.
+\newline\newline
+Il \textbf{Link Analyzer} è responsabile dell'estrazione e della verifica di sicurezza di tutti i collegamenti presenti nell'email, utilizzando tecniche avanzate di pattern matching e normalizzazione degli URL.\newline\newline 
+L'\textbf{Attachment Analyzer} si concentra sull'analisi degli hash degli allegati e sul rilevamento di potenziali malware. \newline\newline
+Il \textbf{DMARC Analyzer} verifica l'implementazione e l'efficacia dei protocolli di autenticazione DKIM, SPF e DMARC.
 
 \section{Funzionalità Principali}
 
 \subsection{Download e Gestione Email}
 
 \subsubsection{IMAP (Internet Message Access Protocol)}
-\textbf{Definizione:} Protocollo standard per l'accesso alle email memorizzate su un server di posta. A differenza di POP3, IMAP mantiene i messaggi sul server permettendo l'accesso da più dispositivi.
-
-\textbf{Caratteristiche principali:}
-\begin{itemize}
-    \item Sincronizzazione bidirezionale tra client e server
-    \item Supporto per cartelle multiple e gerarchiche
-    \item Accesso parziale ai messaggi (solo header, solo corpo, ecc.)
-    \item Gestione degli stati dei messaggi (letto, non letto, eliminato)
-\end{itemize}
+\textbf{Definizione:} IMAP rappresenta il protocollo standard per l'accesso alle email memorizzate su un server di posta elettronica. A differenza del protocollo POP3, che scarica i messaggi localmente rimuovendoli dal server, IMAP mantiene tutti i messaggi sul server permettendo l'accesso sincronizzato da più dispositivi.
+\newline\newline
+Le caratteristiche principali di IMAP includono la sincronizzazione bidirezionale tra client e server, che garantisce che le modifiche apportate da un dispositivo siano visibili su tutti gli altri. Il protocollo offre inoltre supporto nativo per cartelle multiple e gerarchiche, permettendo un'organizzazione avanzata dei messaggi. Una funzionalità particolarmente utile è l'accesso parziale ai messaggi, che consente di scaricare selettivamente solo gli header, solo il corpo, o specifiche parti del messaggio, ottimizzando l'utilizzo della banda. Infine, IMAP gestisce efficacemente gli stati dei messaggi, tracciando informazioni come letto, non letto, eliminato e altre flag personalizzabili.
 
 \subsubsection{Implementazione nel Sistema}
-Il sistema si connette a server IMAP utilizzando SSL/TLS e scarica le email mantenendole nel loro formato originale (.eml). La gestione include:
-
-\begin{itemize}
-    \item Connessione sicura SSL al server IMAP
-    \item Autenticazione con credenziali utente
-    \item Download selettivo per mailbox specifica
-    \item Preservazione formato originale email
-    \item Gestione errori di connessione e timeout
-\end{itemize}
+La gestione delle connessioni IMAP nel sistema è stata implementata con particolare attenzione alla sicurezza e all'affidabilità. Il sistema si connette esclusivamente a server IMAP utilizzando protocolli SSL/TLS, garantendo che tutte le comunicazioni siano crittografate. Le email vengono scaricate e preservate nel loro formato originale (.eml), mantenendo intatti tutti i metadati e le informazioni tecniche necessarie per l'analisi di sicurezza.
+\newline\newline
+Il processo di connessione include l'autenticazione sicura con le credenziali utente fornite, il download selettivo basato sulla mailbox specificata, e la preservazione completa del formato originale dell'email. Il sistema implementa inoltre una gestione robusta degli errori, includendo la gestione di timeout di connessione, errori di autenticazione e problemi di rete temporanei.
 
 \subsection{Analisi degli Header}
 
 \subsubsection{Header Email}
-\textbf{Definizione:} Metadati strutturati che precedono il corpo di un'email, contenenti informazioni tecniche sul percorso, autenticazione e caratteristiche del messaggio.
-
-\textbf{Categorie principali:}
-\begin{itemize}
-    \item \textbf{Header di Routing:} Tracciano il percorso del messaggio (Received, Return-Path)
-    \item \textbf{Header di Identificazione:} Identificano mittente e destinatario (From, To, Message-ID)
-    \item \textbf{Header di Autenticazione:} Contengono informazioni di verifica (DKIM-Signature, Authentication-Results)
-    \item \textbf{Header di Sicurezza:} Risultati di analisi antispam e antimalware (X-Spam-Status, X-Virus-Scan)
-\end{itemize}
-
-\subsubsection{Implementazione Completa di Categorizzazione}
-
-Il sistema implementa un'analisi categorizzata degli header email con le seguenti caratteristiche:
-
-\begin{itemize}
-    \item \textbf{Categorizzazione Automatica}: Header suddivisi per tipologia (Autenticazione, Sicurezza, Routing, Tecnici)
-    \item \textbf{Visualizzazione Interattiva}: Sistema di espansione/compressione per header lunghi
-    \item \textbf{Analisi di Sicurezza}: Estrazione IP mittente e verifica blacklist
-    \item \textbf{Investigazione Avanzata}: Controllo reputazione IP su servizi multipli
-\end{itemize}
-
-\begin{lstlisting}[language=Python, caption=Esempio categorizzazione header]
-# Categorie header automatiche
-auth_headers = [
-    'dkim-signature', 'arc-seal', 'arc-authentication-results', 
-    'authentication-results', 'received-spf'
-]
-
-security_headers = [
-    'x-spam-status', 'x-rspamd-server', 'x-cnfs-analysis',
-    'x-spam-score', 'x-spam-level'
-]
-
-routing_headers = [
-    'received', 'return-path', 'delivered-to', 'x-received',
-    'x-originating-ip'
-]
-
-def categorize_header(header_name):
-    """Categorizza un header basandosi sul nome"""
-    header_lower = header_name.lower()
-      if header_lower in auth_headers:
-        return "Authentication & Security"
-    elif header_lower in security_headers:
-        return "Security & Spam"
-    elif header_lower in routing_headers:
-        return "Routing & Delivery"
-    else:
-        return "Other"
-\end{lstlisting}
+\textbf{Definizione:} Gli header email costituiscono un insieme di metadati strutturati che precedono il corpo di un messaggio di posta elettronica. Questi metadati contengono informazioni tecniche fondamentali riguardanti il percorso seguito dal messaggio, i meccanismi di autenticazione utilizzati e le caratteristiche generali della comunicazione.
+\newline \newline
+Gli header possono essere suddivisi in diverse categorie funzionali. Gli \textbf{header di routing} tracciano il percorso completo che il messaggio ha seguito attraverso i vari server di posta, includendo informazioni come Received e Return-Path. Gli \textbf{header di identificazione} servono a identificare univocamente mittente e destinatario, attraverso campi come From, To e Message-ID. Gli \textbf{header di autenticazione} contengono tutte le informazioni relative ai meccanismi di verifica dell'identità, come DKIM-Signature e Authentication-Results. Infine, gli \textbf{header di sicurezza} riportano i risultati delle analisi antispam e antimalware effettuate dai vari server durante il transito del messaggio.
 
 \subsection{Analisi dei Link}
 
 \subsubsection{Phishing}
-\textbf{Definizione:} Tecnica di ingegneria sociale che utilizza comunicazioni elettroniche fraudolente per rubare informazioni sensibili o credenziali, facendosi passare per entità affidabili.
-
-\textbf{Caratteristiche tipiche:}
-\begin{itemize}
-    \item URL contraffatti che imitano siti legittimi
-    \item Richieste urgenti di aggiornamento credenziali
-    \item Loghi e grafica copiati da organizzazioni reali
-    \item Domini simili a quelli originali (typosquatting)
-\end{itemize}
+\textbf{Definizione:} Il phishing rappresenta una delle tecniche di ingegneria sociale più diffuse e pericolose nell'ambito della cybersecurity. Questa metodologia di attacco utilizza comunicazioni elettroniche fraudolente, principalmente email, per ingannare le vittime e rubare informazioni sensibili quali credenziali di accesso, dati bancari o informazioni personali. L'efficacia del phishing risiede nella capacità degli attaccanti di presentarsi come entità legittime e affidabili.
+\newline \newline
+Le caratteristiche tipiche di un attacco phishing includono l'utilizzo di URL contraffatti che imitano fedelmente l'aspetto di siti web legittimi, spesso utilizzando domini molto simili a quelli originali attraverso tecniche di typosquatting. Gli attaccanti creano inoltre un senso di urgenza nelle loro comunicazioni, richiedendo azioni immediate come l'aggiornamento delle credenziali o la verifica dell'account. Per aumentare la credibilità del messaggio, vengono spesso copiati loghi, grafiche e elementi di design delle organizzazioni impersonate.
 
 \subsubsection{Sistema di Analisi Comprehensive}
 
-L'analisi dei link implementa un approccio multi-servizio con le seguenti funzionalità:
+L'implementazione dell'analisi dei link nel sistema segue un approccio multi-servizio avanzato che massimizza l'accuratezza del rilevamento delle minacce. L'\textbf{estrazione intelligente} utilizza algoritmi per identificare URL nascosti sia nel contenuto HTML che nel testo puro, garantendo che nessun collegamento sfugga all'analisi.
+\newline \newline
+Il processo di \textbf{normalizzazione} standardizza tutti gli URL rilevati per evitare che variazioni sintattiche dello stesso collegamento vengano considerate come entità separate.
+\newline \newline
+Il \textbf{sistema di caching } rappresenta una delle innovazioni più significative dell'implementazione, riducendo il numero di chiamate API duplicate e migliorando le performance complessive del sistema. Il \textbf{risk scoring } calcola un punteggio di rischio più accurato applicando criteri di valutazione più severi per URL potenzialmente pericolosi, inclusi i servizi di abbreviazione e i collegamenti contenenti termini sospetti.
+\newpage
+\subsubsection{Riconoscimento di Link Pericolosi}
 
-\begin{itemize}
-    \item \textbf{Estrazione Intelligente}: Rilevamento URL da contenuto HTML e testo
-    \item \textbf{Normalizzazione}: Standardizzazione URL per evitare duplicati
-    \item \textbf{Batch Processing}: Elaborazione in lotti per rispettare rate limits
-    \item \textbf{Caching Avanzato}: Sistema di cache per ridurre chiamate API
-    \item \textbf{Risk Scoring}: Punteggio di rischio basato su analisi multi-servizio
-\end{itemize}
+Il sistema è sviluppato per rilevare i collegamenti potenzialmente pericolosi, andando oltre i tradizionali metodi di blacklist. Il \textbf{riconoscimento degli URL shortener} si basa su un database completo di oltre 40 servizi di abbreviazione URL, molti dei quali sono frequentemente utilizzati nelle campagne di phishing per nascondere la destinazione reale del collegamento.
+\newline \newline
+La \textbf{detection più restrittiva} rappresenta un approccio dove anche un singolo rilevamento positivo su qualsiasi servizio di sicurezza può determinare un livello di rischio elevato, specialmente per determinate categorie di URL. Questo approccio più conservativo è giustificato dalla natura critica delle minacce email-based.
+\newline \newline
+\textbf{Logica di Classificazione del Rischio}
+\newline
+Per massimizzare la sicurezza del sistema, la logica di classificazione del rischio è stata significativamente migliorata rispetto agli standard tradizionali. Per gli \textbf{URL standard}, il sistema considera un collegamento come non sicuro quando vengono rilevati due o più rilevamenti positivi sui servizi di sicurezza, oppure quando almeno il 2\% dei motori di analisi riporta la presenza di minacce.
+\newline \newline
+Tuttavia, per gli \textbf{URL shortener}, i criteri di valutazione diventano molto più severi: anche un solo rilevamento positivo su qualsiasi servizio è sufficiente per classificare il collegamento come non sicuro. Questa decisione è motivata dalla natura intrinsecamente opaca di questi servizi, che rendono impossibile una valutazione preliminare del rischio da parte dell'utente.
+\newline \newline
+Gli \textbf{URL contenenti termini sospetti} vengono valutati con una severità intermedia ma comunque elevata: anche con un singolo rilevamento, questi collegamenti vengono classificati come potenzialmente pericolosi, richiedendo un'analisi più approfondita prima di essere considerati sicuri.
+
+\subsubsection{URL Shorteners e Sicurezza}
+
+I servizi di abbreviazione URL rappresentano una sfida particolare nel panorama della sicurezza informatica per diverse ragioni fondamentali. Innanzitutto, questi servizi nascondono completamente la destinazione effettiva del collegamento al destinatario dell'email, impedendo qualsiasi valutazione preliminare del rischio basata sul dominio di destinazione.
+\newline \newline
+Questa opacità consente agli URL shortener di eludere facilmente i filtri di sicurezza tradizionali che si basano su blacklist di domini specifici, poiché il dominio visibile è quello del servizio di abbreviazione (spesso legittimo) piuttosto che quello della destinazione malevola. Non sorprende quindi che questi servizi siano diventati strumenti ampiamente utilizzati nelle campagne di phishing proprio per la loro capacità di mascherare URL malevoli.
+\newline \newline
+L'impossibilità per l'utente finale di effettuare una valutazione immediata del rischio rappresenta un ulteriore elemento di vulnerabilità, costringendo a fare affidamento esclusivamente sui risultati dell'analisi automatizzata. Per queste ragioni, il sistema applica automaticamente una valutazione del rischio più severa a tutti gli URL shortener, assegnando un punteggio di rischio base elevato indipendentemente dai risultati specifici dei servizi di sicurezza consultati.
 
 \subsection{Analisi degli Allegati}
 
 \subsubsection{Hash Crittografici}
-\textbf{Definizione:} Funzioni matematiche che convertono dati di qualsiasi dimensione in una stringa di caratteri di lunghezza fissa, utilizzate per verificare l'integrità e identificare univocamente i file.
-
-\textbf{Algoritmi utilizzati:}
-\begin{itemize}
-    \item \textbf{MD5:} 128 bit, veloce ma vulnerabile a collisioni
-    \item \textbf{SHA1:} 160 bit, deprecato per uso crittografico
-    \item \textbf{SHA256:} 256 bit, standard attuale per sicurezza
-\end{itemize}
+\textbf{Definizione:} Gli hash crittografici rappresentano funzioni matematiche fondamentali nella sicurezza informatica, progettate per convertire dati di qualsiasi dimensione in una stringa di caratteri di lunghezza fissa. Queste funzioni sono utilizzate principalmente per verificare l'integrità dei file e per identificare univocamente contenuti digitali, rappresentando un pilastro fondamentale nei sistemi di rilevamento malware.
+\newline \newline
+Tra gli algoritmi più comunemente utilizzati troviamo l'\textbf{MD5}, che genera hash di 128 bit ed è particolarmente apprezzato per la sua velocità di calcolo, sebbene sia ormai considerato vulnerabile a attacchi di collisione. L'\textbf{SHA1} produce hash di 160 bit ed era molto diffuso in passato, ma è ora deprecato per applicazioni crittografiche critiche a causa di vulnerabilità note. L'\textbf{SHA256}, che genera hash di 256 bit, rappresenta attualmente lo standard per applicazioni di sicurezza, offrendo un ottimo equilibrio tra sicurezza e performance.
 
 \subsubsection{Malware via Email}
-\textbf{Definizione:} Software dannoso distribuito attraverso allegati email o link che scaricano payload malevoli.
-
-\textbf{Tipologie comuni:}
-\begin{itemize}
-    \item \textbf{Trojan:} Software che si nasconde come applicazione legittima
-    \item \textbf{Ransomware:} Crittografa i file richiedendo un riscatto
-    \item \textbf{Stealer:} Ruba credenziali e informazioni sensibili
-    \item \textbf{Botnet Agent:} Trasforma il sistema in parte di una rete botnet
-\end{itemize}
+\textbf{Definizione:} Il malware distribuito tramite email rappresenta uno dei vettori di attacco più persistenti e pericolosi nel panorama delle minacce informatiche. Questo tipo di software dannoso viene tipicamente distribuito attraverso allegati email che contengono direttamente il payload malevolo, oppure attraverso collegamenti che dirigono la vittima verso siti web che effettuano il download automatico di componenti dannosi.
+\newline \newline
+Le tipologie più comuni di malware email-based includono i \textbf{Trojan}, software che si nascondono dietro l'apparenza di applicazioni legittime per eludere i sospetti dell'utente e ottenere accesso non autorizzato al sistema. I \textbf{Ransomware} rappresentano una categoria particolarmente pericolosa, in quanto crittografano i file dell'utente richiedendo il pagamento di un riscatto per il ripristino dei dati.
+\newline \newline
+Gli \textbf{Stealer} sono progettati specificamente per rubare credenziali, informazioni sensibili e dati personali, spesso operando in modo silenzioso per lunghi periodi. I \textbf{Botnet Agent} trasformano il sistema infetto in parte di una rete controllata da cybercriminali, utilizzandolo per attività dannose coordinate come attacchi DDoS o spam.
 
 \subsubsection{Implementazione nel Sistema}
 
-Il sistema calcola hash multipli (MD5, SHA1, SHA256) per ogni allegato e li verifica contro database di malware:
-
-\begin{itemize}
-    \item Calcolo hash multipli per maggiore sicurezza
-    \item Verifica su VirusTotal e MalwareBazaar
-    \item Identificazione famiglia malware
-    \item Sistema di quarantena automatica per file sospetti
-\end{itemize}
+Il sistema implementa un approccio multi-layer per l'analisi degli allegati, calcolando simultaneamente hash multipli (MD5, SHA1, SHA256) per ogni file allegato per massimizzare le possibilità di identificazione. Questi hash vengono quindi verificati contro database specializzati di malware come VirusTotal e MalwareBazaar, permettendo l'identificazione non solo della presenza di malware, ma anche della specifica famiglia di appartenenza.
+\newline \newline
+Il sistema include inoltre funzionalità avanzate come l'identificazione automatica della famiglia malware e un sistema di quarantena automatica per file che risultano sospetti dall'analisi, prevenendo potenziali danni al sistema ospitante.
 
 \subsection{Verifica Autenticazione Email}
 
@@ -241,7 +173,7 @@ v=spf1 ip4:192.168.1.0/24 include:_spf.google.com -all
 
 \subsubsection{DKIM (DomainKeys Identified Mail)}
 \textbf{Definizione:} Sistema di autenticazione che utilizza crittografia a chiave pubblica per verificare che un'email non sia stata alterata durante il transito e che provenga effettivamente dal dominio dichiarato.
-
+\newline \newline
 \textbf{Componenti chiave:}
 \begin{itemize}
     \item \textbf{Chiave privata:} Utilizzata dal server mittente per firmare l'email
@@ -258,7 +190,7 @@ DKIM-Signature: v=1; a=rsa-sha256; d=example.com; s=selector1;
 
 \subsubsection{DMARC (Domain-based Message Authentication, Reporting \& Conformance)}
 \textbf{Definizione:} Policy di autenticazione che si basa su SPF e DKIM per determinare l'autenticità di un'email e specificare le azioni da intraprendere per i messaggi che falliscono l'autenticazione.
-
+\newline \newline
 \textbf{Policy DMARC:}
 \begin{itemize}
     \item \textbf{none:} Solo monitoraggio, nessuna azione
@@ -274,7 +206,7 @@ DKIM-Signature: v=1; a=rsa-sha256; d=example.com; s=selector1;
 
 \subsubsection{Email Spoofing}
 \textbf{Definizione:} Falsificazione dell'indirizzo mittente di un'email per far sembrare che provenga da una fonte diversa da quella reale.
-
+\newline \newline
 \textbf{Tecniche comuni:}
 \begin{itemize}
     \item Manipolazione header FROM
@@ -283,195 +215,134 @@ DKIM-Signature: v=1; a=rsa-sha256; d=example.com; s=selector1;
     \item Reply-To manipulation
 \end{itemize}
 
-\subsubsection{Implementazione nel Sistema}
-
-Il sistema implementa una verifica completa dei protocolli di autenticazione:
-
-\begin{itemize}
-    \item \textbf{DKIM Analysis}: Verifica firme digitali e algoritmi crittografici
-    \item \textbf{SPF Verification}: Controllo autorizzazioni server mittente
-    \item \textbf{DMARC Policy}: Verifica politiche dominio e allineamento
-    \item \textbf{Security Assessment}: Valutazione complessiva autenticità email
-\end{itemize}
 
 \section{Servizi di Sicurezza Integrati}
 
 \subsection{Servizi Primari}
 
 \subsubsection{VirusTotal}
-\textbf{Definizione:} Servizio online gratuito che analizza file e URL utilizzando oltre 70 motori antivirus e servizi di rilevamento malware.
-
-\textbf{Funzionalità nell'implementazione:}
-\begin{itemize}
-    \item \textbf{Scansione Multi-Engine:} Analisi file, URL, IP con 60+ motori antivirus
-    \item \textbf{Implementazione:} Context manager per gestione sessioni
-    \item \textbf{Caratteristiche:} Retry logic e cache intelligente
-    \item \textbf{Database:} Accesso a storico di minacce conosciute
-    \item \textbf{API:} Integrazione automatizzata con limite chiamate
-\end{itemize}
+\textbf{Definizione:} VirusTotal rappresenta uno dei servizi online più autorevoli e completi per l'analisi di sicurezza, offrendo gratuitamente l'accesso a una piattaforma che integra oltre 70 motori antivirus e servizi specializzati nel rilevamento di malware e minacce informatiche.
+\newline \newline
+L'implementazione di VirusTotal nel sistema sfrutta appieno le capacità di \textbf{scansione multi-engine}, permettendo l'analisi simultanea di file, URL e indirizzi IP attraverso più di 60 motori antivirus differenti. Questa diversificazione massimizza le probabilità di rilevamento anche delle minacce più sofisticate o recenti.
+\newline \newline
+L'integrazione tecnica utilizza \textbf{context manager} per una gestione ottimale delle sessioni di comunicazione con le API, implementando una \textbf{retry logic} intelligente che gestisce automaticamente i fallimenti temporanei e un sistema di \textbf{cache intelligente} che riduce il numero di chiamate API duplicate. Il servizio fornisce inoltre accesso a un vasto \textbf{database storico} di minacce conosciute, permettendo l'identificazione di campagne di attacco già documentate. L'\textbf{integrazione API} è completamente automatizzata e rispetta i limiti di chiamate imposti dal servizio.
 
 \subsubsection{PhishTank}
-\textbf{Definizione:} Database collaborativo e gratuito di URL di phishing verificati dalla community, gestito da OpenDNS (Cisco).
-
-\textbf{Implementazione nel sistema:}
-\begin{itemize}
-    \item \textbf{Funzionalità:} Database phishing community-driven
-    \item \textbf{Vantaggi:} Gratuito, aggiornamenti real-time
-    \item \textbf{API:} Nessuna chiave richiesta
-    \item \textbf{Verifica:} Controllo manuale da parte della community
-    \item \textbf{Categorizzazione:} Classificazione per tipo di target
-\end{itemize}
+\textbf{Definizione:} PhishTank costituisce un database collaborativo e gratuito di URL di phishing, gestito da OpenDNS (ora parte di Cisco) e alimentato da una community globale di esperti di sicurezza che verificano e catalogano le minacce in tempo reale.
+\newline \newline
+L'implementazione nel sistema sfrutta la natura \textbf{community-driven} del database, beneficiando di aggiornamenti costanti e in tempo reale provenienti da analisti di sicurezza distribuiti globalmente. Il servizio offre il vantaggio significativo di essere completamente \textbf{gratuito} e di non richiedere chiavi API per l'accesso base, semplificando notevolmente l'integrazione.
+\newline \newline
+La \textbf{verifica manuale} effettuata dalla community garantisce un'alta qualità dei dati, riducendo significativamente i falsi positivi. Inoltre, PhishTank offre una \textbf{categorizzazione avanzata} che classifica gli attacchi di phishing per tipo di target (banche, social media, servizi cloud, etc.), fornendo contesto aggiuntivo per l'analisi delle minacce.
 
 \subsection{Servizi Specializzati}
 
 \subsubsection{URLScan.io}
-\textbf{Definizione:} Servizio di analisi comportamentale di siti web che esegue una scansione completa della pagina in un ambiente sandbox.
-
-\textbf{Capacità di analisi e implementazione:}
-\begin{itemize}
-    \item \textbf{Funzionalità}: Analisi comportamentale siti web
-    \item \textbf{Caratteristiche}: Screenshot della pagina renderizzata, analisi traffico di rete
-    \item \textbf{Rilevamento}: Tecnologie utilizzate e JavaScript malevolo
-    \item \textbf{API Key}: Opzionale per funzionalità avanzate
-    \item \textbf{Sandbox}: Esecuzione sicura in ambiente isolato
-\end{itemize}
+\textbf{Definizione:} URLScan.io rappresenta un servizio di analisi comportamentale avanzata che va oltre il semplice controllo delle blacklist, eseguendo una scansione completa e dinamica delle pagine web in un ambiente sandbox controllato e sicuro.
+\newline \newline
+Il servizio eccelle nell'\textbf{analisi comportamentale} dei siti web, simulando la visita di un utente reale e monitorando tutte le attività che si verificano durante il caricamento della pagina. Questa capacità include la generazione di \textbf{screenshot della pagina renderizzata}, che permette agli analisti di verificare visivamente l'aspetto del sito e identificare tentativi di impersonificazione di brand legittimi.
+\newline \newline
+L'\textbf{analisi del traffico di rete} monitora tutte le comunicazioni che avvengono durante il caricamento della pagina, identificando connessioni sospette, download automatici e redirect nascosti. Il servizio è inoltre in grado di rilevare le \textbf{tecnologie utilizzate} dal sito web e di identificare la presenza di \textbf{JavaScript malevolo} o offuscato.
+\newline \newline
+Mentre l'utilizzo base del servizio non richiede una \textbf{API key}, l'accesso alle funzionalità avanzate e a rate limits più elevati è disponibile per utenti registrati. L'esecuzione di tutte le analisi avviene in un \textbf{ambiente sandbox} completamente isolato, garantendo la sicurezza dell'infrastruttura di analisi.
 
 \subsubsection{MalwareBazaar}
-\textbf{Definizione:} Database pubblico e gratuito di campioni malware mantenuto da abuse.ch, specializzato nella condivisione di hash di file malevoli.
-
-\textbf{Implementazione nel sistema:}
-\begin{itemize}
-    \item \textbf{Funzionalità}: Database specializzato malware
-    \item \textbf{Caratteristiche}: Hash lookup, identificazione famiglia
-    \item \textbf{Vantaggi}: Gratuito, database sempre aggiornato
-    \item \textbf{Metadati}: Classificazione dettagliata e timeline scoperta
-    \item \textbf{API}: Facile integrazione senza limiti stringenti
-\end{itemize}
+\textbf{Definizione:} MalwareBazaar è un database pubblico e gratuito di campioni malware mantenuto da abuse.ch, un'organizzazione non-profit svizzera specializzata nella raccolta e condivisione di intelligence sulle minacce informatiche.
+\newline \newline
+Il servizio si distingue come \textbf{database specializzato} esclusivamente nel malware, offrendo funzionalità avanzate di \textbf{hash lookup} e \textbf{identificazione della famiglia} malware. Questa specializzazione permette una classificazione molto più dettagliata e accurata rispetto ai servizi generalisti.
+\newline \newline
+Il database è \textbf{completamente gratuito} e viene costantemente aggiornato con nuovi campioni provenienti da ricercatori di sicurezza, organizzazioni e sistemi automatizzati di rilevamento. Oltre alla semplice identificazione, il servizio fornisce \textbf{metadati dettagliati} sui campioni, inclusi informazioni sulla classificazione delle famiglie malware e \textbf{timeline di scoperta} che aiutano a comprendere l'evoluzione delle minacce.
+\newline \newline
+L'\textbf{integrazione API} è semplice e diretta, senza limiti particolarmente stringenti che potrebbero impedire l'utilizzo in contesti di analisi intensiva.
 
 \subsubsection{AbuseIPDB}
-\begin{itemize}
-    \item \textbf{Funzionalità}: Reputazione IP e report abusi
-    \item \textbf{Caratteristiche}: Geolocalizzazione, ISP info, confidence score
-    \item \textbf{API}: Chiave richiesta per funzionalità complete
-    \item \textbf{Community}: Report dalla community di sicurezza
-    \item \textbf{Dati Storici}: Storico delle segnalazioni e attività sospette
-\end{itemize}
-
-\subsection{Servizi Aggiuntivi}
-
-Il sistema supporta inoltre:
-\begin{itemize}
-    \item \textbf{URLVoid}: Aggregazione 30+ motori reputazione
-    \item \textbf{Spamhaus}: DNS blacklist per domini
-    \item \textbf{Google Safe Browsing}: Protezione Google integrata
-\end{itemize}
-
+AbuseIPDB rappresenta una risorsa fondamentale per la valutazione della reputazione degli indirizzi IP, specializzandosi nella raccolta e nell'analisi di report di abuso provenienti da una vasta community di professionisti della sicurezza informatica.
+\newline \newline
+Il servizio eccelle nella \textbf{valutazione della reputazione IP} fornendo un \textbf{confidence score} che quantifica la probabilità che un determinato indirizzo IP sia coinvolto in attività malevole. Le funzionalità di \textbf{geolocalizzazione} e \textbf{identificazione ISP} forniscono contesto geografico e infrastrutturale utile per l'analisi delle minacce.
+\newline \newline
+L'accesso alle \textbf{funzionalità complete} richiede una chiave API, ma il valore aggiunto giustifica questo requisito. Il database è alimentato da \textbf{report della community} di sicurezza informatica, garantendo informazioni aggiornate e relevant. Il servizio mantiene inoltre \textbf{dati storici} dettagliati delle segnalazioni e delle attività sospette associate a ciascun IP, permettendo analisi longitudinali delle minacce.
+\newpage
 \section{Sistema di Risk Scoring}
 
-\subsection{Metodologia di Scoring}
+\subsection{Metodologia di Risk Scoring Migliorata}
 
-Il sistema implementa un algoritmo di risk scoring che combina i risultati di tutti i servizi disponibili:
+Il sistema usa un algoritmo di risk scoring che rappresenta un'evoluzione significativa rispetto ai metodi tradizionali di valutazione delle minacce. Questo algoritmo combina i risultati di tutti i servizi di sicurezza disponibili.
+\newline \newline
+Il sistema utilizza una \textbf{scala standardizzata da 0 a 10}, dove il valore 10 rappresenta il massimo rischio possibile. Questa standardizzazione facilita l'interpretazione dei risultati e la definizione di policy di sicurezza basate su soglie numeriche chiare.
+\newline \newline
+Un aspetto innovativo dell'implementazione è il \textbf{peso differenziato} assegnato a ciascun servizio di sicurezza: i servizi considerati più affidabili o specializzati ricevono un peso maggiore nella valutazione finale, mentre servizi meno specializzati o con tassi di falsi positivi più elevati influenzano meno il punteggio complessivo.
+\newline \newline
+Il sistema introduce inoltre \textbf{punteggi base} per determinate categorie di URL: i servizi di abbreviazione URL e gli URL contenenti termini sospetti ricevono automaticamente un punteggio di rischio base anche prima che inizi l'analisi vera e propria. Questo approccio riflette la natura intrinsecamente rischiosa di queste categorie.
+\newline \newline
+La \textbf{valutazione progressiva} garantisce che anche un singolo rilevamento positivo abbia un impatto significativo sul punteggio finale, abbandonando l'approccio tradizionale che spesso ignorava rilevamenti isolati. Infine, il sistema genera automaticamente \textbf{raccomandazioni standardizzate} (SAFE, WARNING, CAUTION, BLOCK) basate sul punteggio finale, facilitando la presa di decisioni operative.
 
-\begin{itemize}
-    \item \textbf{Scala 0-10}: Punteggio rischio standardizzato
-    \item \textbf{Peso Bilanciato}: Servizi diversi hanno pesi diversi basati su affidabilita
-    \item \textbf{Raccomandazioni Automatiche}: SAFE, WARNING, CAUTION, BLOCK
-\end{itemize}
+\subsubsection{Logica di Valutazione del Risk Score}
 
-\begin{lstlisting}[language=Python, caption=Esempio algoritmo risk scoring]
-def calculate_risk_score(service_results):
-    """
-    Calcola risk score combinando risultati di servizi multipli
-    Scale: 0-10 (0 = sicuro, 10 = massimo rischio)
-    """
-    total_score = 0
-    max_possible_score = 0
+Il sistema valuta il rischio secondo questa logica:
+
+\begin{enumerate}
+    \item \textbf{Analisi preliminare dell'URL}: 
+    \begin{itemize}
+        \item Se l'URL è un servizio di abbreviazione (shortener): +2.0 punti base di rischio
+        \item Se contiene termini sospetti (login, verify, account, ecc.): +1.5 punti base
+    \end{itemize}
     
-    # Pesi per servizi URL
-    url_weights = {
-        'phishtank': 4,      # Alta affidabilita' per phishing
-        'virustotal': 3,     # Standard de facto
-        'urlvoid': 2,        # Aggregatore utile
-        'urlscan': 2,        # Analisi comportamentale
-        'google_safe_browsing': 1  # Baseline Google
-    }
+    \item \textbf{Integrazione risultati VirusTotal}:
+    \begin{itemize}
+        \item 1 rilevamento positivo: +2 punti (precedentemente +1)
+        \item 2 rilevamenti positivi: +3 punti (precedentemente +2)
+        \item 3+ rilevamenti: scala progressivamente fino a +5 punti
+        \item Se la percentuale di rilevamenti supera il 5\%: +1 punto aggiuntivo
+    \end{itemize}
     
-    # Calcola score per servizi URL
-    for service, weight in url_weights.items():
-        if service in service_results:
-            result = service_results[service]
-            max_possible_score += weight
-            
-            if result.get('is_malicious', False):
-                total_score += weight
-            elif result.get('positives', 0) > 0:
-                # Score parziale basato su detection ratio
-                ratio = result.get('positives', 0) / max(result.get('total', 1), 1)
-                total_score += weight * ratio
+    \item \textbf{Valutazione PhishTank}: fino a +4 punti (se verificato come phishing: +5)
     
-    # Normalizza su scala 0-10
-    if max_possible_score > 0:
-        risk_score = min(10, (total_score / max_possible_score) * 10)
-    else:
-        risk_score = 0
+    \item \textbf{Valutazione URLVoid}: fino a +4 punti (anche con un singolo rilevamento: +1.5)
     
-    return round(risk_score, 1)
+    \item \textbf{Casi speciali}:
+    \begin{itemize}
+        \item URL shortener senza risultati dai servizi: almeno +3 punti di rischio base
+        \item URL shortener con qualsiasi rilevamento positivo: almeno +4 punti di rischio
+    \end{itemize}
+\end{enumerate}
 
-def get_recommendation(risk_score):
-    """Fornisce raccomandazione basata su risk score"""
-    if risk_score <= 2:
-        return "SAFE"
-    elif risk_score <= 4:
-        return "WARNING"
-    elif risk_score <= 7:
-        return "CAUTION"
-    else:
-        return "BLOCK"
-\end{lstlisting}
+\subsubsection{Esempio di Valutazione}
 
-\subsection{Criteri di Valutazione}
+Un link può essere valutato secondo questi passaggi (esempio concettuale):
 
-\begin{itemize}
-    \item \textbf{URL Risk Scoring}: PhishTank (4 punti), VirusTotal (3 punti), URLVoid (2 punti)
-    \item \textbf{Hash Risk Scoring}: MalwareBazaar (6 punti), VirusTotal (4 punti)
-    \item \textbf{IP Risk Scoring}: AbuseIPDB confidence + VirusTotal engines
-\end{itemize}
+\begin{enumerate}
+    \item L'URL è \texttt{bit.ly/abc123} → URL shortener identificato → +2.0 punti di rischio base
+    \item VirusTotal riporta 1 rilevamento positivo su 80 scanner → +2.0 punti
+    \item Google Safe Browsing non rileva minacce → +0 punti
+    \item PhishTank non ha informazioni → +0 punti
+    \item URLVoid non rileva problemi → +0 punti
+    \item Caso speciale: URL shortener con almeno un rilevamento positivo → minimo +4 punti
+    \item Punteggio finale: 4.0/10, classificato come "Medium Risk"
+\end{enumerate}
 
+Questa metodologia garantisce che anche piccoli segnali di potenziale rischio vengano adeguatamente considerati, soprattutto quando combinati con fattori di rischio come l'utilizzo di servizi di abbreviazione URL.
+\newpage
 \section{Ottimizzazioni e Performance}
 
 \subsection{Sistema di Caching}
 
-Il sistema implementa un sofisticato sistema di caching per ottimizzare le performance:
-
-\begin{itemize}
-    \item \textbf{File-based Caching}: Risultati API salvati in file JSON
-    \item \textbf{Cache Key Generation}: Hash MD5 di URL/IP per identificazione univoca
-    \item \textbf{Automatic Expiration}: Scadenza automatica dopo 7 giorni (configurabile)
-    \item \textbf{Memory Efficiency}: Deduplicazione in memoria prima delle chiamate API
-\end{itemize}
+Il sistema implementa un sofisticato meccanismo di caching progettato per ottimizzare significativamente le performance dell'applicazione riducendo al minimo le chiamate API ridondanti. Il \textbf{caching basato su file} salva persistentemente tutti i risultati delle API in file JSON strutturati, permettendo il riutilizzo delle informazioni anche tra sessioni diverse di analisi.
+\newline \newline
+La \textbf{generazione delle chiavi di cache} utilizza hash MD5 degli URL e degli indirizzi IP per creare identificatori univoci che garantiscono l'accesso rapido ai dati salvati senza possibilità di collisioni. Il sistema include una funzionalità di \textbf{scadenza automatica} che rimuove i dati di cache dopo 7 giorni (periodo configurabile), garantendo che le informazioni rimangano aggiornate rispetto all'evoluzione delle minacce.
+\newline \newline
+Un ulteriore livello di ottimizzazione è rappresentato dalla \textbf{deduplicazione in memoria}, che elimina le richieste duplicate prima ancora che vengano inviate alle API esterne, riducendo il carico sui servizi esterni e migliorando i tempi di risposta.
 
 \subsection{Gestione Errori e Resilienza}
 
-\paragraph{Error Handling Comprehensive}
-
-\begin{itemize}
-    \item \textbf{Retry Logic}: Exponential backoff per errori transitori
-    \item \textbf{Graceful Degradation}: Continuazione analisi anche con servizi non disponibili
-    \item \textbf{Quota Management}: Gestione intelligente quote API
-    \item \textbf{Fallback System}: Sistema di fallback automatico tra servizi
-\end{itemize}
+Il sistema implementa un framework comprehensive di gestione degli errori progettato per garantire la massima resilienza operativa. La \textbf{retry logic} utilizza un algoritmo di exponential backoff per gestire automaticamente gli errori transitori, aumentando progressivamente gli intervalli tra i tentativi per evitare di sovraccaricare servizi temporaneamente non disponibili.
+\newline \newline
+La filosofia di \textbf{graceful degradation} permette al sistema di continuare l'analisi anche quando alcuni servizi non sono disponibili, fornendo comunque risultati parziali ma utili basati sui servizi funzionanti. Il \textbf{quota management} monitora intelligentemente l'utilizzo delle quote API, rallentando automaticamente il ritmo delle richieste quando ci si avvicina ai limiti imposti dai provider.
 
 \subsection{Batch Processing}
 
-Per rispettare i rate limits dei servizi esterni:
-
-\begin{itemize}
-    \item Elaborazione URL in lotti di 5
-    \item Pausa automatica tra batch
-    \item Monitoraggio rate limits in real-time
-    \item Prioritizzazione richieste critiche
-\end{itemize}
-
+Per rispettare efficacemente i rate limits imposti dai servizi esterni, il sistema organizza tutte le operazioni in lotti ottimizzati. L'elaborazione degli URL avviene in gruppi di 5 unità, dimensione che rappresenta un compromesso ottimale tra efficienza e rispetto dei vincoli API. 
+\newline \newline
+Il sistema implementa pause automatiche tra i batch, calcolate dinamicamente in base ai rate limits specifici di ciascun servizio. Il monitoraggio dei rate limits avviene in tempo reale, permettendo al sistema di adattare automaticamente il proprio comportamento per evitare interruzioni. Infine, un sistema di prioritizzazione assicura che le richieste critiche per la sicurezza vengano elaborate con precedenza rispetto a quelle meno urgenti.
+\newpage
 \section{Implementazione Tecnica}
 
 \subsection{Requisiti Sistema}
@@ -488,6 +359,19 @@ Per rispettare i rate limits dei servizi esterni:
         \item \texttt{email}: Parsing email RFC-compliant
     \end{itemize}
 \end{itemize}
+
+\subsection{Testing e Validazione}
+
+Per verificare l'efficacia del sistema di analisi, sono stati condotti test utilizzando \textbf{GoPhish}, una piattaforma open source specializzata nella creazione di campagne di phishing simulate per scopi di formazione e testing di sicurezza. GoPhish ha permesso di generare email di phishing controllate con caratteristiche specifiche, consentendo di validare la capacità del sistema di rilevare correttamente:
+
+\begin{itemize}
+    \item URL di phishing con domini contraffatti
+    \item Messaggi con tecniche di spoofing degli header
+    \item Link abbreviati (URL shortener) utilizzati per nascondere destinazioni malevole
+    \item Email con contenuti sospetti progettati per eludere i filtri tradizionali
+\end{itemize}
+
+Questi test hanno confermato l'efficacia dell'approccio multi-servizio nell'identificazione delle minacce e hanno permesso di calibrare accuratamente gli algoritmi di risk scoring.
 
 \subsection{Configurazione}
 
@@ -520,21 +404,6 @@ SECURITY_ANALYSIS_CONFIG = {
 }
 \end{lstlisting}
 
-\subsubsection{Variabili d'Ambiente}
-Il sistema supporta configurazione tramite variabili d'ambiente per maggiore sicurezza:
-
-\begin{lstlisting}[language=bash, caption=Configurazione ambiente]
-# Windows PowerShell
-$env:VIRUSTOTAL_API_KEY="your_api_key"
-$env:URLSCAN_API_KEY="your_api_key"
-$env:ABUSEIPDB_API_KEY="your_api_key"
-
-# Linux/Mac
-export VIRUSTOTAL_API_KEY="your_api_key"
-export URLSCAN_API_KEY="your_api_key"
-export ABUSEIPDB_API_KEY="your_api_key"
-\end{lstlisting}
-
 \subsection{Utilizzo}
 
 \subsubsection{Interfaccia Command Line}
@@ -547,20 +416,6 @@ python app.py -f emails/ -i -o results.html
 
 # Solo analisi header
 python app.py -f emails/ --header -o headers.json
-\end{lstlisting}
-
-\subsubsection{API Programmatica}
-\begin{lstlisting}[language=Python, caption=Utilizzo programmatico]
-from connectors import comprehensive_url_analysis, comprehensive_hash_analysis
-
-# Analisi URL comprehensive
-url_result = comprehensive_url_analysis("https://suspicious-url.com")
-print(f"Risk Score: {url_result['risk_score']}/10")
-print(f"Recommendation: {url_result['recommendation']}")
-
-# Analisi hash comprehensive  
-hash_result = comprehensive_hash_analysis("file_hash_here")
-print(f"Malware Family: {hash_result.get('malware_family', 'Unknown')}")
 \end{lstlisting}
 
 \section{Output e Visualizzazione}
@@ -749,401 +604,110 @@ Valutazione complessiva del rischio:
     \item \textbf{Confidence\_Level}: Livello confidenza nell'analisi (0-100\%)
     \item \textbf{Categories}: Categorie di minacce identificate (phishing, malware, spam)
 \end{itemize}
-
-\subsection{Report HTML Interattivo}
-
-\paragraph{Interfaccia Web Avanzata}
-
-Il sistema genera report HTML con:
-
-\begin{itemize}
-    \item \textbf{Dashboard Overview}: Riepilogo rischi e raccomandazioni
-    \item \textbf{Sezioni Expandibili}: Contenuto organizzato in sezioni pieghevoli
-    \item \textbf{Color Coding}: Codifica colori per livelli di rischio
-    \item \textbf{Interactive Elements}: JavaScript per navigazione migliorata
-    \item \textbf{Responsive Design}: Compatibilità dispositivi mobili
-\end{itemize}
-
-\subsection{Esempio Output JSON Completo con Spiegazioni}
-
-Di seguito un esempio completo di output JSON con commenti esplicativi:
-
-\begin{lstlisting}[caption=Esempio output JSON dettagliato]
-{
-    "Information": {
-        "Scan": {
-            "Filename": "emails/phishing_attempt.eml",
-            "Generated": "June 17, 2025 - 14:30:22",
-            "Scan_Type": "complete_investigation",
-            "Processing_Time": "45.3 seconds",
-            "Services_Used": 8
-        }
-    },
-    "Analysis": {
-        "Headers": {
-            "Data": {
-                "from": "security@bank-example.com",
-                "to": "victim@company.com", 
-                "subject": "=?UTF-8?B?VXJnZW50IEFjY291bnQgVmVyaWZpY2F0aW9u?=",
-                "date": "Mon, 17 Jun 2025 12:15:30 +0200",
-                "message-id": "<suspicious123@attacker-server.com>",
-                "received": "from mail.attacker.com ([203.0.113.45]) by victim-server.com",
-                "x-spam-status": "Yes, score=8.5 required=5.0",
-                "authentication-results": "victim-server.com; dkim=fail spf=fail dmarc=fail"
-            },
-            "Investigation": {
-                "X-Sender-Ip": {
-                    "IP": "203.0.113.45",
-                    "Virustotal": "https://www.virustotal.com/gui/search/203.0.113.45",
-                    "Abuseipdb": "https://www.abuseipdb.com/check/203.0.113.45",
-                    "Safety": "Malicious",
-                    "Positives": 12,
-                    "Total_Engines": 67,
-                    "Country": "Unknown",
-                    "ISP": "Bulletproof Hosting",
-                    "Abuse_Confidence": 89,
-                    "Last_Seen": "2025-06-16"
-                },
-                "Blacklist_Check": {
-                    "Blacklist_Status": "Listed in 3 blacklists",
-                    "Spamhaus_SBL": "Listed",
-                    "Spamcop": "Listed", 
-                    "SURBL": "Listed",
-                    "Details": "IP known for hosting phishing campaigns"
-                },
-                "Authentication_Summary": {
-                    "SPF_Result": "fail",
-                    "DKIM_Result": "fail", 
-                    "DMARC_Result": "fail",
-                    "Overall_Auth": "FAILED - High spoofing risk"
-                }
-            }
-        },
-        "Links": {
-            "Data": {
-                "1": "https://secure-bank-login.evil.com/verify",
-                "2": "https://fonts.googleapis.com/css2?family=Roboto",
-                "3": "mailto:support@bank-example.com"
-            },
-            "Investigation": {
-                "1": {
-                    "Comprehensive_Analysis": {
-                        "Risk_Score": 9.2,
-                        "Recommendation": "BLOCK",
-                        "Total_Services": 5,
-                        "Malicious_Count": 4,
-                        "Confidence": "Very High"
-                    },
-                    "Service_Results": {
-                        "VirusTotal": {
-                            "Positives": 45,
-                            "Total": 67,
-                            "Categories": ["phishing", "malware"],
-                            "Last_Analysis": "2025-06-17T12:30:15Z"
-                        },
-                        "PhishTank": {
-                            "In_Database": true,
-                            "Verified": true,
-                            "Submission_Date": "2025-06-15",
-                            "Target": "Banking Phishing"
-                        },
-                        "URLScan": {
-                            "Verdict": "malicious",
-                            "Screenshot_Available": true,
-                            "Technologies": ["PHP", "JavaScript obfuscation"],
-                            "Final_URL": "https://evil.com/steal-credentials.php"
-                        },
-                        "URLVoid": {
-                            "Detections": 23,
-                            "Total_Engines": 30,
-                            "Risk_Score": 87
-                        }
-                    }
-                },
-                "2": {
-                    "Comprehensive_Analysis": {
-                        "Risk_Score": 0.1,
-                        "Recommendation": "SAFE",
-                        "Notes": "Legitimate Google Fonts service"
-                    }
-                }
-            }
-        },
-        "Digests": {
-            "Data": {
-                "File_MD5": "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6",
-                "File_SHA1": "da39a3ee5e6b4b0d3255bfef95601890afd80709", 
-                "File_SHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-                "Content_MD5": "f6e7d8c9b0a1s2d3f4g5h6j7k8l9m0n1",
-                "Attachment_Count": 1,
-                "Attachment_Hashes": [
-                    {
-                        "Filename": "invoice.pdf.exe",
-                        "MD5": "malware123456789abcdef",
-                        "SHA256": "suspicious_file_hash_here",
-                        "Size": 245760
-                    }
-                ]
-            },
-            "Investigation": {
-                "File_SHA256": {
-                    "Virustotal": "https://www.virustotal.com/gui/search/e3b0c44...",
-                    "Is_Known": false,
-                    "Reputation": "Unknown"
-                },
-                "Attachment_Analysis": {
-                    "invoice.pdf.exe": {
-                        "MalwareBazaar": {
-                            "Is_Malware": true,
-                            "Malware_Family": "AgentTesla",
-                            "First_Seen": "2025-06-10",
-                            "Confidence": "High"
-                        },
-                        "VirusTotal": {
-                            "Detections": 56,
-                            "Total_Engines": 67,
-                            "Categories": ["trojan", "stealer"],
-                            "Recommendation": "QUARANTINE"
-                        }
-                    }
-                }
-            }
-        },
-        "Authentication": {
-            "DMARC_Analysis": {
-                "Domain": "bank-example.com",
-                "Policy": "reject",
-                "Percentage": 100,
-                "Alignment_SPF": "strict",
-                "Alignment_DKIM": "strict",
-                "Report_URI": "mailto:dmarc@bank-example.com",
-                "Evaluation": "Policy violation - should be rejected"
-            },
-            "DKIM_Analysis": {
-                "Signature_Present": false,
-                "Expected_Domain": "bank-example.com",
-                "Evaluation": "FAIL - No valid DKIM signature found",
-                "Risk_Level": "High - Possible domain spoofing"
-            },
-            "SPF_Analysis": {
-                "Result": "fail",
-                "Sender_IP": "203.0.113.45",
-                "SPF_Record": "v=spf1 include:_spf.bank-example.com -all",
-                "Evaluation": "IP not authorized to send for this domain"
-            }
-        },
-        "Risk_Assessment": {
-            "Overall_Risk_Score": 9.5,
-            "Risk_Level": "CRITICAL",
-            "Primary_Threats": [
-                "Phishing attempt",
-                "Malware delivery", 
-                "Domain spoofing",
-                "Credential theft"
-            ],
-            "Recommendation": "BLOCK AND QUARANTINE",
-            "Confidence": 98,
-            "Action_Required": "Immediate security team notification"
-        }
-    }
-}
-\end{lstlisting}
-
-
-\subsection{Interpretazione dei Valori di Risk Score}
-
-Il sistema utilizza una scala standardizzata per il risk scoring:
-
-\begin{itemize}
-    \item \textbf{0.0 - 2.0}: \textcolor{green}{SAFE} - Nessun rischio identificato
-    \item \textbf{2.1 - 4.0}: \textcolor{orange}{WARNING} - Rischio basso, monitoraggio consigliato  
-    \item \textbf{4.1 - 7.0}: \textcolor{red}{CAUTION} - Rischio moderato, analisi approfondita necessaria
-    \item \textbf{7.1 - 10.0}: \textcolor{red}{\textbf{BLOCK}} - Rischio elevato, azione immediata richiesta
-\end{itemize}
-
-\subsection{Significato dei Campi di Autenticazione}
-
-\begin{itemize}
-    \item \textbf{SPF (Sender Policy Framework)}: Verifica che l'IP mittente sia autorizzato dal dominio
-    \item \textbf{DKIM (DomainKeys Identified Mail)}: Verifica firma crittografica del dominio mittente
-    \item \textbf{DMARC (Domain-based Message Authentication)}: Policy che combina SPF e DKIM
-    \item \textbf{Authentication-Results}: Header che riassume i risultati di tutte le verifiche
-\end{itemize}
-
-\section{Testing e Validazione}
-
-\subsection{Test Suite Implementata}
-
-Il sistema è stato validato attraverso:
-
-\begin{itemize}
-    \item \textbf{Unit Tests}: Test individuali per ogni modulo analyzer
-    \item \textbf{Integration Tests}: Test end-to-end con email reali
-    \item \textbf{Performance Tests}: Verifica performance con volumi elevati
-    \item \textbf{Security Tests}: Validazione gestione errori e input malformati
-\end{itemize}
-
-\subsection{Risultati Testing}
-
-\begin{itemize}
-    \item  \textbf{4 email di test}: Analizzate con successo senza errori
-    \item  \textbf{Tutti i moduli}: Import e funzionamento corretto
-    \item  \textbf{Output generation}: JSON e HTML generati correttamente
-    \item  \textbf{Error handling}: Gestione graceful di errori API
-    \item  \textbf{Performance}: Riduzione 70\% chiamate API grazie al caching
-\end{itemize}
-
-\section{Vantaggi e Benefici}
-
-\subsection{Riduzione Dipendenza Singolo Fornitore}
-
-\begin{itemize}
-    \item \textbf{Prima}: 100\% dipendenza da VirusTotal
-    \item \textbf{Dopo}: Sistema distribuito su 8+ servizi
-    \item \textbf{Beneficio}: Resilienza e coverage migliorata
-\end{itemize}
-
-\subsection{Miglioramento Detection Rate}
-
-\begin{itemize}
-    \item \textbf{Phishing}: PhishTank specializzato + VirusTotal
-    \item \textbf{Malware}: MalwareBazaar + VirusTotal per coverage completa
-    \item \textbf{IP Reputation}: AbuseIPDB + blacklist multiple
-    \item \textbf{Website Analysis}: URLScan.io per analisi comportamentale
-\end{itemize}
-
-\subsection{Performance e Affidabilità}
-
-\begin{itemize}
-    \item \textbf{Context Managers}: Eliminazione memory leaks
-    \item \textbf{Batch Processing}: Rispetto rate limits automatico
-    \item \textbf{Intelligent Caching}: Riduzione chiamate API duplicate
-    \item \textbf{Error Handling}: Graceful degradation quando servizi non disponibili
-\end{itemize}
-
-\section{Sicurezza e Compliance}
-
-\subsection{Gestione Credenziali}
-
-\begin{itemize}
-    \item Chiavi API memorizzate in variabili d'ambiente
-    \item Nessuna chiave hardcoded nel codice sorgente
-    \item Supporto per sistemi di gestione credenziali enterprise
-\end{itemize}
-
-\subsection{Privacy e GDPR}
-
-\begin{itemize}
-    \item Analisi locale senza upload email complete
-    \item Solo hash e URL condivisi con servizi esterni
-    \item Cache locale con scadenza automatica
-    \item Possibilità di disabilitare servizi specifici
-\end{itemize}
-
-\section{Casi d'Uso}
-
-\subsection{SOC e Security Teams}
-
-\begin{itemize}
-    \item Analisi incident response per email sospette
-    \item Verifica campagne phishing
-    \item Intelligence gathering su attaccanti
-    \item Validazione sistemi email aziendali
-\end{itemize}
-
-\subsection{Amministratori Email}
-
-\begin{itemize}
-    \item Audit configurazioni DMARC/DKIM/SPF
-    \item Monitoraggio reputazione dominio
-    \item Verifica efficacia filtri antispam
-    \item Analisi deliverability email
-\end{itemize}
-
-\subsection{Ricerca e Formazione}
-
-\begin{itemize}
-    \item Studio tecniche phishing avanzate
-    \item Analisi evoluzione malware email-based
-    \item Training su protocolli autenticazione email
-    \item Benchmark sistemi di security
-\end{itemize}
+\newpage
 
 \section{Limitazioni e Considerazioni}
 
 \subsection{Limitazioni Tecniche}
 
-\begin{itemize}
-    \item \textbf{Rate Limits}: Dipendenti dai limiti API dei servizi esterni
-    \item \textbf{Latenza}: Analisi comprehensive richiede più tempo
-    \item \textbf{Dipendenza Rete}: Richiede connessione internet per investigation
-    \item \textbf{False Positives}: Possibili con servizi multipli
-\end{itemize}
-
-\subsection{Considerazioni Economiche}
-
-\begin{itemize}
-    \item Alcuni servizi richiedono subscription a pagamento
-    \item Costi API possono scalare con volume analisi
-    \item Necessità bilanciamento costo/beneficio per deployments large-scale
-\end{itemize}
-
-\section{Roadmap e Sviluppi Futuri}
-
-\subsection{Miglioramenti Immediati}
-
-\begin{itemize}
-    \item \textbf{Machine Learning}: Integrazione ML per pattern recognition
-    \item \textbf{Real-time Processing}: Supporto analisi email in tempo reale
-    \item \textbf{API REST}: Esposizione funzionalità via API REST
-    \item \textbf{Dashboard Web}: Interfaccia web per gestione e monitoring
-\end{itemize}
-
-\subsection{Integrazioni Avanzate}
-
-\begin{itemize}
-    \item \textbf{SIEM Integration}: Connettori per Splunk, ELK Stack
-    \item \textbf{Threat Intelligence}: Integrazione feed intelligence commerciali
-    \item \textbf{Automated Response}: Azioni automatiche basate su risk score
-    \item \textbf{Blockchain Verification}: Verifica autenticità tramite blockchain
-\end{itemize}
-
-\subsection{Integrazioni Avanzate}
-
-\begin{itemize}
-    \item \textbf{SIEM Integration}: Connettori per Splunk, ELK Stack
-    \item \textbf{Threat Intelligence}: Integrazione feed intelligence commerciali
-    \item \textbf{Automated Response}: Azioni automatiche basate su risk score
-    \item \textbf{Blockchain Verification}: Verifica autenticità tramite blockchain
-\end{itemize}
+Come ogni sistema che dipende da servizi esterni, l'Email Analyzer presenta alcune limitazioni intrinseche che devono essere considerate durante l'implementazione. I \textbf{rate limits} imposti dai provider di servizi di sicurezza rappresentano un vincolo fondamentale che influenza la velocità di elaborazione, specialmente quando si analizzano grandi volumi di email in tempi ristretti.
+\newline \newline
+La \textbf{latenza} dell'analisi comprehensive è inevitabilmente superiore rispetto a sistemi più semplici, poiché la consultazione di servizi multipli richiede tempo aggiuntivo. Questa caratteristica deve essere bilanciata con i benefici in termini di accuratezza e completezza dell'analisi.
+\newline \newline
+La \textbf{dipendenza dalla connettività di rete} rappresenta un altro aspetto critico: il sistema richiede connessione internet stabile per accedere ai servizi di investigazione esterni, limitandone l'utilizzo in ambienti completamente isolati. Infine, l'utilizzo di servizi multipli può potenzialmente aumentare il rischio di \textbf{falsi positivi}, richiedendo una calibrazione attenta degli algoritmi di risk scoring.
 
 \section{Conclusioni}
 
-L'Email Analyzer rappresenta una soluzione completa e moderna per l'analisi di sicurezza delle email, che evolve da un sistema mono-servizio a una piattaforma multi-servizio robusta e scalabile.
+Il progetto ha raggiunto tutti gli obiettivi prefissati, usando un'approccio alla sicurezza email attraverso la \textbf{diversificazione dei servizi} che ha ridotto la dipendenza da una singola piattaforma di controllo. Questa trasformazione ha portato a un \textbf{miglioramento della coverage} con un incremento del detection rate per tutte le categorie di minacce analizzate.
+\newline \newline
+L'\textbf{ottimizzazione delle performance} attraverso l'implementazione di sistemi di caching e batch processing, ha reso il sistema più efficace. La \textbf{resilienza del sistema} è stata migliorata attraverso meccanismi di graceful degradation e error handling che garantiscono continuità operativa anche in condizioni avverse.
+\newline \newline
+Infine, il miglioramento dell'\textbf{usabilità} attraverso output HTML interattivi e una CLI user-friendly ha reso il sistema accessibile a tutti.
 
-\subsection{Obiettivi Raggiunti}
+\newpage
 
-\begin{itemize}
-    \item  \textbf{Diversificazione Servizi}: Ridotta dipendenza da singolo fornitore
-    \item  \textbf{Miglioramento Coverage}: Incremento significativo detection rate
-    \item  \textbf{Ottimizzazione Performance}: Sistema di caching e batch processing
-    \item  \textbf{Resilienza}: Graceful degradation e error handling avanzato
-    \item  \textbf{Usabilità}: Output HTML interattivo e CLI user-friendly
-\end{itemize}
+\section{Bibliografia}
 
-\subsection{Valore Aggiunto}
-
-Il sistema fornisce valore significativo attraverso:
+\subsection{Documentazione Tecnica e Standard}
 
 \begin{itemize}
-    \item \textbf{Accuratezza}: Analisi multi-servizio riduce false negative
-    \item \textbf{Completezza}: Coverage completa di vettori di attacco email
-    \item \textbf{Efficienza}: Automazione completa processo di analisi
-    \item \textbf{Scalabilità}: Architettura modulare facilmente estendibile
-    \item \textbf{Affidabilità}: Sistema robusto con fallback multipli
+    \item RFC 3501 - Internet Message Access Protocol (IMAP4) - \url{https://tools.ietf.org/html/rfc3501}
+    \item RFC 6376 - DomainKeys Identified Mail (DKIM) - \url{https://tools.ietf.org/html/rfc6376}
+    \item RFC 7208 - Sender Policy Framework (SPF) - \url{https://tools.ietf.org/html/rfc7208}
+    \item RFC 7489 - Domain-based Message Authentication (DMARC) - \url{https://tools.ietf.org/html/rfc7489}
 \end{itemize}
 
-Il progetto dimostra come un'architettura modulare ben progettata possa evolvere da un prototipo semplice a una soluzione enterprise-grade, mantenendo facilità d'uso e affidabilità operativa.
+\subsection{Strumenti di Test}
+
+\begin{itemize}
+    \item GoPhish - Piattaforma open source per simulazioni di phishing \\
+    \url{https://getgophish.com/}
+\end{itemize}
+
+\subsection{Risorse Enciclopediche}
+
+\begin{itemize}
+    \item Wikipedia - "Internet Message Access Protocol" \\
+    \url{https://en.wikipedia.org/wiki/Internet_Message_Access_Protocol}
+    \item Wikipedia - "Email Authentication" \\
+    \url{https://en.wikipedia.org/wiki/Email_authentication}
+    \item Wikipedia - "Phishing" \\
+    \url{https://en.wikipedia.org/wiki/Phishing}
+    \item Wikipedia - "DomainKeys Identified Mail" \\
+    \url{https://en.wikipedia.org/wiki/DomainKeys_Identified_Mail}
+    \item Wikipedia - "Sender Policy Framework" \\
+    \url{https://en.wikipedia.org/wiki/Sender_Policy_Framework}
+    \item Wikipedia - "DMARC" \\
+    \url{https://en.wikipedia.org/wiki/DMARC}
+    \item Wikipedia - "Email spoofing" \\
+    \url{https://en.wikipedia.org/wiki/Email_spoofing}
+    \item Wikipedia - "Malware" \\
+    \url{https://en.wikipedia.org/wiki/Malware}
+    \item Wikipedia - "Cryptographic hash function" \\
+    \url{https://en.wikipedia.org/wiki/Cryptographic_hash_function}
+    \item Wikipedia - "URL shortening" \\
+    \url{https://en.wikipedia.org/wiki/URL_shortening}
+\end{itemize}
 
 
+\section{Sitografia}
+
+\subsection{Servizi di Sicurezza Utilizzati}
+
+\begin{itemize}
+    \item VirusTotal - Analisi multi-engine di file e URL \\
+    \url{https://www.virustotal.com/}
+    \item PhishTank - Database collaborativo di phishing \\
+    \url{https://www.phishtank.com/}
+    \item URLScan.io - Analisi comportamentale di siti web \\
+    \url{https://urlscan.io/}
+    \item MalwareBazaar - Database malware di abuse.ch \\
+    \url{https://bazaar.abuse.ch/}
+    \item AbuseIPDB - Database reputazione IP \\
+    \url{https://www.abuseipdb.com/}
+    \item URLVoid - Aggregatore di motori di sicurezza \\
+    \url{https://www.urlvoid.com/}
+\end{itemize}
+
+\subsection{Documentazione e Tutorial Python}
+
+\begin{itemize}
+    \item Python Official Documentation \\
+    \url{https://docs.python.org/3/}
+    \item Real Python - Tutorial e Guide \\
+    \url{https://realpython.com/}
+    \item Stack Overflow - Community di sviluppatori \\
+    \url{https://stackoverflow.com/}
+    \item W3Schools Python Tutorial \\
+    \url{https://www.w3schools.com/python/}
+\end{itemize}
+
+\subsection{Forum e Community}
+
+\begin{itemize}
+    \item Reddit - r/cybersecurity, r/Python, r/netsec \\
+    \url{https://www.reddit.com/r/cybersecurity/}
+    \item GitHub - Repository di progetti open source \\
+    \url{https://github.com/}
+\end{itemize}
 \end{document}

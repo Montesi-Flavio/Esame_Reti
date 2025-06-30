@@ -971,6 +971,8 @@
             <button class="tab" onclick="showEmail(1)">Email 2</button>
             <button class="tab" onclick="showEmail(2)">Email 3</button>
             <button class="tab" onclick="showEmail(3)">Email 4</button>
+            <button class="tab" onclick="showEmail(4)">Email 5</button>
+            <button class="tab" onclick="showEmail(5)">Email 6</button>
         </div>
         <div id="email-0" class="email-content active">
             <div class="section">
@@ -1626,6 +1628,460 @@
                                     <div class="detail-item">
                                         <span class="detail-label">Selector:</span>
                                         <span class="detail-value"><code>iuoqqwfunilueazswvoxeow57fitvqzq</code></span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Canonicalization:</span>
+                                        <span class="detail-value">relaxed/simple</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <h3>📎 Attachments Analysis</h3>
+                <div class="alert alert-info">
+                    <strong>📎 No attachments found in this email</strong>
+                </div>
+            </div>
+
+        </div>
+        <div id="email-4" class="email-content">
+            <div class="section">
+                <h3>📧 Email Headers</h3>
+                <div class="headers-container">
+                    <div class="header-item">
+                        <div class="header-label">Oggetto:</div>
+                        <div class="header-value"><h4>test malicius link</h4></div>
+                    </div>
+                    <div class="header-item">
+                        <div class="header-label">Mittente:</div>
+                        <div class="header-value"><strong>Flavio Montesi <flaviusmonte@gmail.com></strong></div>
+                    </div>
+                    <div class="header-item">
+                        <div class="header-label">Destinatario:</div>
+                        <div class="header-value">"test@maurimori.eu" <test@maurimori.eu></div>
+                    </div>
+                    <div class="header-item">
+                        <div class="header-label">Data:</div>
+                        <div class="header-value"><em>Tue, 17 Jun 2025 21:28:04 +0000</em></div>
+                    </div>
+                    <div class="header-item">
+                        <div class="header-label">ID Messaggio:</div>
+                        <div class="header-value"><code><GV2P195MB18917CBD70172513256BC8D4F273A@GV2P195MB1891.EURP195.PROD.OUTLOOK.COM></code></div>
+                    </div>
+                    <div class="header-section-expandable">
+                        <details>
+                            <summary>🔧 Dettagli Tecnici</summary>
+                            <div class="expandable-content">
+        <div class="accordion" id="headerAccordion">
+            <div class="card">
+            
+                <div id="collapseDetails" class="collapse" aria-labelledby="headingDetails" data-parent="#headerAccordion">
+                    <div class="card-body">
+                        <table class="table table-sm table-striped">
+                            <tbody>
+        <tr><th>accept-language</th><td><small>it-IT, en-US</small></td></tr><tr><th>arc-authentication-results</th><td><small>i=1; scott14; spf=pass (scott14: domain of flaviusmonte@gmail.com designates 209.85.208.179 as permited sender) smtp.mailfrom=flaviusmonte@gmail.com;arc=none;dkim=pass header.d=gmail.com header.b=TFDXPyzP</small></td></tr><tr><th>arc-message-signature</th><td><small>i=1; a=rsa-sha256; d=securemail.pro; s=arc20240405;t=1750195686; c=relaxed/relaxed;bh=jPZUgzyKFl1NXumnPuE5z3x5CDhMH92xJeGxxx2nRg8=;h=DKIM-Signature:From:To:Subject:Date:Message-ID; =?utf-8?q?b=3DpFwDQhiPxuQ?= =?utf-8?q?iMjfPMsYIb9gUcAaA3zM9Hn8SBwsPBL+gsE9+1kLNctYAp/yVmmkdwah0RUMZcSHX?= =?utf-8?q?syK8wy1MA+EenIU/RodWGGtjuZEzdnxLFsJG1lz5UEDk9KKnEzA6bVMhztR/vdMiZ?= =?utf-8?q?4TpVNpqVIPnCqvEgOq0sa7mozE898YVcBWR8gsJiu16qZp3DoOmQWjVNJu8AfMWLn?= =?utf-8?q?AFB274I0p/nHZXKPSiejEKWO8xeG+Q5fcalYtDcLuSntlUGNz3kgf2Mk3i6CDCKvD?= =?utf-8?q?1iZ2wl4p6zoDLCx4oMTXMlCY93wb+nsvsirqRlXGEgCxyK2nJpXH6WSeJLm7hNGUB?= =?utf-8?q?xTapPg=3D=3D?=</small></td></tr><tr><th>arc-seal</th><td><small>i=1; a=rsa-sha256; d=securemail.pro; s=arc20240405; t=1750195686;cv=none; =?utf-8?q?b=3DFhjlnRojj/zlXgUrGrkHlbDdH3obXZXyhCHo/pmCe+Cc7CJv3Ejd?= =?utf-8?q?jRFwzcB8B0hB8Zbhe7xFVTbsILq7wTlsm6zt7mUJ7C4T2ty8o1F4VbVVLM1tUw6FM?= =?utf-8?q?TCe7HUsNlAbmUn42L4FWfod54TMtSWSAcKF5KzvTf3F+T7jans8hvwGu08uw+C+rV?= =?utf-8?q?aa9oi4DtogcL/9sbTJoVI67dILGD9UuTNEoEQBbvBdDFqFnXOKcDyAJJuyvuVte3T?= =?utf-8?q?XYDlGYf3VP8yoCq+K+3mpjAmdH+wDZwB+yZ42QEBC+NY1u5cCYlo4trk2wxIXqNwL?= =?utf-8?q?nR3UCWfiJl8Fkyvi2TWM2DkeyplHSQ=3D=3D?=</small></td></tr><tr><th>content-language</th><td><small>it-IT</small></td></tr><tr><th>content-type</th><td><small>multipart/alternative;boundary="_000_GV2P195MB18917CBD70172513256BC8D4F273AGV2P195MB1891EURP_"</small></td></tr><tr><th>delivered-to</th><td><small>test@maurimori.eu</small></td></tr><tr><th>dkim-signature</th><td><small>v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20230601; t=1750195686; x=1750800486; darn=maurimori.eu; h=mime-version:msip_labels:content-language:accept-language :message-id:date:thread-index:thread-topic:subject:to:from:from:to :cc:subject:date:message-id:reply-to; bh=jPZUgzyKFl1NXumnPuE5z3x5CDhMH92xJeGxxx2nRg8=; b=TFDXPyzP6oxqo1cqUsvW9lOYkzzb/xWl9dE6oz2Gqi12bXNnZgAEVLdvOaPaBrDchU URYwQiJtN1/zCg4O7RhiGC4uBFONj3s+A1jm4e8LZV5q/Gt+PWFih8B7//T+KoCbCr6A bJ+mAl1byaxLkDj43yrP7F6ODxAa0RLCItkkdUdquLPFqQSM63mO2QHsN231FksF05Bd 5bqqEvP9yT33xa3bK+fevICeiJg5XdxkYpbMvSZhDTQNX9tR3up94rLv+rVWvaLvnLtz jxmOGxYbar3b0etsy8OY6lIXEkcKRdlLwKIjTOx9nnh4Lb7Ju/hZle3fyvRqH1gYFNCr sanw==</small></td></tr><tr><th>mime-version</th><td><small>1.0</small></td></tr><tr><th>msip_labels</th><td><small></small></td></tr><tr><th>received</th><td><small>from montiit-dir03.it.dadainternal ([172.29.136.14])by montiit-be31.it.dadainternal with LMTPid pjxiGV8SUWhe5ikAS21KyQ:T7626:P1(envelope-from <flaviusmonte@gmail.com>)for <test@maurimori.eu>; Tue, 17 Jun 2025 23:28:06 +0200 from scott14 ([172.29.136.14])by montiit-dir03.it.dadainternal with LMTPid pjxiGV8SUWhe5ikAS21KyQ:T7626(envelope-from <flaviusmonte@gmail.com>)for <test@maurimori.eu>; Tue, 17 Jun 2025 23:28:06 +0200 from mail-lj1-f179.google.com ([209.85.208.179])by cmsmtp with ESMTPSid RdqgueZVVqw1nRdqgu0dSe; Tue, 17 Jun 2025 23:28:06 +0200 by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-32adebb15c5so53088801fa.3 for <test@maurimori.eu>; Tue, 17 Jun 2025 14:28:06 -0700 (PDT) from GV2P195MB1891.EURP195.PROD.OUTLOOK.COM ([2603:1026:c11:c1f::5]) by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32b6ca569c0sm3644251fa.81.2025.06.17.14.28.04 for <test@maurimori.eu> (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256); Tue, 17 Jun 2025 14:28:04 -0700 (PDT)</small></td></tr><tr><th>received-spf</th><td><small>pass</small></td></tr><tr><th>return-path</th><td><small><flaviusmonte@gmail.com></small></td></tr><tr><th>thread-index</th><td><small>AQHb386ovQPVJPbcyUWoIuJJrK9GmQ==</small></td></tr><tr><th>thread-topic</th><td><small>test malicius link</small></td></tr><tr><th>x-cloudmark-reporter</th><td><small>test@maurimori.eu</small></td></tr><tr><th>x-cmae-envelope</th><td><small>=?utf-8?q?MS4xfCCBK/bdRpYt3NbZEBHGcykS8EpMvZao+bi1Kh5/zuCHn?= =?utf-8?q?Yvqx7wgKnuHtX4s6qqHl94qI4SrBxGmLJLfRUN6Pj13GMeMYvWUlVnQC3uMVy5qIj?= =?utf-8?q?F5Ca4E_LXkjd+c6D4KNnO5KxWXk8lB9TSUSfGsCR52uw4pbxQgH2Pr0TV9F9Yask6?= =?utf-8?q?iYmbQ0bOLkVdLb4esQeXfC6xe6dotV3tD33CLOnok=3D?=</small></td></tr><tr><th>x-cnfs-analysis</th><td><small>v=2.4 cv=LfY86ifi c=1 sm=1 tr=0 ts=6851dde6 cx=a_idp_d a=VTRoezvS/npC8Q0+BDQU1g==:117 a=xqWC_Br6kY4A:10 a=6IFa9wvqVegA:10 a=Q96Gm4U0OdsA:10 a=x7bEGLp0ZPQA:10 a=pJ2Kb-HxkR8A:10 a=95EFz5htlIgA:10 a=cJljozh3AAAA:8 a=OY9YJAcQc-cgaM_hqVsA:9 a=wPNLvfGTeEIA:10 a=-FEs8UIgK8oA:10 a=0u3WR1unWx6tBz1ldeMA:9 a=frz4AuCg-hUA:10 a=_W_S_7VecoQA:10 a=vexicnJHVZC5-rvN4z9Y:22 a=D0ylyQf1oEvrQwGOqMAa:22 a=BYL-pX1xYmNgx-yrYO5N:22 a=Lcw6dl7kLhG240Z2xKZo:22 a=poXaRoVlC6wW9_mwW8W4:22 a=olNob2YexThTZ6quqLSg:22 a=pHzHmUro8NiASowvMSCR:22 a=6VlIyEUom7LUIeUMNQJH:22</small></td></tr><tr><th>x-gm-gg</th><td><small>ASbGncsu+TGvERcl9AW/s0+SUaWp44z8X8okLV7XYE6KS525icDNKyrqJwh7Ja1DWjs3friR7j60e01YMuCiX6kiJYcBGP4lBNXj7qhjbiE8WyM/xH4334fLw1D2zYoDqffMurVj/EgPHsfNCt13u7Eid+EjhOLOViWjZVerkFf/5W5NLeWkg6RsPBtVVRPMYccDdDnAxEJErnoAPaIqFf4br+yMaWhIVJYietDOl6lHoEnvW7gtzm/a9dt8y8PZhY1CzXCD2en6rfbFbgexwALED8Xt9RsG6cEzQUztMrIJi6PV1nyxLdJ/aTHiPZsfXUr3LjJF9xaZrfJaQ/KwKAbgus/q7dTnOGVOMbWPzGTz3amR/mUe0P5M52FYD5Q9AynDONCEWzqWB12BbiVcla9JCX0n7url</small></td></tr><tr><th>x-gm-message-state</th><td><small>AOJu0YzxRyXGBOPOK0pYCB+VhtYrekPNfOkbcMJweK9abmuL348/weXrL5ZZ+9iseYxSIQooRm+brcPTBnSXKudJlflROrmY26HaPxOmSrj3vJzrXZzTYw==</small></td></tr><tr><th>x-google-dkim-signature</th><td><small>v=1; a=rsa-sha256; c=relaxed/relaxed; d=1e100.net; s=20230601; t=1750195686; x=1750800486; h=mime-version:msip_labels:content-language:accept-language :message-id:date:thread-index:thread-topic:subject:to:from :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to; bh=jPZUgzyKFl1NXumnPuE5z3x5CDhMH92xJeGxxx2nRg8=; b=JCGvAEa0uPDp7XHxX5GCA7/NSYkBsp3C8UK6vGUFNeU+qDe59SQxEVRJKwqowuKU6l Ybq4VBFJ0YHkQy88AnTaHf4sHajRAZmtQn/GKv11BWgVO1/07SL8uUQRYFIe9HbYB+Kr sWzts+1vZW9Zu7TNDcf8gX+4eEJq4EjtIyeVsrWdHEaH0ZzkH2Fn2kP/L7prrckYYBYn v7jfatN2WJH11nv06sFPDT3TuIE++8KEaKLFTZCOx7U/ayiW1yeZqyO3NbBjoVQnf99f 92RAe0z++ZEhdsV2UkXKv+ABmr2S56Q5RSBrkxqbzaYpB0QJq2SsiqCJJyDoLOsq25ww IiPQ==</small></td></tr><tr><th>x-google-smtp-source</th><td><small>=?utf-8?q?AGHT+IHeez8ldfXJpxF16KH9TjkvYwKMZ6Eu1N6PNk78?= =?utf-8?q?obbePOIlcE4iWbdLRp53eb19LtW+Hf0K1A=3D=3D?=</small></td></tr><tr><th>x-ms-exchange-messagesentrepresentingtype</th><td><small>1</small></td></tr><tr><th>x-ms-exchange-organization-recordreviewcfmtype</th><td><small>0</small></td></tr><tr><th>x-ms-exchange-organization-scl</th><td><small>-1</small></td></tr><tr><th>x-ms-has-attach</th><td><small></small></td></tr><tr><th>x-ms-tnef-correlator</th><td><small></small></td></tr><tr><th>x-received</th><td><small>by 2002:a05:651c:1544:b0:32a:8153:6934 with SMTP id 38308e7fff4ca-32b4a2c3159mr45853791fa.1.1750195685376; Tue, 17 Jun 2025 14:28:05 -0700 (PDT)</small></td></tr><tr><th>x-rid-domain</th><td><small>FWD-test@maurimori.eu</small></td></tr><tr><th>x-rid-platform</th><td><small>FORWARDLNX</small></td></tr><tr><th>x-rspamd-server</th><td><small>rspamd15</small></td></tr><tr><th>x-spam-status</th><td><small>No, score=0.00, required=95.00</small></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+                        </details>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>🔗 Links Analysis</h3>
+                <p>Found 1 unique links</p>
+                <div class="link-list">
+                    <div class="link-item danger-link">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="http://17ebook.co/" target="_blank">http://17ebook.co/</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: 17ebook.co</div>
+                            <div>Safety Score: 46.66666666666667%</div>
+                            <div class="threats">Threats: CAUTION - Medium risk, investigate further</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <h3>🔐 DMARC & DKIM Authentication Analysis</h3>
+                <div class="dmarc-container">
+                    <div class="domain-info">
+                        <h4>📧 Domain Analysis: gmail.com</h4>
+                    </div>
+                    <div class="dkim-analysis">
+                        <h5>🔑 DKIM (DomainKeys Identified Mail) Analysis</h5>
+                        <div class="auth-status-box">
+                            <div class="status-item success">
+                                <span class="status-icon">✅</span>
+                                <span class="status-text">DKIM Signature Present</span>
+                            </div>
+                            <div class="dkim-details">
+                                <h6>📋 DKIM Signature Details</h6>
+                                <div class="dkim-details-grid">
+                                    <div class="detail-item">
+                                        <span class="detail-label">Version:</span>
+                                        <span class="detail-value">1</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Algorithm:</span>
+                                        <span class="detail-value"><code>rsa-sha256</code></span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Signing Domain:</span>
+                                        <span class="detail-value"><strong>gmail.com</strong></span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Selector:</span>
+                                        <span class="detail-value"><code>20230601</code></span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Canonicalization:</span>
+                                        <span class="detail-value">relaxed/relaxed</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <h3>📎 Attachments Analysis</h3>
+                <div class="alert alert-info">
+                    <strong>📎 No attachments found in this email</strong>
+                </div>
+            </div>
+
+        </div>
+        <div id="email-5" class="email-content">
+            <div class="section">
+                <h3>📧 Email Headers</h3>
+                <div class="headers-container">
+                    <div class="header-item">
+                        <div class="header-label">Oggetto:</div>
+                        <div class="header-value"><h4>(no subject)</h4></div>
+                    </div>
+                    <div class="header-item">
+                        <div class="header-label">Mittente:</div>
+                        <div class="header-value"><strong>test <noreply@hiwork.it></strong></div>
+                    </div>
+                    <div class="header-item">
+                        <div class="header-label">Destinatario:</div>
+                        <div class="header-value">test@maurimori.eu</div>
+                    </div>
+                    <div class="header-item">
+                        <div class="header-label">Data:</div>
+                        <div class="header-value"><em>Thu, 19 Jun 2025 16:14:24 +0000 (UTC)</em></div>
+                    </div>
+                    <div class="header-item">
+                        <div class="header-label">ID Messaggio:</div>
+                        <div class="header-value"><code><da122024.AUwAAHE4suwAAc6tbFQAA-YlNNkAAYKJzbgAoRerAC-GaQBoVDdg@mailjet.com></code></div>
+                    </div>
+                    <div class="header-section-expandable">
+                        <details>
+                            <summary>🔧 Dettagli Tecnici</summary>
+                            <div class="expandable-content">
+        <div class="accordion" id="headerAccordion">
+            <div class="card">
+            
+                <div id="collapseDetails" class="collapse" aria-labelledby="headingDetails" data-parent="#headerAccordion">
+                    <div class="card-body">
+                        <table class="table table-sm table-striped">
+                            <tbody>
+        <tr><th>arc-authentication-results</th><td><small>i=1; scott11; spf=pass (scott11: domain of =?utf-8?q?da122024=2Eauwaahe4suwaac6tbfqaa-ylnnkaaykjzbgaorerac-gaqbovddg?= =?utf-8?q?=40a3114601=2Ebnc3=2Emailjet=2Ecom?= designates 185.250.237.6 as permited sender) =?utf-8?q?smtp=2Emailfrom=3Dda122024=2Eauwaahe4suwaac6tbfq?= =?utf-8?q?aa-ylnnkaaykjzbgaorerac-gaqbovddg=40a3114601=2Ebnc3=2Emailjet=2Ec?= =?utf-8?q?om=3B?=arc=none;dkim=pass header.d=hiwork.it header.i=noreply@hiwork.it header.b=J5Lojqwe</small></td></tr><tr><th>arc-message-signature</th><td><small>i=1; a=rsa-sha256; d=securemail.pro; s=arc20240405;t=1750349665; c=relaxed/relaxed;bh=5sN3ORlDNdEnBrZ5PUdri565/L+11+e57QfGXKkW9Gs=;h=DKIM-Signature:Message-Id:From:To:Subject:Date; =?utf-8?q?b=3DTh5HUKx8q6E?= =?utf-8?q?8fnDb7fX9qjLYo68513J1Bs5e0n0uJBGU65l/ki4tN/l7IkbYjYUjNDU58+rfDn4l?= =?utf-8?q?qC8x1AOXu5mOXY/ZbpPI62xFVUDs2O2+29ZfzuPhN0IPHogzBMTht0i+fpNqG7XH+?= =?utf-8?q?RgwZXdP7aM/kgkDsgv1tK1psx7fyOdZ47X0K4FdRg0HCJi94JAfnP2J2FPlQFHX0p?= =?utf-8?q?hgLpJmBP+VOoF2Q1jZ5lLTYxaDaTu3z37xxQRYVMcTjTKfvLEEu9AIvb0m5boE5zi?= =?utf-8?q?zD5PM3t4Vu8cr2KjalsL+ccLvN4JwU9ofD09ZeWNDLjgX+OkjX2TgL4Nlxy0pJS6I?= =?utf-8?q?5X7dWg=3D=3D?=</small></td></tr><tr><th>arc-seal</th><td><small>i=1; a=rsa-sha256; d=securemail.pro; s=arc20240405; t=1750349665;cv=none; =?utf-8?q?b=3Db5koiKswoF2i1BBvYR//K6jQ+tcyo28tsdcNVZF87toWHugqGIdo?= =?utf-8?q?aFI+iudmvcFoE5whOjul74k1ACn5zf0fj17+bgUZFy5tOQzanmaKHqBMgKRCJtWE7?= =?utf-8?q?tI6U1rZ1YDrsbTbryYNLMo6yrPDoyfEO6CTpNmkWBptq/vEJ/pY6UQBGkUp2/SSIz?= =?utf-8?q?pW5JvvbHmVDXD6IQyXiahtR63SvqJflXHRfyPHrasrhN0fyRCFIi2YKbSMo9fkOCg?= =?utf-8?q?mJILd6SpGqvLdCSdcy4AU6+hbBn8//8BJeXYRsBYjt7WOx6VFIOU+Q7z4/2g1qRjT?= =?utf-8?q?i5/RQSIAnEV22D1gD9ZCzS1TCHEnbg=3D=3D?=</small></td></tr><tr><th>content-type</th><td><small>multipart/alternative; boundary="=-QYA1qZUBmjcynyMER/qp"</small></td></tr><tr><th>delivered-to</th><td><small>test@maurimori.eu</small></td></tr><tr><th>dkim-signature</th><td><small>v=1; a=rsa-sha256; c=relaxed/simple; q=dns/txt; d=hiwork.it; i=noreply@hiwork.it; s=mailjet; x=1750356864; =?utf-8?q?h=3Dmessage-id=3Am?= =?utf-8?q?ime-version=3Afrom=3Afrom=3Ato=3Ato=3Asubject=3Asubject=3Adate=3A?= =?utf-8?q?date=3Alist-id=3Alist-unsubscribe-post=3A?= list-unsubscribe:feedback-id:precedence:x-campaignid:x-csa-complaints: x-mj-mid:x-mj-smtpguid:x-report-abuse-to:content-type; bh=o9T5iP+9rkXDay4T6BNqqZ4TIEOf7rB/NuAygaB4mu0=; b=J5LojqweDUm+dPpN12QHSH0V9ZXGl8w//tY1uXHUyeZNQ7ppcvDXC7LdE maN7vrM4w3H0R+jxDQSoHkX0smcDDWt2mS8n9alIQCtCRaJZN5fNGXK8DvR8 T3NuRkUix5ZTnP3/CG+aWstnrjlvZxjEyik/otkcLLVvIjF/ceYm3nG2vdjg RVWyaGyOcTNFkuN+Ez6BwSYXejuYcSPxAPzkzQ0Ovc8nwxTgf6ZY+FICc327 V1O4qTasrHdhTisRx7hUBNImAPHUPPcyJSNY+bmRQWwX40GrRiV74hZ3hnTx jUxRuYKjLOjVcSbIdsDeqNVnPzeXE4fc4hM2CoEtGPsVw==</small></td></tr><tr><th>feedback-id</th><td><small>42.3114601.2854361:MJ</small></td></tr><tr><th>list-id</th><td><small><noreply.hiwork.it.sr4ix-uxwor.mj></small></td></tr><tr><th>list-unsubscribe</th><td><small><mailto:unsub-da122024.sr4ix.lp2k0i7h4j1w@bnc3.mailjet.com>,=?utf-8?q?=3Ch?= =?utf-8?q?ttps=3A//sr4ix=2Emjt=2Elu/unsub2=3Fm=3DAUwAAHE4suwAAc6tbFQAA-YlNN?= =?utf-8?q?kAAYKJzbgAoRerAC-GaQBoVDdgkmFxES0RRkCYGx8Wzt0pcgArjdk=26b=3Dda122?= =?utf-8?q?024=26e=3D08939792=26x=3DNkIp3pi-fhaamG6dMmPPWbbgudhAKdP89hVzzZWY?= =?utf-8?q?=5FH8=3E?=</small></td></tr><tr><th>list-unsubscribe-post</th><td><small>List-Unsubscribe=One-Click</small></td></tr><tr><th>mime-version</th><td><small>1.0</small></td></tr><tr><th>precedence</th><td><small>bulk</small></td></tr><tr><th>received</th><td><small>from montiit-dir03.it.dadainternal ([172.29.136.11])by montiit-be31.it.dadainternal with LMTPid w4QPAjfIU2ijIC8AS21KyQ:T5346:P1(envelope-from =?utf-8?q?=3Cda122024=2Eauwaahe4suwaac6tbfqaa-ylnnkaaykjzbga?= =?utf-8?q?orerac-gaqbovddg=40a3114601=2Ebnc3=2Emailjet=2Ecom=3E=29?=for <test@maurimori.eu>; Thu, 19 Jun 2025 18:14:26 +0200 from scott11 ([172.29.136.11])by montiit-dir03.it.dadainternal with LMTPid w4QPAjfIU2ijIC8AS21KyQ:T5346(envelope-from =?utf-8?q?=3Cda122024?= =?utf-8?q?=2Eauwaahe4suwaac6tbfqaa-ylnnkaaykjzbgaorerac-gaqbovddg=40a311460?= =?utf-8?q?1=2Ebnc3=2Emailjet=2Ecom=3E=29?=for <test@maurimori.eu>; Thu, 19 Jun 2025 18:14:26 +0200 from o6.p38.mailjet.com ([185.250.237.6])(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 256/256 bits)(Client did not present a certificate)by cmsmtp with ESMTPSid SHuDuFFXX8ihESHuDub7rq; Thu, 19 Jun 2025 18:14:25 +0200</small></td></tr><tr><th>received-spf</th><td><small>pass</small></td></tr><tr><th>return-path</th><td><small>=?utf-8?q?=3Cda122024=2EAUwAAHE4suwAAc6tbFQAA-YlNNkAAYKJzbgAoR?= =?utf-8?q?erAC-GaQBoVDdg=40a3114601=2Ebnc3=2Emailjet=2Ecom=3E?=</small></td></tr><tr><th>x-campaignid</th><td><small>7762439252</small></td></tr><tr><th>x-cloudmark-reporter</th><td><small>test@maurimori.eu</small></td></tr><tr><th>x-cmae-envelope</th><td><small>=?utf-8?q?MS4xfL8sqewj+DRvtAJNb6oCDdTTMDuxMKmz/Gcrkxplm38zu?= =?utf-8?q?mg/7NByDGELiCpD6b+Y9UQruDkv66IN1KfCMEfnPoZcaack8xjbBenHqqobHaFx0f?= =?utf-8?q?LyIY2j_Fclx9v5zQ97cbS/ZVU5UbADvw0sfwxBzkJWIQWBfb0tlQtaoW33Txc7bku?= =?utf-8?q?AsfjgaROMF4mJ14wJULCqSUsZtHJKheC0ZSqs/86hk+ey8usYQgHrLbOtlBlcL?= 6RbrbUd82+zJEGYaG/RWDSGt8Muh/kFZAl+VCxdJiB6G4Aq5xrFVfxxapFwdEHnb</small></td></tr><tr><th>x-cnfs-analysis</th><td><small>v=2.4 cv=Ka3SsRYD c=1 sm=1 tr=0 ts=68543761 b=1 cx=a_idp_d a=8IVpVKAyZpjD/6Hg+UKPAw==:117 a=8IVpVKAyZpjD/6Hg+UKPAw==:17 a=fGYPQxYm8b8A:10 a=j1P8S1yNTQMA:10 a=avRnOf21weMA:10 a=g8TUdU_LZmEA:10 a=AI-HGmbAAAAA:8 a=8xVFDnwYAAAA:8 a=ccY35Ng8AAAA:8 a=x6NJhiS1AAAA:8 a=1IiApR9hJl8_RpTojGMA:9 a=QEXdDO2ut3YA:10 a=SSmOFEACAAAA:8 a=qpdoPRByoeBp3KncLVEA:9 a=5fPwjo7BD6vJBv3Z:21 a=gKO2Hq4RSVkA:10 a=frz4AuCg-hUA:10 a=_W_S_7VecoQA:10 a=Ru97nHiPDtp4odn3vKgu:22 a=xo5jKAKm-U-Zyk2_beg_:22 a=fmEoHorTQ4PRq2Qpf1YE:22 a=H_3qtOe8-2RvqO0ry-Us:22 a=jMKBOVNxxD9njo8wKH5I:22 a=y0J2zpYaMY9p1GIdyKGa:22 a=7z1AwqmE7qKjpXkZBq5u:22</small></td></tr><tr><th>x-csa-complaints</th><td><small>csa-complaints@eco.de</small></td></tr><tr><th>x-mj-mid</th><td><small>=?utf-8?q?AUwAAHE4suwAAc6tbFQAA-YlNNkAAYKJzbgAoRerAC-GaQBoVDdgkmF?= =?utf-8?q?xES0RRkCYGx8Wzt0pcgArjdk?=</small></td></tr><tr><th>x-mj-smtpguid</th><td><small>92617111-2d11-4640-981b-1f16cedd2972</small></td></tr><tr><th>x-report-abuse-to</th><td><small>Message sent by Mailjet please report toabuse@mailjet.com with a copy of the message</small></td></tr><tr><th>x-rid-domain</th><td><small>FWD-test@maurimori.eu</small></td></tr><tr><th>x-rid-platform</th><td><small>FORWARDLNX</small></td></tr><tr><th>x-rspamd-server</th><td><small>rspamd16</small></td></tr><tr><th>x-spam-status</th><td><small>No, score=0.00, required=95.00</small></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+                        </details>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>🔗 Links Analysis</h3>
+                <p>Found 27 unique links</p>
+                <div class="link-list">
+                    <div class="link-item safe-link">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="http://companyname.com/" target="_blank">http://companyname.com/</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: companyname.com</div>
+                            <div>Safety Score: 100%</div>
+                        </div>
+                    </div>
+                    <div class="link-item safe-link">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://assets.mailjet.com/lib/images/passport/mailjet-brand/logo1.png" target="_blank">https://assets.mailjet.com/lib/images/passport/mailjet-brand/logo1.png</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: assets.mailjet.com</div>
+                            <div>Safety Score: 80.0%</div>
+                            <div class="threats">Threats: WARNING - Low risk, monitor carefully</div>
+                        </div>
+                    </div>
+                    <div class="link-item warning-link">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://spinh.mjt.lu/img2/spinh/14510481-6b24-469a-9f40-a1eee430452c/content" target="_blank">https://spinh.mjt.lu/img2/spinh/14510481-6b24-469a-9f40-a1eee430452c/content</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: spinh.mjt.lu</div>
+                            <div>Safety Score: 50%</div>
+                            <div class="threats">Error: VirusTotal API error: (&#x27;NotFoundError&#x27;, &#x27;URL &quot;aHR0cHM6Ly9zcGluaC5tanQubHUvaW1nMi9zcGluaC8xNDUxMDQ4MS02YjI0LTQ2OWEtOWY0MC1hMWVlZTQzMDQ1MmMvY29udGVudA&quot; not found&#x27;)</div>
+                        </div>
+                    </div>
+                    <div class="link-item safe-link">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://spinh.mjt.lu/img2/spinh/290c812b-b7a3-4d4a-a640-c4f7578ec3da/content" target="_blank">https://spinh.mjt.lu/img2/spinh/290c812b-b7a3-4d4a-a640-c4f7578ec3da/content</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: spinh.mjt.lu</div>
+                            <div>Safety Score: 100%</div>
+                        </div>
+                    </div>
+                    <div class="link-item warning-link">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://spinh.mjt.lu/img2/spinh/290c812b-b7a3-4d4a-a640-c4f7578ec3da/content]" target="_blank">https://spinh.mjt.lu/img2/spinh/290c812b-b7a3-4d4a-a640-c4f7578ec3da/content]</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: spinh.mjt.lu</div>
+                            <div>Safety Score: 50%</div>
+                            <div class="threats">Error: VirusTotal API error: (&#x27;NotFoundError&#x27;, &#x27;URL &quot;aHR0cHM6Ly9zcGluaC5tanQubHUvaW1nMi9zcGluaC8yOTBjODEyYi1iN2EzLTRkNGEtYTY0MC1jNGY3NTc4ZWMzZGEvY29udGVudF0&quot; not found&#x27;)</div>
+                        </div>
+                    </div>
+                    <div class="link-item safe-link">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://spinh.mjt.lu/img2/spinh/61dd8c64-f788-47a7-b86c-6329baf20233/content" target="_blank">https://spinh.mjt.lu/img2/spinh/61dd8c64-f788-47a7-b86c-6329baf20233/content</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: spinh.mjt.lu</div>
+                            <div>Safety Score: 100%</div>
+                        </div>
+                    </div>
+                    <div class="link-item warning-link">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://spinh.mjt.lu/img2/spinh/61dd8c64-f788-47a7-b86c-6329baf20233/content]" target="_blank">https://spinh.mjt.lu/img2/spinh/61dd8c64-f788-47a7-b86c-6329baf20233/content]</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: spinh.mjt.lu</div>
+                            <div>Safety Score: 50%</div>
+                            <div class="threats">Error: VirusTotal API error: (&#x27;NotFoundError&#x27;, &#x27;URL &quot;aHR0cHM6Ly9zcGluaC5tanQubHUvaW1nMi9zcGluaC82MWRkOGM2NC1mNzg4LTQ3YTctYjg2Yy02MzI5YmFmMjAyMzMvY29udGVudF0&quot; not found&#x27;)</div>
+                        </div>
+                    </div>
+                    <div class="link-item safe-link">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://spinh.mjt.lu/img2/spinh/76d0b16c-7ca5-4635-872e-1f431f2a56df/content" target="_blank">https://spinh.mjt.lu/img2/spinh/76d0b16c-7ca5-4635-872e-1f431f2a56df/content</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: spinh.mjt.lu</div>
+                            <div>Safety Score: 100%</div>
+                        </div>
+                    </div>
+                    <div class="link-item warning-link">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://spinh.mjt.lu/img2/spinh/76d0b16c-7ca5-4635-872e-1f431f2a56df/content]" target="_blank">https://spinh.mjt.lu/img2/spinh/76d0b16c-7ca5-4635-872e-1f431f2a56df/content]</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: spinh.mjt.lu</div>
+                            <div>Safety Score: 50%</div>
+                            <div class="threats">Error: VirusTotal API error: (&#x27;NotFoundError&#x27;, &#x27;URL &quot;aHR0cHM6Ly9zcGluaC5tanQubHUvaW1nMi9zcGluaC83NmQwYjE2Yy03Y2E1LTQ2MzUtODcyZS0xZjQzMWYyYTU2ZGYvY29udGVudF0&quot; not found&#x27;)</div>
+                        </div>
+                    </div>
+                    <div class="link-item safe-link">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://spinh.mjt.lu/img2/spinh/aaccd5ae-9218-4bea-8922-16f505c239b4/content" target="_blank">https://spinh.mjt.lu/img2/spinh/aaccd5ae-9218-4bea-8922-16f505c239b4/content</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: spinh.mjt.lu</div>
+                            <div>Safety Score: 100%</div>
+                        </div>
+                    </div>
+                    <div class="link-item safe-link">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://spinh.mjt.lu/img2/spinh/b8515991-2e38-4091-89f4-c653d064be4f/content" target="_blank">https://spinh.mjt.lu/img2/spinh/b8515991-2e38-4091-89f4-c653d064be4f/content</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: spinh.mjt.lu</div>
+                            <div>Safety Score: 100%</div>
+                        </div>
+                    </div>
+                    <div class="link-item warning-link">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://spinh.mjt.lu/img2/spinh/b8515991-2e38-4091-89f4-c653d064be4f/content]" target="_blank">https://spinh.mjt.lu/img2/spinh/b8515991-2e38-4091-89f4-c653d064be4f/content]</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: spinh.mjt.lu</div>
+                            <div>Safety Score: 50%</div>
+                            <div class="threats">Error: VirusTotal API error: (&#x27;NotFoundError&#x27;, &#x27;URL &quot;aHR0cHM6Ly9zcGluaC5tanQubHUvaW1nMi9zcGluaC9iODUxNTk5MS0yZTM4LTQwOTEtODlmNC1jNjUzZDA2NGJlNGYvY29udGVudF0&quot; not found&#x27;)</div>
+                        </div>
+                    </div>
+                    <div class="link-item warning-link">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://spinh.mjt.lu/img2/spinh/bc9f2787-3403-4014-a792-a6e210d8dc7e/content" target="_blank">https://spinh.mjt.lu/img2/spinh/bc9f2787-3403-4014-a792-a6e210d8dc7e/content</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: spinh.mjt.lu</div>
+                            <div>Safety Score: 50%</div>
+                            <div class="threats">Error: VirusTotal API error: (&#x27;NotFoundError&#x27;, &#x27;URL &quot;aHR0cHM6Ly9zcGluaC5tanQubHUvaW1nMi9zcGluaC9iYzlmMjc4Ny0zNDAzLTQwMTQtYTc5Mi1hNmUyMTBkOGRjN2UvY29udGVudA&quot; not found&#x27;)</div>
+                        </div>
+                    </div>
+                    <div class="link-item warning-link">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://spinh.mjt.lu/img2/spinh/bc9f2787-3403-4014-a792-a6e210d8dc7e/content]" target="_blank">https://spinh.mjt.lu/img2/spinh/bc9f2787-3403-4014-a792-a6e210d8dc7e/content]</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: spinh.mjt.lu</div>
+                            <div>Safety Score: 50%</div>
+                            <div class="threats">Error: VirusTotal API error: (&#x27;NotFoundError&#x27;, &#x27;URL &quot;aHR0cHM6Ly9zcGluaC5tanQubHUvaW1nMi9zcGluaC9iYzlmMjc4Ny0zNDAzLTQwMTQtYTc5Mi1hNmUyMTBkOGRjN2UvY29udGVudF0&quot; not found&#x27;)</div>
+                        </div>
+                    </div>
+                    <div class="link-item warning-link">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://spinh.mjt.lu/img2/spinh/eb7961e2-a653-4164-9037-f3c094c7dede/content" target="_blank">https://spinh.mjt.lu/img2/spinh/eb7961e2-a653-4164-9037-f3c094c7dede/content</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: spinh.mjt.lu</div>
+                            <div>Safety Score: 50%</div>
+                            <div class="threats">Error: VirusTotal API error: (&#x27;NotFoundError&#x27;, &#x27;URL &quot;aHR0cHM6Ly9zcGluaC5tanQubHUvaW1nMi9zcGluaC9lYjc5NjFlMi1hNjUzLTQxNjQtOTAzNy1mM2MwOTRjN2RlZGUvY29udGVudA&quot; not found&#x27;)</div>
+                        </div>
+                    </div>
+                    <div class="link-item warning-link">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://spinh.mjt.lu/img2/spinh/eb7961e2-a653-4164-9037-f3c094c7dede/content]" target="_blank">https://spinh.mjt.lu/img2/spinh/eb7961e2-a653-4164-9037-f3c094c7dede/content]</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: spinh.mjt.lu</div>
+                            <div>Safety Score: 50%</div>
+                            <div class="threats">Error: VirusTotal API error: (&#x27;NotFoundError&#x27;, &#x27;URL &quot;aHR0cHM6Ly9zcGluaC5tanQubHUvaW1nMi9zcGluaC9lYjc5NjFlMi1hNjUzLTQxNjQtOTAzNy1mM2MwOTRjN2RlZGUvY29udGVudF0&quot; not found&#x27;)</div>
+                        </div>
+                    </div>
+                    <div class="link-item warning-link">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://sr4ix.mjt.lu/lnk/AUwAAHE4suwAAc6tbFQAA-YlNNkAAYKJzbgAoRerAC-GaQBoVDdgkmFxES0RRkCYGx8Wzt0pcgArjdk/0/ktfQIXrU8agC3coAM0vQ4A/aHR0cHM6Ly93d3cubWFpbGpldC5jb20vP3V0bV9zb3VyY2U9Zm9vdGVyJnV0bV9tZWRpdW09ZW1haWwmdXRtX2NhbXBhaWduPWxvZ28x?b=1" target="_blank">https://sr4ix.mjt.lu/lnk/AUwAAHE4suwAAc6tbFQAA-YlNNkAAYKJzbgAoRerAC-GaQBoVDdgkmFxES0RRkCYGx8Wzt0pcgArjdk/0/ktfQIXrU8agC3coAM0vQ4A/aHR0cHM6Ly93d3cubWFpbGpldC5jb20vP3V0bV9zb3VyY2U9Zm9vdGVyJnV0bV9tZWRpdW09ZW1haWwmdXRtX2NhbXBhaWduPWxvZ28x?b=1</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: sr4ix.mjt.lu</div>
+                            <div>Safety Score: 50%</div>
+                            <div class="threats">Error: VirusTotal API error: (&#x27;NotFoundError&#x27;, &#x27;URL &quot;aHR0cHM6Ly9zcjRpeC5tanQubHUvbG5rL0FVd0FBSEU0c3V3QUFjNnRiRlFBQS1ZbE5Oa0FBWUtKemJnQW9SZXJBQy1HYVFCb1ZEZGdrbUZ4RVMwUlJrQ1lHeDhXenQwcGNnQXJqZGsvMC9rdGZRSVhyVThhZ0MzY29BTTB2UTRBL2FIUjBjSE02THk5M2QzY3ViV0ZwYkdwbGRDNWpiMjB2UDNWMGJWOXpiM1Z5WTJVOVptOXZkR1Z5Sm5WMGJWOXRaV1JwZFcwOVpXMWhhV3dtZFhSdFgyTmhiWEJoYVdkdVBXeHZaMjh4P2I9MQ&quot; not found&#x27;)</div>
+                        </div>
+                    </div>
+                    <div class="link-item warning-link">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://sr4ix.mjt.lu/lnk/AUwAAHE4suwAAc6tbFQAA-YlNNkAAYKJzbgAoRerAC-GaQBoVDdgkmFxES0RRkCYGx8Wzt0pcgArjdk/0/ktfQIXrU8agC3coAM0vQ4A/aHR0cHM6Ly93d3cubWFpbGpldC5jb20vP3V0bV9zb3VyY2U9Zm9vdGVyJnV0bV9tZWRpdW09ZW1haWwmdXRtX2NhbXBhaWduPWxvZ28x?b=3" target="_blank">https://sr4ix.mjt.lu/lnk/AUwAAHE4suwAAc6tbFQAA-YlNNkAAYKJzbgAoRerAC-GaQBoVDdgkmFxES0RRkCYGx8Wzt0pcgArjdk/0/ktfQIXrU8agC3coAM0vQ4A/aHR0cHM6Ly93d3cubWFpbGpldC5jb20vP3V0bV9zb3VyY2U9Zm9vdGVyJnV0bV9tZWRpdW09ZW1haWwmdXRtX2NhbXBhaWduPWxvZ28x?b=3</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: sr4ix.mjt.lu</div>
+                            <div>Safety Score: 50%</div>
+                            <div class="threats">Error: VirusTotal API error: (&#x27;NotFoundError&#x27;, &#x27;URL &quot;aHR0cHM6Ly9zcjRpeC5tanQubHUvbG5rL0FVd0FBSEU0c3V3QUFjNnRiRlFBQS1ZbE5Oa0FBWUtKemJnQW9SZXJBQy1HYVFCb1ZEZGdrbUZ4RVMwUlJrQ1lHeDhXenQwcGNnQXJqZGsvMC9rdGZRSVhyVThhZ0MzY29BTTB2UTRBL2FIUjBjSE02THk5M2QzY3ViV0ZwYkdwbGRDNWpiMjB2UDNWMGJWOXpiM1Z5WTJVOVptOXZkR1Z5Sm5WMGJWOXRaV1JwZFcwOVpXMWhhV3dtZFhSdFgyTmhiWEJoYVdkdVBXeHZaMjh4P2I9Mw&quot; not found&#x27;)</div>
+                        </div>
+                    </div>
+                    <div class="link-item warning-link">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://sr4ix.mjt.lu/lnk/AUwAAHE4suwAAc6tbFQAA-YlNNkAAYKJzbgAoRerAC-GaQBoVDdgkmFxES0RRkCYGx8Wzt0pcgArjdk/1/lcpVE1MlOsG5seG2v66FgA/aHR0cHM6Ly93d3cubWFpbGpldC5jb20vP3V0bV9zb3VyY2U9Zm9vdGVyJnV0bV9tZWRpdW09ZW1haWwmdXRtX2NhbXBhaWduPWxvZ28x" target="_blank">https://sr4ix.mjt.lu/lnk/AUwAAHE4suwAAc6tbFQAA-YlNNkAAYKJzbgAoRerAC-GaQBoVDdgkmFxES0RRkCYGx8Wzt0pcgArjdk/1/lcpVE1MlOsG5seG2v66FgA/aHR0cHM6Ly93d3cubWFpbGpldC5jb20vP3V0bV9zb3VyY2U9Zm9vdGVyJnV0bV9tZWRpdW09ZW1haWwmdXRtX2NhbXBhaWduPWxvZ28x</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: sr4ix.mjt.lu</div>
+                            <div>Safety Score: 50%</div>
+                            <div class="threats">Error: VirusTotal API error: (&#x27;NotFoundError&#x27;, &#x27;URL &quot;aHR0cHM6Ly9zcjRpeC5tanQubHUvbG5rL0FVd0FBSEU0c3V3QUFjNnRiRlFBQS1ZbE5Oa0FBWUtKemJnQW9SZXJBQy1HYVFCb1ZEZGdrbUZ4RVMwUlJrQ1lHeDhXenQwcGNnQXJqZGsvMS9sY3BWRTFNbE9zRzVzZUcydjY2RmdBL2FIUjBjSE02THk5M2QzY3ViV0ZwYkdwbGRDNWpiMjB2UDNWMGJWOXpiM1Z5WTJVOVptOXZkR1Z5Sm5WMGJWOXRaV1JwZFcwOVpXMWhhV3dtZFhSdFgyTmhiWEJoYVdkdVBXeHZaMjh4&quot; not found&#x27;)</div>
+                        </div>
+                    </div>
+                    <div class="link-item warning-link">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://sr4ix.mjt.lu/nl3/sRposl8FVgySTFOZVPjuOg" target="_blank">https://sr4ix.mjt.lu/nl3/sRposl8FVgySTFOZVPjuOg</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: sr4ix.mjt.lu</div>
+                            <div>Safety Score: 50%</div>
+                            <div class="threats">Error: VirusTotal API error: (&#x27;NotFoundError&#x27;, &#x27;URL &quot;aHR0cHM6Ly9zcjRpeC5tanQubHUvbmwzL3NScG9zbDhGVmd5U1RGT1pWUGp1T2c&quot; not found&#x27;)</div>
+                        </div>
+                    </div>
+                    <div class="link-item warning-link">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://sr4ix.mjt.lu/oo/AUwAAHE4suwAAc6tbFQAA-YlNNkAAYKJzbgAoRerAC-GaQBoVDdgkmFxES0RRkCYGx8Wzt0pcgArjdk/930857b1/e.gif" target="_blank">https://sr4ix.mjt.lu/oo/AUwAAHE4suwAAc6tbFQAA-YlNNkAAYKJzbgAoRerAC-GaQBoVDdgkmFxES0RRkCYGx8Wzt0pcgArjdk/930857b1/e.gif</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: sr4ix.mjt.lu</div>
+                            <div>Safety Score: 50%</div>
+                            <div class="threats">Error: VirusTotal API error: (&#x27;NotFoundError&#x27;, &#x27;URL &quot;aHR0cHM6Ly9zcjRpeC5tanQubHUvb28vQVV3QUFIRTRzdXdBQWM2dGJGUUFBLVlsTk5rQUFZS0p6YmdBb1JlckFDLUdhUUJvVkRkZ2ttRnhFUzBSUmtDWUd4OFd6dDBwY2dBcmpkay85MzA4NTdiMS9lLmdpZg&quot; not found&#x27;)</div>
+                        </div>
+                    </div>
+                    <div class="link-item warning-link">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://sr4ix.mjt.lu/unsub2?hl=en&amp;m=AUwAAHE4suwAAc6tbFQAA-YlNNkAAYKJzbgAoRerAC-GaQBoVDdgkmFxES0RRkCYGx8Wzt0pcgArjdk&amp;b=da122024&amp;e=08939792&amp;x=NkIp3pi-fhaamG6dMmPPWbbgudhAKdP89hVzzZWY_H8" target="_blank">https://sr4ix.mjt.lu/unsub2?hl=en&amp;m=AUwAAHE4suwAAc6tbFQAA-YlNNkAAYKJzbgAoRerAC-GaQBoVDdgkmFxES0RRkCYGx8Wzt0pcgArjdk&amp;b=da122024&amp;e=08939792&amp;x=NkIp3pi-fhaamG6dMmPPWbbgudhAKdP89hVzzZWY_H8</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: sr4ix.mjt.lu</div>
+                            <div>Safety Score: 50%</div>
+                            <div class="threats">Error: VirusTotal API error: (&#x27;NotFoundError&#x27;, &#x27;URL &quot;aHR0cHM6Ly9zcjRpeC5tanQubHUvdW5zdWIyP2hsPWVuJm09QVV3QUFIRTRzdXdBQWM2dGJGUUFBLVlsTk5rQUFZS0p6YmdBb1JlckFDLUdhUUJvVkRkZ2ttRnhFUzBSUmtDWUd4OFd6dDBwY2dBcmpkayZiPWRhMTIyMDI0JmU9MDg5Mzk3OTImeD1Oa0lwM3BpLWZoYWFtRzZkTW1QUFdiYmd1ZGhBS2RQODloVnp6WldZX0g4&quot; not found&#x27;)</div>
+                        </div>
+                    </div>
+                    <div class="link-item warning-link">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://sr4ix.mjt.lu/unsub2?hl=en&amp;m=AUwAAHE4suwAAc6tbFQAA-YlNNkAAYKJzbgAoRerAC-GaQBoVDdgkmFxES0RRkCYGx8Wzt0pcgArjdk&amp;b=da122024&amp;e=08939792&amp;x=NkIp3pi-fhaamG6dMmPPWbbgudhAKdP89hVzzZWY_H8." target="_blank">https://sr4ix.mjt.lu/unsub2?hl=en&amp;m=AUwAAHE4suwAAc6tbFQAA-YlNNkAAYKJzbgAoRerAC-GaQBoVDdgkmFxES0RRkCYGx8Wzt0pcgArjdk&amp;b=da122024&amp;e=08939792&amp;x=NkIp3pi-fhaamG6dMmPPWbbgudhAKdP89hVzzZWY_H8.</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: sr4ix.mjt.lu</div>
+                            <div>Safety Score: 50%</div>
+                            <div class="threats">Error: VirusTotal API error: (&#x27;NotFoundError&#x27;, &#x27;URL &quot;aHR0cHM6Ly9zcjRpeC5tanQubHUvdW5zdWIyP2hsPWVuJm09QVV3QUFIRTRzdXdBQWM2dGJGUUFBLVlsTk5rQUFZS0p6YmdBb1JlckFDLUdhUUJvVkRkZ2ttRnhFUzBSUmtDWUd4OFd6dDBwY2dBcmpkayZiPWRhMTIyMDI0JmU9MDg5Mzk3OTImeD1Oa0lwM3BpLWZoYWFtRzZkTW1QUFdiYmd1ZGhBS2RQODloVnp6WldZX0g4Lg&quot; not found&#x27;)</div>
+                        </div>
+                    </div>
+                    <div class="link-item safe-link">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://static.mailjet.com/ico-social/facebook.png" target="_blank">https://static.mailjet.com/ico-social/facebook.png</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: static.mailjet.com</div>
+                            <div>Safety Score: 80.0%</div>
+                            <div class="threats">Threats: WARNING - Low risk, monitor carefully</div>
+                        </div>
+                    </div>
+                    <div class="link-item safe-link">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://static.mailjet.com/ico-social/instagram.png" target="_blank">https://static.mailjet.com/ico-social/instagram.png</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: static.mailjet.com</div>
+                            <div>Safety Score: 80.0%</div>
+                            <div class="threats">Threats: WARNING - Low risk, monitor carefully</div>
+                        </div>
+                    </div>
+                    <div class="link-item safe-link">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://static.mailjet.com/ico-social/youtube.png" target="_blank">https://static.mailjet.com/ico-social/youtube.png</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: static.mailjet.com</div>
+                            <div>Safety Score: 80.0%</div>
+                            <div class="threats">Threats: WARNING - Low risk, monitor carefully</div>
+                        </div>
+                    </div>
+                    <div class="link-item safe-link">
+                        <div class="link-url" style="display: block; width: 100%; padding-bottom: 10px;"><a href="https://www.mailjet.com/?utm_source=footer&amp;utm_medium=email&amp;utm_campaign=logo1]" target="_blank">https://www.mailjet.com/?utm_source=footer&amp;utm_medium=email&amp;utm_campaign=logo1]</a></div>
+                        <div style="clear: both; margin-top: 15px;"></div>
+                        <div class="link-details" style="display: block; margin-top: 8px;">
+                            <div class="domain-info">Domain: www.mailjet.com</div>
+                            <div>Safety Score: 80.0%</div>
+                            <div class="threats">Threats: WARNING - Low risk, monitor carefully</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <h3>🔐 DMARC & DKIM Authentication Analysis</h3>
+                <div class="dmarc-container">
+                    <div class="domain-info">
+                        <h4>📧 Domain Analysis: hiwork.it</h4>
+                    </div>
+                    <div class="dkim-analysis">
+                        <h5>🔑 DKIM (DomainKeys Identified Mail) Analysis</h5>
+                        <div class="auth-status-box">
+                            <div class="status-item success">
+                                <span class="status-icon">✅</span>
+                                <span class="status-text">DKIM Signature Present</span>
+                            </div>
+                            <div class="dkim-details">
+                                <h6>📋 DKIM Signature Details</h6>
+                                <div class="dkim-details-grid">
+                                    <div class="detail-item">
+                                        <span class="detail-label">Version:</span>
+                                        <span class="detail-value">1</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Algorithm:</span>
+                                        <span class="detail-value"><code>rsa-sha256</code></span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Signing Domain:</span>
+                                        <span class="detail-value"><strong>hiwork.it</strong></span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Selector:</span>
+                                        <span class="detail-value"><code>mailjet</code></span>
                                     </div>
                                     <div class="detail-item">
                                         <span class="detail-label">Canonicalization:</span>
